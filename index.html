@@ -25815,6 +25815,189 @@ M834 80h400000v40h-400000z"></path>
                                             for each token.</li>
                                     </ul>
                                 </div>
+
+                                <!-- ═══════════════════════════════════════════════════════════
+                                     IMAGE-BASED NOTES: Encoder Architecture (02.png & 03.png)
+                                     ═══════════════════════════════════════════════════════════ -->
+                                <div class="encoder-notes-block" style="margin: 32px 0; display: flex; flex-direction: column; gap: 24px;">
+
+                                    <!-- Section 1 -->
+                                    <details open>
+                                        <summary class="pro-heading style-h3" style="--h3-bg: rgba(37,99,235,0.06); --h3-border: rgba(37,99,235,0.18); --h3-border-left: #2563eb; --h3-text: #1d4ed8;">
+                                            📌 Section 1 — High-Level Transformer Architecture (Image 1 · 02.png)
+                                        </summary>
+                                        <div class="indented">
+                                            <p style="color: var(--muted); font-size: 0.93rem; margin: 8px 0 10px 0;">Image 1 shows the complete Transformer model from the original "Attention is All You Need" paper — from input tokens all the way to output predictions.</p>
+                                            <ul class="bulleted-list">
+                                                <li style="list-style-type:disc">The model has two main blocks: a <strong>yellow Encoder</strong> on the left and a <strong>red Decoder</strong> on the right.</li>
+                                                <li style="list-style-type:disc">Both blocks are stacked <strong>N = 6 times</strong> — 6 identical layers on top of each other, each building a deeper, more abstract understanding.</li>
+                                                <li style="list-style-type:disc">The Encoder reads the input sentence (e.g., "How are you") and converts it into a rich contextual representation — it does not generate output.</li>
+                                                <li style="list-style-type:disc">The Decoder uses that representation to generate the output token by token (e.g., a translated sentence).</li>
+                                                <li style="list-style-type:disc">The final Encoder output is sent to <em>every single Decoder layer</em> — all 6 Decoder layers can reference the full input meaning via Cross-Attention.</li>
+                                                <li style="list-style-type:disc">At the very end, a <strong>Linear</strong> layer + <strong>Softmax</strong> converts the Decoder's vector into probability scores over the vocabulary — the highest-probability word is selected as the prediction.</li>
+                                            </ul>
+
+                                            <details style="margin-top: 14px;">
+                                                <summary class="pro-heading style-h4">🔷 Sub-section 1.1 — Inside Each Encoder Layer</summary>
+                                                <div class="indented">
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc">Every Encoder layer contains exactly <strong>two sub-layers</strong>:</li>
+                                                        <li style="list-style-type:circle"><strong>Sub-layer 1 — Multi-Head Self-Attention:</strong> Each word looks at all other words to understand its context. For example, "bank" checks neighbors to decide if it means "river bank" or "money bank".</li>
+                                                        <li style="list-style-type:circle"><strong>Sub-layer 2 — Position-wise Feed-Forward Network (FFN):</strong> Each word's 512-dim vector is independently passed through a small 2-layer network that adds expressive non-linear power.</li>
+                                                        <li style="list-style-type:disc">After <em>each</em> sub-layer, there is an <strong>Add &amp; Norm</strong> step: the sub-layer input is added back as a residual, then Layer Normalization is applied.</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
+
+                                            <details style="margin-top: 10px;">
+                                                <summary class="pro-heading style-h4">🔷 Sub-section 1.2 — The Add &amp; Norm Formula</summary>
+                                                <div class="indented">
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc">After Self-Attention: &nbsp;<code>Z_norm = LayerNorm( SelfAttention(X) + X )</code></li>
+                                                        <li style="list-style-type:disc">After Feed-Forward: &nbsp;<code>Y_norm = LayerNorm( FFN(Z_norm) + Z_norm )</code></li>
+                                                        <li style="list-style-type:disc">The <code>+ X</code> term is the <strong>residual connection</strong> — it passes original information through unchanged so the layer only needs to learn what to <em>add</em> on top, not relearn everything.</li>
+                                                        <li style="list-style-type:disc">Layer Normalization keeps activations stable — without it, deep stacks of 6 layers would suffer from exploding or vanishing gradients during training.</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
+                                        </div>
+                                    </details>
+
+                                    <!-- Section 2 -->
+                                    <details open>
+                                        <summary class="pro-heading style-h3" style="--h3-bg: rgba(5,150,105,0.06); --h3-border: rgba(5,150,105,0.18); --h3-border-left: #059669; --h3-text: #047857;">
+                                            📌 Section 2 — From Raw Text to Encoder Input: The 4-Step Preprocessing Pipeline (Image 1)
+                                        </summary>
+                                        <div class="indented">
+                                            <p style="color: var(--muted); font-size: 0.93rem; margin: 8px 0 10px 0;">Before any word enters the Encoder stack, it goes through a 4-step preprocessing pipeline shown at the bottom of Image 1.</p>
+                                            <ul class="bulleted-list">
+                                                <li style="list-style-type:disc"><strong>Step 1 — Tokenization:</strong> The sentence is split into individual tokens: <em>"How are you"</em> → <code>["How", "are", "you"]</code>. Each token is a discrete unit the model can process.</li>
+                                                <li style="list-style-type:disc"><strong>Step 2 — Word Embedding (512 dimensions):</strong> Each token is converted to a 512-dimensional vector via an Embedding lookup table. This vector encodes the semantic <em>meaning</em> of the word. These are labeled <strong>E₁, E₂, E₃</strong> in the image.</li>
+                                                <li style="list-style-type:disc"><strong>Step 3 — Positional Encoding:</strong> Because all words are processed in parallel, the model has no built-in sense of word order. Positional encoding adds a sinusoidal wave signal for each position:
+                                                    <ul style="margin-top: 6px;">
+                                                        <li style="list-style-type:circle">Even dimensions: <code>PE(pos, 2i) = sin(pos / 10000^(2i/512))</code></li>
+                                                        <li style="list-style-type:circle">Odd dimensions: <code>PE(pos, 2i+1) = cos(pos / 10000^(2i/512))</code></li>
+                                                        <li style="list-style-type:circle">These produce positional vectors <strong>P₁, P₂, P₃</strong>, each 512-dimensional.</li>
+                                                    </ul>
+                                                </li>
+                                                <li style="list-style-type:disc"><strong>Step 4 — Element-wise Addition:</strong> Word embedding + positional encoding are added: <code>X₁ = E₁ + P₁</code>. Each result is a 512-dim vector encoding both <em>meaning</em> and <em>position</em>.</li>
+                                                <li style="list-style-type:disc">The final input matrix <code>X = [X₁, X₂, X₃]</code> with shape <code>[3 × 512]</code> is fed into Encoder Layer 1.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Section 3 -->
+                                    <details open>
+                                        <summary class="pro-heading style-h3" style="--h3-bg: rgba(124,58,237,0.06); --h3-border: rgba(124,58,237,0.18); --h3-border-left: #7c3aed; --h3-text: #6d28d9;">
+                                            📌 Section 3 — Step-by-Step Tensor Data Flow Through One Encoder Layer (Image 2 · 03.png)
+                                        </summary>
+                                        <div class="indented">
+                                            <p style="color: var(--muted); font-size: 0.93rem; margin: 8px 0 10px 0;"><strong>Image 2</strong> zooms into one Encoder layer and shows exactly how the 512-dim vectors transform at each stage.</p>
+
+                                            <details open style="margin-bottom: 10px;">
+                                                <summary class="pro-heading style-h4">🔶 Phase 1 — Input: Embedding + Positional Encoding (bottom of Image 2)</summary>
+                                                <div class="indented">
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc">Tokens "How", "are", "you" are embedded and combined with positional vectors → <strong>X₁, X₂, X₃</strong> (shape: <code>[3 × 512]</code>).</li>
+                                                        <li style="list-style-type:disc">These vectors carry both <em>meaning</em> and <em>position</em> information into the layer.</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
+
+                                            <details open style="margin-bottom: 10px;">
+                                                <summary class="pro-heading style-h4">🔶 Phase 2 — Multi-Head Self-Attention</summary>
+                                                <div class="indented">
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc">All three vectors X₁, X₂, X₃ enter the <strong>Multi-Head Attention</strong> block simultaneously.</li>
+                                                        <li style="list-style-type:disc">Each word computes attention scores against every other word — capturing relationships like: "you" is closely related to "How" and "are".</li>
+                                                        <li style="list-style-type:disc">Output: <strong>Z₁, Z₂, Z₃</strong> — three new 512-dim context-enriched vectors.</li>
+                                                        <li style="list-style-type:disc">Important: Positional encoding is static (same for position 1, 2, 3 always). Self-Attention is <em>dynamic</em> — it changes based on the actual words in the sentence.</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
+
+                                            <details open style="margin-bottom: 10px;">
+                                                <summary class="pro-heading style-h4">🔶 Phase 3 — First Add &amp; LayerNorm (after Self-Attention)</summary>
+                                                <div class="indented">
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc"><strong>Residual skip:</strong> <code>Z₁' = Z₁ + X₁</code>&nbsp;|&nbsp;<code>Z₂' = Z₂ + X₂</code>&nbsp;|&nbsp;<code>Z₃' = Z₃ + X₃</code></li>
+                                                        <li style="list-style-type:disc">This preserves the original word information even after the Attention block has modified it.</li>
+                                                        <li style="list-style-type:disc"><strong>Layer Normalization</strong>: scales each vector to mean ≈ 0 and std ≈ 1 — prevents training instability in deep networks.</li>
+                                                        <li style="list-style-type:disc">Output: <strong>Z₁_norm, Z₂_norm, Z₃_norm</strong> — normalized, context-enriched 512-dim vectors.</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
+
+                                            <details open style="margin-bottom: 10px;">
+                                                <summary class="pro-heading style-h4">🔶 Phase 4 — Feed-Forward Network (FFN): Expand to 2048, then Contract to 512</summary>
+                                                <div class="indented">
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc">The FFN processes each token's vector independently (same weights for all tokens, different input values).</li>
+                                                        <li style="list-style-type:disc"><strong>FFN Layer 1 — Expand (512 → 2048):</strong>
+                                                            <ul style="margin-top: 6px;">
+                                                                <li style="list-style-type:circle">Weight matrix <strong>W₁</strong>: shape <code>[512 × 2048]</code>, bias <strong>b₁</strong>.</li>
+                                                                <li style="list-style-type:circle">Formula: <code>Intermediate = ReLU(Z_norm · W₁ + b₁)</code></li>
+                                                                <li style="list-style-type:circle"><strong>ReLU activation</strong>: <code>f(x) = max(0, x)</code> — keeps positive values, zeros out negatives. Adds non-linearity so the model can learn complex, non-linear patterns.</li>
+                                                                <li style="list-style-type:circle">Expanding to 2048 gives the model more "neurons" to detect subtle patterns — like zooming into details.</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li style="list-style-type:disc"><strong>FFN Layer 2 — Contract (2048 → 512):</strong>
+                                                            <ul style="margin-top: 6px;">
+                                                                <li style="list-style-type:circle">Weight matrix <strong>W₂</strong>: shape <code>[2048 × 512]</code>, bias <strong>b₂</strong>.</li>
+                                                                <li style="list-style-type:circle">Formula: <code>FFN Output = Intermediate · W₂ + b₂</code> (linear, no activation function).</li>
+                                                                <li style="list-style-type:circle">Compresses back to 512 dims so dimensions match for the upcoming residual connection.</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li style="list-style-type:disc">Output: <strong>Y₁, Y₂, Y₃</strong> — three refined 512-dim vectors, one per token.</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
+
+                                            <details open style="margin-bottom: 10px;">
+                                                <summary class="pro-heading style-h4">🔶 Phase 5 — Second Add &amp; LayerNorm (after FFN)</summary>
+                                                <div class="indented">
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc"><strong>Second residual skip:</strong> <code>Y₁' = Y₁ + Z₁_norm</code>&nbsp;|&nbsp;<code>Y₂' = Y₂ + Z₂_norm</code>&nbsp;|&nbsp;<code>Y₃' = Y₃ + Z₃_norm</code></li>
+                                                        <li style="list-style-type:disc">Layer Normalization applied again → final output: <strong>Y₁_norm, Y₂_norm, Y₃_norm</strong>.</li>
+                                                        <li style="list-style-type:disc">Shape: <code>[3 × 512]</code> — same shape as the layer's input, allowing stacking.</li>
+                                                        <li style="list-style-type:disc">These vectors are passed to the <strong>next Encoder layer</strong> (layers 2 through 6 repeat this exact process, each with their own learned weights).</li>
+                                                        <li style="list-style-type:disc">After all 6 Encoder layers: the final output matrix (shape <code>[3 × 512]</code>) is sent to the Decoder as the <strong>Key (K)</strong> and <strong>Value (V)</strong> vectors for Cross-Attention.</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
+                                        </div>
+                                    </details>
+
+                                    <!-- Section 4 -->
+                                    <details open>
+                                        <summary class="pro-heading style-h3" style="--h3-bg: rgba(217,119,6,0.06); --h3-border: rgba(217,119,6,0.18); --h3-border-left: #d97706; --h3-text: #b45309;">
+                                            📌 Section 4 — Complete Encoder Pipeline: At a Glance
+                                        </summary>
+                                        <div class="indented">
+                                            <ul class="bulleted-list">
+                                                <li style="list-style-type:disc">The Encoder's sole job: <strong>read and deeply understand</strong> the input — it builds representation, it never generates output.</li>
+                                                <li style="list-style-type:disc">It processes all tokens <strong>simultaneously in parallel</strong>, making it far faster than older sequential RNNs or LSTMs.</li>
+                                                <li style="list-style-type:disc">Full pipeline for each token through one Encoder layer:</li>
+                                            </ul>
+                                            <code style="display:block; margin: 12px 0; padding: 14px 16px; border-radius: 8px; background: rgba(0,0,0,0.05); font-size: 0.87rem; line-height: 2.1; border-left: 4px solid #d97706;">
+                                                Input X (512-dim per token)<br>
+                                                &nbsp;&nbsp;↓ Multi-Head Self-Attention → Z (context-enriched)<br>
+                                                &nbsp;&nbsp;↓ Add(Z + X) + LayerNorm → Z_norm<br>
+                                                &nbsp;&nbsp;↓ FFN Layer 1: ReLU(Z_norm · W₁ + b₁) → 2048-dim<br>
+                                                &nbsp;&nbsp;↓ FFN Layer 2: 2048-dim · W₂ + b₂ → Y (512-dim)<br>
+                                                &nbsp;&nbsp;↓ Add(Y + Z_norm) + LayerNorm → Y_norm<br>
+                                                Output Y_norm (512-dim) → Next Encoder Layer
+                                            </code>
+                                            <ul class="bulleted-list">
+                                                <li style="list-style-type:disc">This repeats for all 6 Encoder layers with different learned weights.</li>
+                                                <li style="list-style-type:disc">The final output after Layer 6: matrix <code>[seq_len × 512]</code> — the complete contextual memory of the input, handed to the Decoder.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                </div>
+                                <!-- ═══════════════════════════════════════ END IMAGE-BASED NOTES ══ -->
+
                                 <div dir="auto">
                                     <details id="questions-2">
                                         <summary class="pro-heading style-h2">Questions</summary>
