@@ -1652,7 +1652,7 @@
                                             Techniques</strong></h3>
                                 </div>
                                 <div dir="auto">
-                                    <p class="" id="18f8a6d6-2b53-803f-94a9-c7d879be6c86">The video outlines the
+                                    <p class="" id="18f8a6d6-2b53-803f-94a9-c7d879be6c86">The following sections outline the
                                         progression of techniques for converting words into numerical data:</p>
                                 </div>
                                 <div dir="auto">
@@ -1716,7 +1716,7 @@
                                             Embeddings</strong></h3>
                                 </div>
                                 <div dir="auto">
-                                    <p class="" id="18f8a6d6-2b53-8095-a2d1-d58a2a947202">The video highlights
+                                    <p class="" id="18f8a6d6-2b53-8095-a2d1-d58a2a947202">Modern Transformer architecture highlights
                                         <strong>word embeddings</strong> as a significant advancement:</p>
                                 </div>
                                 <div dir="auto">
@@ -1763,8 +1763,7 @@
                                             Static Word Embeddings</strong></h3>
                                 </div>
                                 <div dir="auto">
-                                    <p class="" id="18f8a6d6-2b53-8009-bc80-db4282288070">Despite their power, the video
-                                        points out a key limitation of traditional word embeddings: they capture the
+                                    <p class="" id="18f8a6d6-2b53-8009-bc80-db4282288070">Despite their power, there is a key limitation of traditional word embeddings: they capture the
                                         <strong>average meaning</strong> of a word across the entire training dataset.
                                     </p>
                                 </div>
@@ -1776,7 +1775,7 @@
                                             regardless of the context in which it is used.<div dir="auto">
                                                 <ul class="bulleted-list" id="18f8a6d6-2b53-8043-9b5d-c98f666ee0a2">
                                                     <li style="list-style-type:circle"><strong>Example of
-                                                            "Apple":</strong> The video illustrates this issue with the
+                                                            "Apple":</strong> This issue is illustrated with the
                                                         word "apple." If a word embedding model is trained on a dataset
                                                         where "apple" appears more frequently as a fruit, its vector
                                                         will be skewed towards representing "apple" as a fruit, even
@@ -1791,8 +1790,7 @@
                                     <ul class="bulleted-list" id="18f8a6d6-2b53-801e-bc5e-ea6f20523af8">
                                         <li style="list-style-type:disc"><mark class="highlight-yellow"><strong>Average
                                                     Meaning Capture</strong></mark><strong>:</strong> The word embedding
-                                            for "apple" will be an average of its usage as a fruit and a company. The
-                                            video gives an example of a two dimensional vector where one dimension
+                                            for "apple" will be an average of its usage as a fruit and a company. Consider an example of a two-dimensional vector where one dimension
                                             represents "test" and the other represents "technology". If in the training
                                             data apple appears more often as a fruit then the "test" dimension will have
                                             a higher value and the "technology" dimension will have a lower value. This
@@ -1805,8 +1803,7 @@
                                     <ul class="bulleted-list" id="18f8a6d6-2b53-808c-a080-e1c0b3e71d59">
                                         <li style="list-style-type:disc"><mark
                                                 class="highlight-yellow"><strong>Problematic for
-                                                    Translation</strong></mark>: As an example, the video notes that an
-                                            NLP translation application, given the sentence "Apple launched a new phone
+                                                    Translation</strong></mark>: As an example, an NLP translation application, given the sentence "Apple launched a new phone
                                             while I was eating an orange," would vectorize all the words including
                                             "apple", but would not be able to take into account the contextual use of
                                             the word.</li>
@@ -1817,8 +1814,7 @@
                                             Generating Contextual Embeddings</strong></h3>
                                 </div>
                                 <div dir="auto">
-                                    <p class="" id="18f8a6d6-2b53-80e3-b8a1-e196136811b7">The video introduces
-                                        <strong>self-attention</strong> as the solution to the problem of static word
+                                    <p class="" id="18f8a6d6-2b53-80e3-b8a1-e196136811b7">This is where <strong>self-attention</strong> comes in as the solution to the problem of static word
                                         embeddings.</p>
                                 </div>
                                 <div dir="auto">
@@ -1846,7 +1842,7 @@
                                                 class="highlight-yellow"><strong>Mechanism</strong></mark><strong>:</strong>
                                             Self-attention takes the static embeddings of all the words in a sentence as
                                             input. It performs some calculations (the specifics of which are to be
-                                            covered in later videos) to generate new contextual embeddings for each
+                                            covered in the following sections) to generate new contextual embeddings for each
                                             word. The output embeddings are "smart" because they are adjusted based on
                                             the specific context of each word.<div dir="auto">
                                                 <ul class="bulleted-list" id="18f8a6d6-2b53-8082-8dc2-c988c6ce6ad0">
@@ -2002,13 +1998,12 @@
                                     <p class="" id="18f8a6d6-2b53-80a0-a563-d9f341b326f9"><strong>Summary</strong></p>
                                 </div>
                                 <div dir="auto">
-                                    <p class="" id="18f8a6d6-2b53-8034-a114-c286267c1ba6">In summary, the video explains
-                                        that self-attention is a mechanism that enhances word embeddings by making them
+                                    <p class="" id="18f8a6d6-2b53-8034-a114-c286267c1ba6">In summary, self-attention is a mechanism that enhances word embeddings by making them
                                         context-aware. Self-attention takes static word embeddings as input and
                                         generates dynamic, contextual embeddings that are better suited for NLP
-                                        applications. The video's main focus is to explain the need for self-attention,
-                                        and the subsequent videos will delve into the mechanics of how self-attention
-                                        works. The next video will focus on the query, key and value vectors.</p>
+                                        applications. The primary focus here is to establish the need for self-attention,
+                                         while subsequent sections delve into the mechanics of how self-attention
+                                         works. The next section focuses on the query, key, and value vectors.</p>
                                 </div>
                             </div>
                         </details>
@@ -4521,7 +4516,7 @@
                                                     <div dir="auto">
                                                         <ul class="bulleted-list"
                                                             id="1908a6d6-2b53-8025-b8ed-d0feefa21cdf">
-                                                            <li style="list-style-type:disc">The video uses the example
+                                                            <li style="list-style-type:disc">We can use the example
                                                                 of the sentences "Money bank grows" and "River bank
                                                                 flows" to demonstrate the problem with static
                                                                 embeddings.</li>
@@ -28356,9 +28351,8 @@ M834 80h400000v40h-400000z"></path>
                                                                                                 teacher forcing, the
                                                                                                 constraint of needing
                                                                                                 the previous time step's
-                                                                                                output is removed. The
-                                                                                                video says, because the
-                                                                                                data set is available,
+                                                                                                output is removed. Because the
+                                                                                                full training dataset is available,
                                                                                                 there is no need to wait
                                                                                             </li>
                                                                                         </ul>
