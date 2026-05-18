@@ -14,10 +14,12 @@ A highly structured, visual, and mathematically rigorous educational walkthrough
 The complete study notes, visual diagrams, mathematical breakdowns, and deep-dive question-and-answers are fully compiled and hosted on Vercel:
 
 <div align="center">
+  <p>👉 <b>Click the button below to open the live interactive site:</b></p>
   <a href="https://demystifying-transformers.vercel.app/" target="_blank" rel="noopener noreferrer">
-    <img src="https://img.shields.io/badge/Explore%20The%20Live%20Interactive%20Site%20Here-0f766e?style=for-the-badge&logo=vercel&logoColor=white" alt="Explore The Live Interactive Site Here" height="46">
+    <img src="https://img.shields.io/badge/%F0%9F%91%89%20Explore%20The%20Live%20Interactive%20Site%20Here%20%F0%9F%91%88-0f766e?style=for-the-badge&logo=vercel&logoColor=white" alt="👉 Explore The Live Interactive Site Here 👈" height="50">
   </a>
 </div>
+
 
 
 ---
