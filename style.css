@@ -1215,9 +1215,9 @@ summary.style-h2::before {
     margin-right: 14px !important;
 }
 
-/* 01 - Introduction (Vibrant Royal Blue to Indigo Gradient) */
+/* 01 - Introduction (Vibrant Royal Blue to Sapphire Dual-Color Gradient) */
 #\30 1-introduction-to-transformer > summary.style-h2 {
-    background: linear-gradient(90deg, #1e3c72 0%, #2a5298 50%, #2563eb 100%) !important;
+    background: linear-gradient(135deg, #1e3c72 0%, #2563eb 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25) !important;
 }
@@ -1225,9 +1225,9 @@ summary.style-h2::before {
     border-left: 3px solid #2563eb !important;
 }
 
-/* 02 - What is Self Attention (Vibrant Emerald to Mint Tech Gradient) */
+/* 02 - What is Self Attention (Vibrant Emerald to Mint Dual-Color Gradient) */
 #\30 2-what-is-self-attention > summary.style-h2 {
-    background: linear-gradient(90deg, #065f46 0%, #059669 50%, #10b981 100%) !important;
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 4px 15px rgba(5, 150, 105, 0.25) !important;
 }
@@ -1235,9 +1235,9 @@ summary.style-h2::before {
     border-left: 3px solid #059669 !important;
 }
 
-/* 03 - Self Attention in Transformers (Vibrant Sci-Fi Cyan to Deep Teal Gradient) */
+/* 03 - Self Attention in Transformers (Vibrant Sci-Fi Cyan to Teal Dual-Color Gradient) */
 #\30 3-self-attention-in-transformers > summary.style-h2 {
-    background: linear-gradient(90deg, #0f766e 0%, #0891b2 50%, #06b6d4 100%) !important;
+    background: linear-gradient(135deg, #0f766e 0%, #06b6d4 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 4px 15px rgba(8, 145, 178, 0.25) !important;
 }
@@ -1245,9 +1245,9 @@ summary.style-h2::before {
     border-left: 3px solid #0891b2 !important;
 }
 
-/* 04 - Scaled Dot Product Attention (Futuristic Deep Violet to Lavender Gradient) */
+/* 04 - Scaled Dot Product Attention (Futuristic Deep Violet to Purple Dual-Color Gradient) */
 #\30 4-scaled-dot-product-attention > summary.style-h2 {
-    background: linear-gradient(90deg, #4c1d95 0%, #6d28d9 50%, #8b5cf6 100%) !important;
+    background: linear-gradient(135deg, #5b21b6 0%, #8b5cf6 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 4px 15px rgba(109, 40, 217, 0.25) !important;
 }
@@ -1255,9 +1255,9 @@ summary.style-h2::before {
     border-left: 3px solid #7c3aed !important;
 }
 
-/* 05 - Self-Attention Geometric Intuition (Futuristic Sky Blue to Deep Sapphire Gradient) */
+/* 05 - Self-Attention Geometric Intuition (Futuristic Sky Blue to Ocean Blue Dual-Color Gradient) */
 #\30 5-self-attention-geometric-intuition > summary.style-h2 {
-    background: linear-gradient(90deg, #1e3a8a 0%, #0284c7 50%, #0ea5e9 100%) !important;
+    background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 4px 15px rgba(2, 132, 199, 0.25) !important;
 }
@@ -1265,9 +1265,9 @@ summary.style-h2::before {
     border-left: 3px solid #0284c7 !important;
 }
 
-/* 06 - Multi-head Attention (Electric Rose Pink to Velvet Magenta Gradient) */
+/* 06 - Multi-head Attention (Electric Pink to Deep Magenta Dual-Color Gradient) */
 #\30 6-multi-head-attention-in-transformers > summary.style-h2 {
-    background: linear-gradient(90deg, #831843 0%, #db2777 50%, #ec4899 100%) !important;
+    background: linear-gradient(135deg, #db2777 0%, #ec4899 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 4px 15px rgba(219, 39, 119, 0.25) !important;
 }
@@ -1275,9 +1275,9 @@ summary.style-h2::before {
     border-left: 3px solid #db2777 !important;
 }
 
-/* 07 - Positional Encoding (Vibrant Copper Orange to Amber Gold Gradient) */
+/* 07 - Positional Encoding (Vibrant Cyber Orange to Amber Dual-Color Gradient) */
 #\30 7-positional-encoding-in-transformers > summary.style-h2 {
-    background: linear-gradient(90deg, #7c2d12 0%, #ea580c 50%, #f97316 100%) !important;
+    background: linear-gradient(135deg, #ea580c 0%, #f97316 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25) !important;
 }
@@ -1285,9 +1285,9 @@ summary.style-h2::before {
     border-left: 3px solid #ea580c !important;
 }
 
-/* 08 - Layer Normalization (Cyber Amethyst Purple to Vivid Orchid Gradient) */
+/* 08 - Layer Normalization (Cyber Amethyst to Lavender Dual-Color Gradient) */
 #\30 8-layer-normalization-in-transformers > summary.style-h2 {
-    background: linear-gradient(90deg, #581c87 0%, #7e22ce 50%, #a855f7 100%) !important;
+    background: linear-gradient(135deg, #7e22ce 0%, #a855f7 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 4px 15px rgba(126, 34, 206, 0.25) !important;
 }
@@ -1295,9 +1295,9 @@ summary.style-h2::before {
     border-left: 3px solid #8b5cf6 !important;
 }
 
-/* Encoder (Deep Royal Indigo to Cool Blue Tech Gradient) */
+/* Encoder (Deep Royal Indigo to Cool Blue Dual-Color Gradient) */
 #encoder > summary.style-h2 {
-    background: linear-gradient(90deg, #312e81 0%, #4f46e5 50%, #6366f1 100%) !important;
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 4px 15px rgba(79, 70, 229, 0.25) !important;
 }
@@ -1305,9 +1305,9 @@ summary.style-h2::before {
     border-left: 3px solid #6366f1 !important;
 }
 
-/* Decoder (Cyber Crimson Rose to Passionate Velvet Red Gradient) */
+/* Decoder (Cyber Crimson Rose to Passionate Pink Dual-Color Gradient) */
 #decoder > summary.style-h2 {
-    background: linear-gradient(90deg, #881337 0%, #e11d48 50%, #f43f5e 100%) !important;
+    background: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 4px 15px rgba(225, 29, 72, 0.25) !important;
 }
