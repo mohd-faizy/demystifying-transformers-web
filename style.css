@@ -2998,7 +2998,11 @@ body.dark-mode .alert-callout-primary {
     flex-shrink: 0;
     text-align: left;
   }
-  .tech-table tbody td[data-label="What It Controls"] {
+  .tech-table tbody td[data-label="What It Controls"],
+  .tech-table tbody td[data-label="Mechanism"],
+  .tech-table tbody td[data-label="Pros / Strengths"],
+  .tech-table tbody td[data-label="Cons / Limitations"],
+  .tech-table tbody td[data-label="Key Applications"] {
     flex-direction: column;
     align-items: stretch;
     border-bottom: none !important;
@@ -3006,7 +3010,11 @@ body.dark-mode .alert-callout-primary {
     padding-top: 12px !important;
     gap: 6px;
   }
-  .tech-table tbody td[data-label="What It Controls"]::before {
+  .tech-table tbody td[data-label="What It Controls"]::before,
+  .tech-table tbody td[data-label="Mechanism"]::before,
+  .tech-table tbody td[data-label="Pros / Strengths"]::before,
+  .tech-table tbody td[data-label="Cons / Limitations"]::before,
+  .tech-table tbody td[data-label="Key Applications"]::before {
     margin-bottom: 2px;
   }
 }

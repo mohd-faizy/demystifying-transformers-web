@@ -4005,6 +4005,71 @@
                                         while subsequent sections delve into the mechanics of how self-attention
                                         works. The next section focuses on the query, key, and value vectors.</p>
                                 </div>
+                                <div dir="auto" style="margin-top: 32px;">
+                                    <h3 class="" id="vocabulary-representation-techniques-comparison"><strong>💡 Vocabulary Representation & Self-Attention Comparison</strong></h3>
+                                </div>
+                                <div class="tech-table-wrap" style="margin-top: 24px;">
+                                    <table class="tech-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Technique Name</th>
+                                                <th>Mechanism</th>
+                                                <th>Pros / Strengths</th>
+                                                <th>Cons / Limitations</th>
+                                                <th>Contextual Awareness (Yes/No)</th>
+                                                <th>Output Type</th>
+                                                <th>Key Applications</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td data-label="Technique Name">Self-Attention Mechanism</td>
+                                                <td data-label="Mechanism">Performs calculations using query, key, and value vectors to adjust static embeddings based on neighboring words in a sentence.</td>
+                                                <td data-label="Pros / Strengths">Generates dynamic embeddings that understand specific word contexts and resolve ambiguity.</td>
+                                                <td data-label="Cons / Limitations">Requires complex mathematical calculations.</td>
+                                                <td data-label="Contextual Awareness (Yes/No)">Yes</td>
+                                                <td data-label="Output Type">Dynamic contextual embeddings</td>
+                                                <td data-label="Key Applications">Transformers, Large Language Models (LLMs), Generative AI, Machine Translation</td>
+                                            </tr>
+                                            <tr>
+                                                <td data-label="Technique Name">Word Embeddings (Static)</td>
+                                                <td data-label="Mechanism">Neural networks trained on large datasets to convert words into n-dimensional vectors based on semantic similarity.</td>
+                                                <td data-label="Pros / Strengths">Captures semantic meaning; similar words occupy similar positions in geometric space.</td>
+                                                <td data-label="Cons / Limitations">Represents an &quot;average meaning&quot;; cannot distinguish between different meanings of the same word based on context.</td>
+                                                <td data-label="Contextual Awareness (Yes/No)">No</td>
+                                                <td data-label="Output Type">n-dimensional dense vectors (e.g., 64, 256, 512)</td>
+                                                <td data-label="Key Applications">Sentiment analysis, Named Entity Recognition (NER), general NLP tasks</td>
+                                            </tr>
+                                            <tr>
+                                                <td data-label="Technique Name">TF-IDF</td>
+                                                <td data-label="Mechanism">Weights the importance of words by multiplying Term Frequency by Inverse Document Frequency.</td>
+                                                <td data-label="Pros / Strengths">Improves upon Bag of Words by considering word importance across an entire document corpus.</td>
+                                                <td data-label="Cons / Limitations">Does not capture semantic meaning or contextual nuances.</td>
+                                                <td data-label="Contextual Awareness (Yes/No)">No</td>
+                                                <td data-label="Output Type">Sparse vectors (weighted)</td>
+                                                <td data-label="Key Applications">Document classification, information retrieval</td>
+                                            </tr>
+                                            <tr>
+                                                <td data-label="Technique Name">Bag of Words (BoW)</td>
+                                                <td data-label="Mechanism">Counts the frequency of each unique word within a specific document or sentence.</td>
+                                                <td data-label="Pros / Strengths">Captures word frequency, offering an improvement over binary one-hot representation.</td>
+                                                <td data-label="Cons / Limitations">Lacks semantic understanding and context; remains a relatively simple representation.</td>
+                                                <td data-label="Contextual Awareness (Yes/No)">No</td>
+                                                <td data-label="Output Type">Sparse vectors (counts)</td>
+                                                <td data-label="Key Applications">Simple NLP applications, sentiment analysis</td>
+                                            </tr>
+                                            <tr>
+                                                <td data-label="Technique Name">One-Hot Encoding</td>
+                                                <td data-label="Mechanism">Assigns a unique vector where one index is 1 and all others are 0 based on the presence of a word in a fixed vocabulary.</td>
+                                                <td data-label="Pros / Strengths">Simple and original method for converting words to numerical representations.</td>
+                                                <td data-label="Cons / Limitations">Inefficient for large vocabularies; creates high-dimensional, sparse vectors.</td>
+                                                <td data-label="Contextual Awareness (Yes/No)">No</td>
+                                                <td data-label="Output Type">Sparse vectors (binary)</td>
+                                                <td data-label="Key Applications">Basic vectorization in early NLP tasks</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </details>
                     </div>
