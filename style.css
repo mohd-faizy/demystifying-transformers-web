@@ -1320,114 +1320,152 @@ summary.style-h5 {
   color: #6366f1;
 }
 
-/* Paper Summary Container */
+/* Paper Summary Grid Container */
 .paper-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 24px;
   margin-top: 36px;
 }
 
-/* Reddit-style block with vertical coloured line */
+/* Base card block styles */
 .reddit-block {
-  display: grid;
-  grid-template-columns: 20px 1fr;
-  gap: 0 20px;
-  padding: 0 0 8px 0;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 24px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
   position: relative;
+  box-shadow: 0 4px 20px rgba(31, 41, 51, 0.03);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  height: 100%;
+  box-sizing: border-box;
+  min-width: 0; /* Prevents flex children from stretching container */
 }
 
-/* The vertical accent line */
+/* Card Colors / Theme mapping */
+.reddit-block:nth-child(1) { --card-theme: #6366f1; --card-theme-rgb: 99, 102, 241; }
+.reddit-block:nth-child(2) { --card-theme: #0f766e; --card-theme-rgb: 15, 118, 110; }
+.reddit-block:nth-child(3) { --card-theme: #d97706; --card-theme-rgb: 217, 119, 6; }
+.reddit-block:nth-child(4) { --card-theme: #7c3aed; --card-theme-rgb: 124, 58, 237; }
+.reddit-block:nth-child(5) { --card-theme: #0369a1; --card-theme-rgb: 3, 105, 161; }
+.reddit-block:nth-child(6) { --card-theme: #dc2626; --card-theme-rgb: 220, 38, 38; }
+.reddit-block:nth-child(7) { --card-theme: #059669; --card-theme-rgb: 5, 150, 105; }
+.reddit-block:nth-child(8) { --card-theme: #db2777; --card-theme-rgb: 219, 39, 119; }
+
+/* Interactive Hover floating and neon borders */
+.reddit-block:hover {
+  transform: translateY(-8px);
+  border-color: var(--card-theme);
+  box-shadow: 0 20px 40px rgba(var(--card-theme-rgb), 0.08), 
+              0 6px 16px rgba(var(--card-theme-rgb), 0.03);
+}
+
+/* The decorative top strip */
 .reddit-line {
-  width: 2px;
-  background: var(--line);
-  border-radius: 4px;
-  transition: background 0.3s ease;
-  min-height: 100%;
-  position: relative;
-}
-
-/* Cycle through colours for each block */
-.reddit-block:nth-child(1) .reddit-line {
-  background: #6366f1;
-}
-
-.reddit-block:nth-child(2) .reddit-line {
-  background: #0f766e;
-}
-
-.reddit-block:nth-child(3) .reddit-line {
-  background: #d97706;
-}
-
-.reddit-block:nth-child(4) .reddit-line {
-  background: #7c3aed;
-}
-
-.reddit-block:nth-child(5) .reddit-line {
-  background: #0369a1;
-}
-
-.reddit-block:nth-child(6) .reddit-line {
-  background: #dc2626;
-}
-
-.reddit-block:nth-child(7) .reddit-line {
-  background: #059669;
-}
-
-.reddit-block:nth-child(8) .reddit-line {
-  background: #db2777;
-}
-
-/* Dot on the line */
-.reddit-line::before {
-  content: '';
   position: absolute;
-  top: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: inherit;
-  box-shadow: 0 0 0 3px var(--bg-color);
-  transition: transform 0.3s ease;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--card-theme) !important;
+  transition: height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border-radius: 16px 16px 0 0;
 }
 
-.reddit-block:hover .reddit-line::before {
-  transform: translateX(-50%) scale(1.4);
+.reddit-block:hover .reddit-line {
+  height: 6px;
+}
+
+/* Hide old dots */
+.reddit-line::before {
+  display: none !important;
 }
 
 .reddit-content {
-  padding: 0 0 32px 0;
-  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin-top: 4px;
+  min-width: 0; /* Prevents flex children from stretching container */
 }
 
 .summary-heading {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin: 0 0 14px 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0 0 16px 0;
   color: var(--ink);
+  letter-spacing: -0.025em;
+  line-height: 1.35;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Nested sub-lists inside summary blocks */
 .reddit-content ul {
+  list-style: none !important;
   margin: 0;
-  padding-left: 20px;
-  list-style: disc;
-}
-
-.reddit-content ul ul {
-  padding-left: 20px;
-  list-style: circle;
-  margin-top: 6px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .reddit-content li {
-  margin-bottom: 10px;
-  line-height: 1.65;
+  position: relative;
+  padding-left: 18px; /* space for indicator dot */
+  font-size: 0.94rem;
+  line-height: 1.55;
+  color: var(--muted);
+  margin-bottom: 0 !important;
+}
+
+/* Modern square marker in card accent color */
+.reddit-content li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--card-theme);
+  opacity: 0.75;
+  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.2s ease;
+}
+
+.reddit-block:hover li::before {
+  transform: scale(1.3);
+  opacity: 1;
+}
+
+.reddit-content li strong {
   color: var(--ink);
+  font-weight: 650;
+}
+
+/* Nested sub-lists styling inside cards */
+.reddit-content ul ul {
+  margin-top: 8px;
+  padding-left: 6px;
+  gap: 8px;
+}
+
+.reddit-content ul ul li {
+  font-size: 0.88rem;
+  padding-left: 14px;
+}
+
+.reddit-content ul ul li::before {
+  top: 7px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%; /* standard circle for sub-bullet */
+  background: var(--card-theme);
+  opacity: 0.6;
 }
 
 .reddit-content code {
@@ -1639,7 +1677,11 @@ summary.style-h4 {
 
 /* Transformer Technical Table */
 .tech-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0; /* allows shrinking inside flex containers */
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   margin: 32px 0;
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
@@ -2839,98 +2881,7 @@ body.dark-mode .alert-callout-primary {
     padding: 12px 16px !important;
   }
 
-  /* Tables */
-  .tech-table-wrap {
-    margin: 16px 0;
-    border-radius: 12px;
-    box-shadow: none;
-    background: transparent;
-    overflow-x: visible;
-  }
 
-  .tech-table {
-    display: block;
-    width: 100%;
-    min-width: 0;
-    background: transparent;
-    border: none;
-    font-size: 0.88rem;
-  }
-
-  .tech-table thead {
-    display: none;
-  }
-
-  .tech-table tbody {
-    display: block;
-    width: 100%;
-  }
-
-  .tech-table tbody tr {
-    display: block;
-    width: 100%;
-    margin-bottom: 20px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 16px;
-    background: var(--panel);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-    box-sizing: border-box;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .tech-table tbody tr:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
-  }
-
-  .tech-table tbody tr:last-child {
-    margin-bottom: 0;
-  }
-
-  .tech-table tbody td {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0 !important;
-    border: none !important;
-    border-bottom: 1px solid var(--line) !important;
-    width: 100% !important;
-    box-sizing: border-box;
-    background: transparent !important;
-    text-align: right;
-  }
-
-  .tech-table tbody td:first-child {
-    font-weight: 700;
-    color: var(--accent) !important;
-    white-space: normal;
-  }
-
-  .tech-table tbody td::before {
-    content: attr(data-label);
-    font-weight: 700;
-    color: var(--muted);
-    font-size: 0.74rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-right: 16px;
-    flex-shrink: 0;
-    text-align: left;
-  }
-
-  .tech-table tbody td[data-label="What It Controls"] {
-    flex-direction: column;
-    align-items: stretch;
-    border-bottom: none !important;
-    text-align: left;
-    padding-top: 12px !important;
-    gap: 6px;
-  }
-
-  .tech-table tbody td[data-label="What It Controls"]::before {
-    margin-bottom: 2px;
-  }
 
 
   /* Resource cards */
@@ -2953,10 +2904,9 @@ body.dark-mode .alert-callout-primary {
     animation: none;
   }
 
-  /* Reddit lines */
+  /* Reddit blocks on mobile */
   .reddit-block {
-    grid-template-columns: 14px 1fr;
-    gap: 0 14px;
+    padding: 20px 16px;
   }
 
   /* Alerts & markers */
@@ -2976,6 +2926,88 @@ body.dark-mode .alert-callout-primary {
 
   .footer-icons {
     gap: 12px;
+  }
+
+  /* Responsive card-based mobile tech table */
+  .tech-table-wrap {
+    margin: 16px 0;
+    border-radius: 12px;
+    box-shadow: none;
+    background: transparent;
+    overflow-x: visible;
+  }
+  .tech-table {
+    display: block;
+    width: 100% !important;
+    min-width: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    font-size: 0.88rem;
+  }
+  .tech-table thead {
+    display: none !important;
+  }
+  .tech-table tbody {
+    display: block;
+    width: 100%;
+  }
+  .tech-table tbody tr {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    background: var(--panel);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .tech-table tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+  }
+  .tech-table tbody tr:last-child {
+    margin-bottom: 0;
+  }
+  .tech-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0 !important;
+    border: none !important;
+    border-bottom: 1px solid var(--line) !important;
+    width: 100% !important;
+    box-sizing: border-box;
+    background: transparent !important;
+    text-align: right;
+  }
+  .tech-table tbody td:first-child {
+    font-weight: 700;
+    color: var(--accent) !important;
+    white-space: normal;
+  }
+  .tech-table tbody td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--muted);
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-right: 16px;
+    flex-shrink: 0;
+    text-align: left;
+  }
+  .tech-table tbody td[data-label="What It Controls"] {
+    flex-direction: column;
+    align-items: stretch;
+    border-bottom: none !important;
+    text-align: left;
+    padding-top: 12px !important;
+    gap: 6px;
+  }
+  .tech-table tbody td[data-label="What It Controls"]::before {
+    margin-bottom: 2px;
   }
 }
 
@@ -3097,115 +3129,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ================================================================
-   RESPONSIVE TABLE OPTIMIZATION — Technical Specifications Table
-   ================================================================ */
-@media (max-width: 768px) {
-  /* Convert standard table layout to interactive modular cards */
-  .tech-table {
-    display: block;
-    width: 100% !important;
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
-  }
 
-  .tech-table thead {
-    display: none !important; /* Hide original headers */
-  }
-
-  .tech-table tbody,
-  .tech-table tr,
-  .tech-table td {
-    display: block;
-    width: 100% !important;
-  }
-
-  /* Style each row as a separate card block */
-  .tech-table tr {
-    margin-bottom: 20px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 16px;
-    background: var(--panel);
-    box-shadow: 0 4px 15px rgba(31, 41, 51, 0.03);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  /* Add subtle elevation on interaction */
-  .tech-table tr:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(31, 41, 51, 0.06);
-    border-color: rgba(var(--accent-rgb, 15, 118, 110), 0.3);
-  }
-
-  /* Convert cell structure to clean horizontal key-value lines */
-  .tech-table td {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 10px 0 !important;
-    border: none !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
-    font-size: 0.88rem;
-    line-height: 1.4;
-  }
-
-  /* Key-value label generator via HTML5 data attribute */
-  .tech-table td::before {
-    content: attr(data-label);
-    font-weight: 700;
-    color: var(--muted);
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-right: 24px;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  /* Highlight and align right-hand values */
-  .tech-table td > * {
-    text-align: right;
-    word-break: break-word;
-  }
-
-  /* Bold primary identifier column values */
-  .tech-table td[data-label="Hyperparameter"] {
-    font-weight: 600;
-    color: var(--ink);
-  }
-
-  /* Style math/code notation formulas */
-  .tech-table td[data-label="Symbol"] code {
-    background: rgba(var(--accent-rgb, 15, 118, 110), 0.06) !important;
-    color: var(--accent) !important;
-    font-weight: 700;
-    font-size: 0.85rem;
-    border: 1px solid rgba(var(--accent-rgb, 15, 118, 110), 0.15) !important;
-  }
-
-  /* Stack final description column vertically to span full width beautifully */
-  .tech-table td:last-child {
-    border-bottom: none !important;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-    padding-top: 14px !important;
-  }
-
-  .tech-table td:last-child::before {
-    margin-bottom: 4px;
-    display: block;
-  }
-
-  .tech-table td:last-child > * {
-    text-align: left;
-    color: var(--ink);
-    line-height: 1.5;
-    font-size: 0.88rem;
-  }
-}
 
 /* ================================================================
    INTERACTIVE COLLAPSIBLE SECTIONS
