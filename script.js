@@ -76,4 +76,109 @@ document.addEventListener("DOMContentLoaded", () => {
         block.addEventListener("mouseenter", () => line.style.opacity = "0.7");
         block.addEventListener("mouseleave", () => line.style.opacity = "1");
     });
+
+
+    /* ── Mobile Navigation Drawer ─────────────────────────────── */
+    (function () {
+        const hamburgerBtn  = document.getElementById("mobile-hamburger-btn");
+        const drawer        = document.getElementById("mobile-nav-drawer");
+        const backdrop      = document.getElementById("mobile-nav-backdrop");
+        const closeBtn      = document.getElementById("drawer-close-btn");
+        const drawerContent = document.getElementById("drawer-nav-content");
+
+        // Only runs when elements exist (i.e. always — they're in the HTML)
+        if (!hamburgerBtn || !drawer || !backdrop) return;
+
+        // --- Clone the sidebar nav-list into the drawer (once) ---
+        const sidebarNavList = document.querySelector(".nav .nav-list");
+        if (sidebarNavList && drawerContent) {
+            const clone = sidebarNavList.cloneNode(true);
+            // Wrap in a <ul class="nav-list"> inside .nav so existing CSS applies
+            const navWrapper = document.createElement("nav");
+            navWrapper.className = "nav";
+            navWrapper.appendChild(clone);
+            drawerContent.appendChild(navWrapper);
+
+            // Re-attach expand/collapse behaviour for cloned sub-lists
+            navWrapper.querySelectorAll(".nav-list ul").forEach(ul => {
+                ul.style.display = "none";
+
+                // Find the direct parent <li> of this <ul>, then its <a>
+                const parentLi   = ul.parentElement;
+                const parentLink = parentLi.querySelector(":scope > a");
+                if (!parentLink) return;
+
+                // Remove any duplicate ❯ icons carried over from the clone
+                parentLink.querySelectorAll(".nav-toggle").forEach(i => i.remove());
+
+                const icon = document.createElement("span");
+                icon.className = "nav-toggle";
+                icon.textContent = "❯";
+                parentLink.appendChild(icon);
+
+                // clicking a parent link → toggle sub-menu ONLY, keep drawer open
+                parentLink.addEventListener("click", e => {
+                    e.preventDefault();          // stop page jump; sub-menu is the action
+                    e.stopPropagation();         // don't bubble to backdrop
+                    const isOpen = ul.style.display !== "none";
+                    ul.style.display = isOpen ? "none" : "block";
+                    icon.classList.toggle("open", !isOpen);
+                });
+            });
+
+            // Close drawer ONLY when a true leaf link is clicked
+            // (a leaf = an <a> whose parent <li> has NO child <ul>)
+            navWrapper.querySelectorAll(".nav-list a").forEach(link => {
+                const parentLi = link.closest("li");
+                const hasChildren = parentLi && parentLi.querySelector(":scope > ul");
+
+                if (!hasChildren) {
+                    // It's a leaf — navigate AND close
+                    link.addEventListener("click", () => {
+                        closeDrawer();
+                    });
+                }
+                // parent toggle links: no close listener added — drawer stays open
+            });
+        }
+
+        // --- Open / Close helpers ---
+        function openDrawer() {
+            drawer.classList.add("open");
+            backdrop.classList.add("visible");
+            hamburgerBtn.classList.add("open");
+            hamburgerBtn.setAttribute("aria-expanded", "true");
+            drawer.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden"; // lock scroll
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove("open");
+            backdrop.classList.remove("visible");
+            hamburgerBtn.classList.remove("open");
+            hamburgerBtn.setAttribute("aria-expanded", "false");
+            drawer.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = ""; // restore scroll
+        }
+
+        // --- Event listeners ---
+        hamburgerBtn.addEventListener("click", () => {
+            drawer.classList.contains("open") ? closeDrawer() : openDrawer();
+        });
+
+        if (closeBtn) closeBtn.addEventListener("click", closeDrawer);
+
+        backdrop.addEventListener("click", closeDrawer);
+
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && drawer.classList.contains("open")) closeDrawer();
+        });
+
+        // Reset body scroll if window is resized above mobile breakpoint
+        window.addEventListener("resize", () => {
+            if (window.innerWidth > 980) {
+                closeDrawer();
+            }
+        });
+    }());
 });

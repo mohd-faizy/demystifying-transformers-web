@@ -30,13 +30,54 @@
             <span class="cyber-toggle-label-on">Dark</span>
         </div>
     </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         MOBILE NAVIGATION — hidden on desktop via CSS
+         Fixed top-bar | Slide-in drawer | Backdrop overlay
+         ═══════════════════════════════════════════════════ -->
+
+    <!-- Fixed mobile top-bar -->
+    <header class="mobile-topbar" id="mobile-topbar" aria-label="Mobile navigation bar">
+        <p class="mobile-topbar-title"><span>Transformer</span> Architecture Notes</p>
+        <button class="mobile-hamburger" id="mobile-hamburger-btn" aria-label="Open navigation menu"
+            aria-expanded="false" aria-controls="mobile-nav-drawer">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </header>
+
+    <!-- Slide-in nav drawer -->
+    <nav class="mobile-nav-drawer" id="mobile-nav-drawer" aria-label="Mobile site navigation" aria-hidden="true">
+        <div class="drawer-header">
+            <div class="drawer-header-text">
+                <span class="drawer-kicker">Transformer Notes</span>
+                <h2 class="drawer-title">Architecture Learning Path</h2>
+            </div>
+            <button class="drawer-close" id="drawer-close-btn" aria-label="Close navigation">&#x2715;</button>
+        </div>
+        <div class="drawer-nav" id="drawer-nav-content">
+            <!-- nav-list is cloned here by JS at runtime -->
+        </div>
+    </nav>
+
+    <!-- Dark backdrop -->
+    <div class="mobile-nav-backdrop" id="mobile-nav-backdrop" aria-hidden="true"></div>
+
     <div class="shell">
         <aside aria-label="Study navigation" class="sidebar">
             <div class="brand">
-                <span class="brand-kicker">Transformer Notes</span>
-                <h1 class="brand-title">Architecture Learning Path</h1>
+                <div>
+                    <span class="brand-kicker">Transformer Notes</span>
+                    <h1 class="brand-title">Architecture Learning Path</h1>
+                </div>
+                <button class="hamburger-menu" id="mobile-menu-btn" aria-label="Toggle navigation">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
             </div>
-            <nav class="nav">
+            <nav class="nav" id="sidebar-nav">
                 <ul class="nav-list">
                     <li><a href="#learning-path">Study Path</a></li>
                     <li><a class="nav-paper-link" href="#attention-paper">Attention Is All You Need</a></li>
