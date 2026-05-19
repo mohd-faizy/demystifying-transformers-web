@@ -3611,405 +3611,215 @@
                         <details id="02-what-is-self-attention">
                             <summary class="pro-heading style-h2">02 - What is Self Attention? </summary>
                             <div class="indented">
+                                <div dir="auto">
+                                    <p>Self-attention solves the core NLP challenge of context-aware word representation. By dynamically analyzing the relationships between all words in a sequence, it transcends the limitations of traditional, static vectorizations and embeddings to unlock true semantic understanding.</p>
+                                </div>
 
                                 <div dir="auto">
-                                    <p class="" id="18f8a6d6-2b53-80a8-8687-ece1a89c7ecf"><strong> What is the
-                                            Fundamental problem that NLP is trying to solve?</strong>
-                                    <div class="indented">
-                                        <div dir="auto">
-                                            <ul class="bulleted-list" id="18f8a6d6-2b53-8014-adc7-c73669e69b53">
-                                                <li style="list-style-type:disc">The <strong>Fundamental problem that
-                                                        NLP is trying to solve is h</strong>ow to represent word as
-                                                    numbers, because the compute is good with numbers, not with words.
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div dir="auto">
-                                            <ul class="bulleted-list" id="18f8a6d6-2b53-80e0-bf4d-ffcc8c4185e6">
-                                                <li style="list-style-type:disc"> The initial and critical step for any
-                                                    NLP task is to convert words into numerical representations. This
-                                                    conversion process is called <strong>vectorization</strong>.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    </p>
-                                </div>
-                                <div dir="auto">
-                                    <h3 class="" id="18f8a6d6-2b53-800b-8807-dbde8391e5d8"><strong> Evolution of
-                                        </strong><code><strong>Word Vectorization</strong></code><strong>
-                                            Techniques</strong></h3>
-                                </div>
-                                <div dir="auto">
-                                    <p class="" id="18f8a6d6-2b53-803f-94a9-c7d879be6c86">The following sections outline
-                                        the
-                                        progression of techniques for converting words into numerical data:</p>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-8012-9f4c-ddb680e1f4cd">
-                                        <li style="list-style-type:disc">
-                                            <code><strong>One-Hot Encoding</strong></code><strong>:</strong> This is a
-                                            basic technique where each unique word in a vocabulary is represented by a
-                                            vector. The vector has a length equal to the size of the vocabulary, with a
-                                            '1' at the index corresponding to the word and '0's everywhere else. For
-                                            example, for one hot encoding the vocabulary could be represented as . <div
-                                                dir="ltr">
-                                                <figure class="image" id="18f8a6d6-2b53-80f1-bc32-cdaa6ea7cce2"><a
-                                                        href="assets/images/part-1/03.png"><img
-                                                            src="assets/images/part-1/03.png" /></a></figure>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="18f8a6d6-2b53-8017-ba5a-f7cb5e8c412e">
-                                                    <li style="list-style-type:circle"><mark
-                                                            class="highlight-yellow_background">This method is
-                                                            inefficient and does not capture any semantic relationships
-                                                            between words.</mark></li>
-                                                </ul>
-                                            </div>
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-fundamental-nlp-problem">
+                                                <summary class="pro-heading style-h4">1. The Fundamental NLP Problem</summary>
+                                                <div class="indented" dir="auto">
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc"><strong>Core Challenge:</strong> Computers excel at processing numbers, not raw text. Therefore, every NLP pipeline must first translate human language into numeric form.</li>
+                                                        <li style="list-style-type:disc"><strong>Vectorization:</strong> The critical process of transforming words into mathematical representations (vectors) so neural networks can analyze them.</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
                                 </div>
+
                                 <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-8054-a229-ef260a908f24">
-                                        <li style="list-style-type:disc">
-                                            <code><strong>Bag of Words</strong></code><strong>:</strong> This method
-                                            improves on one-hot encoding by considering the frequency of words in a
-                                            sentence. Instead of just indicating the presence of a word, it counts how
-                                            many times each word appears in a given sentence. For instance, in the
-                                            sentence "mat cat mat", the bag-of-words representation, given the same
-                                            vocabulary as above, would be . <mark
-                                                class="highlight-yellow_background">While this technique captures
-                                                frequency, it still does not account for semantic relationships.</mark>
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-evolution-vectorization">
+                                                <summary class="pro-heading style-h4">2. Evolution of Word Vectorization Techniques</summary>
+                                                <div class="indented" dir="auto">
+                                                    <p>Before modern deep learning, NLP progressed through three primary vectorization methods, each attempting to represent language numerically:</p>
+                                                    
+                                                    <div dir="auto">
+                                                        <ul class="toggle">
+                                                            <li>
+                                                                <details id="details-one-hot-encoding">
+                                                                    <summary class="pro-heading style-h5">One-Hot Encoding</summary>
+                                                                    <div class="indented" dir="auto">
+                                                                        <div dir="ltr">
+                                                                            <figure class="image" id="fig-one-hot-encoding">
+                                                                                <a href="assets/images/part-1/03.png"><img src="assets/images/part-1/03.png" /></a>
+                                                                            </figure>
+                                                                        </div>
+                                                                        <ul class="bulleted-list">
+                                                                            <li style="list-style-type:disc"><strong>Mechanism:</strong> Maps each unique word in the vocabulary to a high-dimensional sparse binary vector. The vector's size equals the vocabulary size, containing a single <code>1</code> at the word's designated index and <code>0</code>s everywhere else.</li>
+                                                                            <li style="list-style-type:disc"><mark class="highlight-yellow_background"><strong>Bottleneck:</strong> This method is highly inefficient for large vocabularies (resulting in massive, mostly empty vectors) and completely fails to capture semantic similarity or relationships between words.</mark></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </details>
+                                                            </li>
+                                                            
+                                                            <li>
+                                                                <details id="details-bag-of-words">
+                                                                    <summary class="pro-heading style-h5">Bag of Words (BoW)</summary>
+                                                                    <div class="indented" dir="auto">
+                                                                        <div dir="ltr">
+                                                                            <figure class="image" id="fig-bag-of-words">
+                                                                                <a href="assets/images/part-1/04.png"><img src="assets/images/part-1/04.png" /></a>
+                                                                            </figure>
+                                                                        </div>
+                                                                        <ul class="bulleted-list">
+                                                                            <li style="list-style-type:disc"><strong>Mechanism:</strong> Improves on one-hot encoding by counting the occurrences of each word in a document or sentence, rather than just marking binary presence.</li>
+                                                                            <li style="list-style-type:disc"><mark class="highlight-yellow_background"><strong>Bottleneck:</strong> Although it captures word frequency (importance), it completely discards grammar rules, word order, context, and semantic meaning.</mark></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </details>
+                                                            </li>
+                                                            
+                                                            <li>
+                                                                <details id="details-tf-idf">
+                                                                    <summary class="pro-heading style-h5">TF-IDF (Term Frequency-Inverse Document Frequency)</summary>
+                                                                    <div class="indented" dir="auto">
+                                                                        <div dir="ltr">
+                                                                            <figure class="image" id="fig-tf-idf">
+                                                                                <a href="assets/images/part-1/05.png"><img src="assets/images/part-1/05.png" /></a>
+                                                                            </figure>
+                                                                        </div>
+                                                                        <ul class="bulleted-list">
+                                                                            <li style="list-style-type:disc"><strong>Mechanism:</strong> Weights the importance of a word by multiplying its local frequency (TF) with its rarity across all documents in the corpus (Inverse Document Frequency or IDF).</li>
+                                                                            <li style="list-style-type:disc"><mark class="highlight-yellow_background"><strong>Bottleneck:</strong> Excellent for document ranking and retrieval, but still treats words as isolated entities without conceptual or context understanding.</mark></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </details>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
                                 </div>
-                                <div dir="ltr">
-                                    <figure class="image" id="18f8a6d6-2b53-80e6-95b0-e5bb89f392e2"><a
-                                            href="assets/images/part-1/04.png"><img
-                                                src="assets/images/part-1/04.png" /></a></figure>
-                                </div>
+
                                 <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-80ff-a791-d11ccafcf559">
-                                        <li style="list-style-type:disc"><code><strong>TF-IDF</strong></code><strong>
-                                                (Term Frequency-Inverse Document Frequency):</strong> This technique
-                                            builds upon bag of words by considering the importance of a word in a
-                                            document relative to a collection of documents.</li>
-                                    </ul>
-                                </div>
-                                <div dir="ltr">
-                                    <figure class="image" id="18f8a6d6-2b53-80e4-8ee2-c0447115e118"><a
-                                            href="assets/images/part-1/05.png"><img
-                                                src="assets/images/part-1/05.png" /></a></figure>
-                                </div>
-                                <div dir="auto">
-                                    <h3 class="" id="18f8a6d6-2b53-804c-8556-fffd74b2f4aa"><strong> The Power of Word
-                                            Embeddings</strong></h3>
-                                </div>
-                                <div dir="auto">
-                                    <p class="" id="18f8a6d6-2b53-8095-a2d1-d58a2a947202">Modern Transformer
-                                        architecture highlights
-                                        <strong>word embeddings</strong> as a significant advancement:
-                                    </p>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-8078-8281-cd1404b62ca7">
-                                        <li style="list-style-type:disc"><mark class="highlight-yellow"><strong>Semantic
-                                                    Meaning</strong></mark><strong>:</strong> Word embeddings convert
-                                            words into vectors in a way that captures their semantic meaning. This means
-                                            that the numerical representations of words reflect not only the words
-                                            themselves, but also the contexts they typically appear in.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-805d-982c-e6ef0b1ac504">
-                                        <li style="list-style-type:disc"><mark class="highlight-yellow"><strong>Training
-                                                    Process</strong></mark><strong>:</strong> Word embeddings are
-                                            generated by training a neural network on a large dataset of text. This
-                                            neural network learns to understand how words are used in different
-                                            contexts. The result is an n-dimensional vector for each word.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-809b-a262-ec882e84b0c1">
-                                        <li style="list-style-type:disc"><mark class="highlight-yellow"><strong>Vector
-                                                    Space</strong></mark><strong>:</strong> In the embedding space,
-                                            semantically similar words have similar vector representations, meaning they
-                                            are located close to each other. For example, the vectors for "king" and
-                                            "queen" would be closer to each other than to "cricketer".</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-80a4-94df-cf6473146421">
-                                        <li style="list-style-type:disc"><mark
-                                                class="highlight-yellow"><strong>Dimensionality</strong></mark><strong>:</strong>
-                                            Each dimension of the word embedding vector can represent a particular
-                                            semantic aspect of the word. For example, one dimension could represent
-                                            "royalty," where "king" and "queen" would have high values, while
-                                            "cricketer" would have a lower value. Another dimension might represent
-                                            "athleticism," where "cricketer" would have a high value, and "king" and
-                                            "queen" would have lower values.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <h3 class="" id="18f8a6d6-2b53-80e6-a61c-eb3cfe052c96"><strong> The Limitation of
-                                            Static Word Embeddings</strong></h3>
-                                </div>
-                                <div dir="auto">
-                                    <p class="" id="18f8a6d6-2b53-8009-bc80-db4282288070">Despite their power, there is
-                                        a key limitation of traditional word embeddings: they capture the
-                                        <strong>average meaning</strong> of a word across the entire training dataset.
-                                    </p>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-806e-9eae-cd3477d91e8a">
-                                        <li style="list-style-type:disc"><mark class="highlight-yellow"><strong>Context
-                                                    Insensitivity</strong></mark><strong>:</strong> Word embeddings are
-                                            static, meaning that a word always has the same vector representation,
-                                            regardless of the context in which it is used.<div dir="auto">
-                                                <ul class="bulleted-list" id="18f8a6d6-2b53-8043-9b5d-c98f666ee0a2">
-                                                    <li style="list-style-type:circle"><strong>Example of
-                                                            "Apple":</strong> This issue is illustrated with the
-                                                        word "apple." If a word embedding model is trained on a dataset
-                                                        where "apple" appears more frequently as a fruit, its vector
-                                                        will be skewed towards representing "apple" as a fruit, even
-                                                        when it's used to mean a technology company. The word embedding
-                                                        is created once, and then used repeatedly.</li>
-                                                </ul>
-                                            </div>
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-power-word-embeddings">
+                                                <summary class="pro-heading style-h4">3. The Power of Word Embeddings</summary>
+                                                <div class="indented" dir="auto">
+                                                    <p>Modern Transformer architecture highlights dense <strong>word embeddings</strong> as a significant advancement over traditional sparse methods:</p>
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc"><strong>Semantic Meaning:</strong> Word embeddings convert words into vectors in a way that captures their semantic meaning, reflecting the context in which they typically appear.</li>
+                                                        <li style="list-style-type:disc"><strong>Training Process:</strong> Generated by training a neural network on large text corpora, mapping vocabulary into continuous n-dimensional vectors through context analysis.</li>
+                                                        <li style="list-style-type:disc"><strong>Vector Space Geometrics:</strong> In the embedding space, semantically similar words have similar vector representations, locating them close to each other (e.g., the vectors for <code>king</code> and <code>queen</code> are geometrically close, while <code>cricketer</code> resides in a different region).</li>
+                                                        <li style="list-style-type:disc"><strong>Dimensionality Representation:</strong> Each dimension of the word embedding vector can represent a particular semantic aspect of the word (e.g., one dimension might represent "royalty", another "athleticism").</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
                                 </div>
+
                                 <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-801e-bc5e-ea6f20523af8">
-                                        <li style="list-style-type:disc"><mark class="highlight-yellow"><strong>Average
-                                                    Meaning Capture</strong></mark><strong>:</strong> The word embedding
-                                            for "apple" will be an average of its usage as a fruit and a company.
-                                            Consider an example of a two-dimensional vector where one dimension
-                                            represents "test" and the other represents "technology". If in the training
-                                            data apple appears more often as a fruit then the "test" dimension will have
-                                            a higher value and the "technology" dimension will have a lower value. This
-                                            could be problematic in the context of the sentence “Apple launched a new
-                                            phone…”, where “apple” should be understood as referring to a technology
-                                            company rather than a fruit.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-808c-a080-e1c0b3e71d59">
-                                        <li style="list-style-type:disc"><mark
-                                                class="highlight-yellow"><strong>Problematic for
-                                                    Translation</strong></mark>: As an example, an NLP translation
-                                            application, given the sentence "Apple launched a new phone
-                                            while I was eating an orange," would vectorize all the words including
-                                            "apple", but would not be able to take into account the contextual use of
-                                            the word.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <h3 class="" id="18f8a6d6-2b53-807c-a24e-ea714897485f"><strong> Self-Attention:
-                                            Generating Contextual Embeddings</strong></h3>
-                                </div>
-                                <div dir="auto">
-                                    <p class="" id="18f8a6d6-2b53-80e3-b8a1-e196136811b7">This is where
-                                        <strong>self-attention</strong> comes in as the solution to the problem of
-                                        static word
-                                        embeddings.</p>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-800e-a957-e48d4ba73150">
-                                        <li style="list-style-type:disc"><mark
-                                                class="highlight-yellow"><strong>Contextual
-                                                    Understanding</strong></mark><strong>:</strong> Self-attention is a
-                                            mechanism that generates <strong>contextual word embeddings</strong>. This
-                                            means that the vector representation of a word changes dynamically based on
-                                            the context in which it is used in a sentence.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-80c0-a94e-e8a251e2d9da">
-                                        <li style="list-style-type:disc"><mark class="highlight-yellow"><strong>Dynamic
-                                                    Embeddings</strong></mark><strong>:</strong> Unlike static word
-                                            embeddings, contextual embeddings are generated on the fly. They consider
-                                            the relationships between all the words in the sentence to determine the
-                                            most appropriate representation for each word.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-800b-ae3e-d71a6c15d051">
-                                        <li style="list-style-type:disc"><mark
-                                                class="highlight-yellow"><strong>Mechanism</strong></mark><strong>:</strong>
-                                            Self-attention takes the static embeddings of all the words in a sentence as
-                                            input. It performs some calculations (the specifics of which are to be
-                                            covered in the following sections) to generate new contextual embeddings for
-                                            each
-                                            word. The output embeddings are "smart" because they are adjusted based on
-                                            the specific context of each word.<div dir="auto">
-                                                <ul class="bulleted-list" id="18f8a6d6-2b53-8082-8dc2-c988c6ce6ad0">
-                                                    <li style="list-style-type:circle"><strong>Example with
-                                                            "Apple":</strong> In the sentence "Apple launched a new
-                                                        phone...", a self-attention mechanism should be able to generate
-                                                        a contextual embedding for "apple" that reflects its use as a
-                                                        technology company. It would increase the "technology" component
-                                                        and decrease the "test" component of the embedding vector, which
-                                                        is the reverse of the word embedding created for the word
-                                                        "apple" when it is mostly used as a fruit in the training data.
-                                                        In addition, it should do so without confusing the reference to
-                                                        "orange" as a fruit.</li>
-                                                </ul>
-                                            </div>
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-limitation-static-embeddings">
+                                                <summary class="pro-heading style-h4">4. The Limitation of Static Word Embeddings</summary>
+                                                <div class="indented" dir="auto">
+                                                    <p>Despite their power, traditional word embeddings suffer from a critical architectural constraint: they are completely <strong>static</strong>.</p>
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc"><strong>Context Insensitivity:</strong> A word always receives the same fixed vector representation, regardless of how or where it appears in a sentence.</li>
+                                                        <li style="list-style-type:disc"><strong>Average Meaning Capture:</strong> The embedding vector is forced to represent the mathematical "average" of all its training contexts:
+                                                            <ul class="bulleted-list">
+                                                                <li style="list-style-type:circle"><strong>The "Apple" Example:</strong> If "apple" appears mostly as a fruit in the corpus, its vector will be skewed towards food dimensions, even in the sentence <em>"Apple launched a new phone"</em>, where it refers to a tech company. The vector cannot dynamically adjust to this contextual shift.</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li style="list-style-type:disc"><strong>Problematic for Translation:</strong> Downstream NLP applications, like machine translation, cannot resolve homonyms or context-dependent terms correctly when using rigid, static representations (e.g., translating <em>"Apple launched a new phone while I was eating an orange"</em> without semantic confusion).</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
                                 </div>
+
                                 <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-8020-b334-e46a427fdb42">
-                                        <li style="list-style-type:disc"><strong>Use in Transformers:</strong>
-                                            Self-attention is used in advanced NLP architectures, such as Transformers.
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="18f8a6d6-2b53-8069-8a35-dfe56eb42b9e">
-                                                    <li style="list-style-type:circle"><strong>How it works:</strong>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="18f8a6d6-2b53-8086-bb8f-ec5251cf66e9">
-                                                                <li style="list-style-type:square">
-                                                                    <strong>Self-attention takes static word embeddings
-                                                                        of all the words in a sentence as
-                                                                        input.</strong>
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-self-attention-contextual">
+                                                <summary class="pro-heading style-h4">5. Self-Attention: Generating Contextual Embeddings</summary>
+                                                <div class="indented" dir="auto">
+                                                    <p>Self-attention is the core mathematical breakthrough that addresses static embedding limitations by generating <strong>contextual embeddings</strong> dynamically.</p>
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc"><strong>Contextual Understanding:</strong> Self-attention generates <strong>contextual word embeddings</strong> where the vector representation of a word changes dynamically based on the context in which it is used in a sentence.</li>
+                                                        <li style="list-style-type:disc"><strong>Dynamic Embeddings:</strong> Unlike static word embeddings, contextual embeddings are generated on the fly, considering the relationships between all words in the sentence to determine the most appropriate representation.</li>
+                                                        <li style="list-style-type:disc"><strong>The Mechanism:</strong> Receives static word embeddings for the entire sentence simultaneously as input. It evaluates mutual relationships between all words and outputs a "smart", contextually adjusted embedding vector.
+                                                            <ul class="bulleted-list">
+                                                                <li style="list-style-type:circle"><strong>Resolving "Apple" Ambiguity:</strong> In <em>"Apple launched a new phone..."</em>, self-attention recognizes "launched" and "phone" to dynamically increase the "technology" aspect of "apple" while dampening the "fruit" aspect, without confusing the reference to "orange" in the same paragraph.</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li style="list-style-type:disc"><strong>Use in Transformers:</strong>
+                                                            <ul class="bulleted-list">
+                                                                <li style="list-style-type:circle"><strong>How it works:</strong>
+                                                                    <ul class="bulleted-list">
+                                                                        <li style="list-style-type:square">Self-attention takes static word embeddings of all the words in a sentence as input.</li>
+                                                                        <li style="list-style-type:square">It performs calculations to generate new contextual embeddings reflecting the specific sequence context.</li>
+                                                                        <li style="list-style-type:square">The contextual embeddings are "smart" because they are adjusted based on all neighboring words in the sentence.</li>
+                                                                    </ul>
+                                                                </li>
+                                                                <li style="list-style-type:circle"><strong>Dimensional Space Representation:</strong>
+                                                                    <ul class="bulleted-list">
+                                                                        <li style="list-style-type:square">Word embeddings are represented in a high-dimensional space, where each dimension captures a different aspect of meaning.</li>
+                                                                        <li style="list-style-type:square">For example, one dimension might represent "royalty," another "athleticism," and so on.</li>
+                                                                        <li style="list-style-type:square">In this space, words with similar meanings are located close to each other, allowing the model to understand relationships.</li>
+                                                                    </ul>
                                                                 </li>
                                                             </ul>
-                                                        </div>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="18f8a6d6-2b53-8048-b72e-f2e5ce7da7f8">
-                                                                <li style="list-style-type:square"><strong>It performs
-                                                                        calculations to generate new, contextual
-                                                                        embeddings for each word. These embeddings
-                                                                        reflect the specific context of each
-                                                                        word.</strong></li>
-                                                            </ul>
-                                                        </div>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="18f8a6d6-2b53-8077-9905-f93266a76ef8">
-                                                                <li style="list-style-type:square"><strong>The
-                                                                        contextual embeddings are "smart" because they
-                                                                        are adjusted based on the other words in the
-                                                                        sentence, allowing the model to understand how a
-                                                                        particular word is being used.</strong></li>
-                                                            </ul>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="18f8a6d6-2b53-80a3-a094-dc87d96e335b">
-                                                    <li style="list-style-type:circle"><strong>Dimensional Space
-                                                            Representation:</strong>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="18f8a6d6-2b53-80a6-a3b9-f0ef94b6a643">
-                                                                <li style="list-style-type:square"><strong>Word
-                                                                        embeddings are represented in a high-dimensional
-                                                                        space, where each dimension captures a different
-                                                                        aspect of the word's meaning.</strong></li>
-                                                            </ul>
-                                                        </div>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="18f8a6d6-2b53-80f3-b2cf-ec1915769c6d">
-                                                                <li style="list-style-type:square"><strong>For example,
-                                                                        one dimension might represent "royalty," another
-                                                                        "athleticism," and so on.</strong></li>
-                                                            </ul>
-                                                        </div>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="18f8a6d6-2b53-8097-886e-e77a4f162fbe">
-                                                                <li style="list-style-type:square"><strong>In this
-                                                                        space, words with similar meanings are located
-                                                                        close to each other, allowing the model to
-                                                                        understand relationships between words.</strong>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
                                 </div>
+
                                 <div dir="auto">
-                                    <h3 class="" id="18f8a6d6-2b53-80f0-8957-ea250e74ce4e"><strong> R</strong>eal-world
-                                        applications Where self-Attention plays a key role</h3>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-8002-99b3-c1988e76104d">
-                                        <li style="list-style-type:disc"><strong>Large Language Models (LLMs)</strong>:
-                                            Including models like ChatGPT, GPT-3, and similar models that generate
-                                            human-like text.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-80fd-90c2-d17e63161ead">
-                                        <li style="list-style-type:disc"><strong>Machine Translation</strong>: Enabling
-                                            more accurate and context-aware translation between languages.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-80c0-9a9e-e15d5aa50836">
-                                        <li style="list-style-type:disc"><strong>Text Summarization</strong>: Creating
-                                            concise summaries of longer texts while preserving the core meaning.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-8011-bd92-d354cd1610b9">
-                                        <li style="list-style-type:disc"><strong>Sentiment Analysis</strong>:
-                                            Determining the emotional tone or attitude expressed in a piece of text.
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-applications-self-attention">
+                                                <summary class="pro-heading style-h4">6. Real-World Applications of Self-Attention</summary>
+                                                <div class="indented" dir="auto">
+                                                    <p>Self-attention is the driving engine behind modern state-of-the-art AI systems:</p>
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc"><strong>Large Language Models (LLMs):</strong> Powers models like ChatGPT, Claude, and Gemini to generate rich, contextually sound human-like text.</li>
+                                                        <li style="list-style-type:disc"><strong>Machine Translation:</strong> Enables fluid, context-aware translation by resolving complex sentence dependencies and multi-meaning vocabulary.</li>
+                                                        <li style="list-style-type:disc"><strong>Text Summarization:</strong> Distills long sequences into short summaries while preserving the core conceptual meaning.</li>
+                                                        <li style="list-style-type:disc"><strong>Sentiment Analysis:</strong> Accurately captures emotional tone and attitude by understanding the contextual play of words.</li>
+                                                        <li style="list-style-type:disc"><strong>Named Entity Recognition (NER):</strong> Identifies and categorizes specific entities (e.g., people, organizations, locations) based on context.</li>
+                                                        <li style="list-style-type:disc"><strong>Question Answering Systems & Chatbots:</strong> Underpins natural, conversational AI systems capable of answering complex inquiries.</li>
+                                                        <li style="list-style-type:disc"><strong>Code Generation:</strong> Assists in translating natural language descriptions into accurate programming code.</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
                                 </div>
+
                                 <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-80ef-8746-fcfde48279c6">
-                                        <li style="list-style-type:disc"><strong>Named Entity Recognition
-                                                (NER)</strong>: Identifying and categorizing named entities (e.g.,
-                                            people, organizations, locations) in text.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-807c-9024-fbbbed87a781">
-                                        <li style="list-style-type:disc"><strong>Question Answering Systems</strong>:
-                                            Improving the ability of systems to understand and answer complex questions.
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-summary-self-attention">
+                                                <summary class="pro-heading style-h4">Summary</summary>
+                                                <div class="indented" dir="auto">
+                                                    <p>In summary, self-attention elevates raw NLP representation from static, rigid vectors to dynamic, context-aware mathematical spaces. It takes simple static word embeddings as input and generates dynamic, contextual embeddings that are better suited for modern NLP applications. While this section establishes the critical <em>need</em> for self-attention, subsequent sections will delve into the exact mechanics of how it works, starting with the query, key, and value vectors.</p>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
                                 </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-80be-919c-ed3d5c181f08">
-                                        <li style="list-style-type:disc"><strong>Chatbots and Conversational
-                                                AI</strong>: Powering more natural and engaging conversations between
-                                            humans and machines.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="18f8a6d6-2b53-8037-95ad-db6b9e114b50">
-                                        <li style="list-style-type:disc"><strong>Code Generation</strong>: Assisting in
-                                            the generation of code based on natural language descriptions.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <p class="" id="18f8a6d6-2b53-80a0-a563-d9f341b326f9"><strong>Summary</strong></p>
-                                </div>
-                                <div dir="auto">
-                                    <p class="" id="18f8a6d6-2b53-8034-a114-c286267c1ba6">In summary, self-attention is
-                                        a mechanism that enhances word embeddings by making them
-                                        context-aware. Self-attention takes static word embeddings as input and
-                                        generates dynamic, contextual embeddings that are better suited for NLP
-                                        applications. The primary focus here is to establish the need for
-                                        self-attention,
-                                        while subsequent sections delve into the mechanics of how self-attention
-                                        works. The next section focuses on the query, key, and value vectors.</p>
-                                </div>
+
                                 <div dir="auto" style="margin-top: 32px;">
                                     <h3 class="" id="vocabulary-representation-techniques-comparison"><strong>💡 Vocabulary Representation & Self-Attention Comparison</strong></h3>
                                 </div>
-                                <div class="tech-table-wrap" style="margin-top: 24px;">
-                                    <table class="tech-table">
+                                <div class="tech-table-wrap vocab-table-wrap" style="margin-top: 24px;">
+                                    <table class="tech-table vocab-table">
                                         <thead>
                                             <tr>
                                                 <th>Technique Name</th>
@@ -4022,12 +3832,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
+                                            <tr class="highlighted-row">
                                                 <td data-label="Technique Name">Self-Attention Mechanism</td>
                                                 <td data-label="Mechanism">Performs calculations using query, key, and value vectors to adjust static embeddings based on neighboring words in a sentence.</td>
                                                 <td data-label="Pros / Strengths">Generates dynamic embeddings that understand specific word contexts and resolve ambiguity.</td>
                                                 <td data-label="Cons / Limitations">Requires complex mathematical calculations.</td>
-                                                <td data-label="Contextual Awareness (Yes/No)">Yes</td>
+                                                <td data-label="Contextual Awareness (Yes/No)"><span class="vocab-badge vocab-badge-yes">Yes</span></td>
                                                 <td data-label="Output Type">Dynamic contextual embeddings</td>
                                                 <td data-label="Key Applications">Transformers, Large Language Models (LLMs), Generative AI, Machine Translation</td>
                                             </tr>
@@ -4036,7 +3846,7 @@
                                                 <td data-label="Mechanism">Neural networks trained on large datasets to convert words into n-dimensional vectors based on semantic similarity.</td>
                                                 <td data-label="Pros / Strengths">Captures semantic meaning; similar words occupy similar positions in geometric space.</td>
                                                 <td data-label="Cons / Limitations">Represents an &quot;average meaning&quot;; cannot distinguish between different meanings of the same word based on context.</td>
-                                                <td data-label="Contextual Awareness (Yes/No)">No</td>
+                                                <td data-label="Contextual Awareness (Yes/No)"><span class="vocab-badge vocab-badge-no">No</span></td>
                                                 <td data-label="Output Type">n-dimensional dense vectors (e.g., 64, 256, 512)</td>
                                                 <td data-label="Key Applications">Sentiment analysis, Named Entity Recognition (NER), general NLP tasks</td>
                                             </tr>
@@ -4045,7 +3855,7 @@
                                                 <td data-label="Mechanism">Weights the importance of words by multiplying Term Frequency by Inverse Document Frequency.</td>
                                                 <td data-label="Pros / Strengths">Improves upon Bag of Words by considering word importance across an entire document corpus.</td>
                                                 <td data-label="Cons / Limitations">Does not capture semantic meaning or contextual nuances.</td>
-                                                <td data-label="Contextual Awareness (Yes/No)">No</td>
+                                                <td data-label="Contextual Awareness (Yes/No)"><span class="vocab-badge vocab-badge-no">No</span></td>
                                                 <td data-label="Output Type">Sparse vectors (weighted)</td>
                                                 <td data-label="Key Applications">Document classification, information retrieval</td>
                                             </tr>
@@ -4054,7 +3864,7 @@
                                                 <td data-label="Mechanism">Counts the frequency of each unique word within a specific document or sentence.</td>
                                                 <td data-label="Pros / Strengths">Captures word frequency, offering an improvement over binary one-hot representation.</td>
                                                 <td data-label="Cons / Limitations">Lacks semantic understanding and context; remains a relatively simple representation.</td>
-                                                <td data-label="Contextual Awareness (Yes/No)">No</td>
+                                                <td data-label="Contextual Awareness (Yes/No)"><span class="vocab-badge vocab-badge-no">No</span></td>
                                                 <td data-label="Output Type">Sparse vectors (counts)</td>
                                                 <td data-label="Key Applications">Simple NLP applications, sentiment analysis</td>
                                             </tr>
@@ -4063,7 +3873,7 @@
                                                 <td data-label="Mechanism">Assigns a unique vector where one index is 1 and all others are 0 based on the presence of a word in a fixed vocabulary.</td>
                                                 <td data-label="Pros / Strengths">Simple and original method for converting words to numerical representations.</td>
                                                 <td data-label="Cons / Limitations">Inefficient for large vocabularies; creates high-dimensional, sparse vectors.</td>
-                                                <td data-label="Contextual Awareness (Yes/No)">No</td>
+                                                <td data-label="Contextual Awareness (Yes/No)"><span class="vocab-badge vocab-badge-no">No</span></td>
                                                 <td data-label="Output Type">Sparse vectors (binary)</td>
                                                 <td data-label="Key Applications">Basic vectorization in early NLP tasks</td>
                                             </tr>
