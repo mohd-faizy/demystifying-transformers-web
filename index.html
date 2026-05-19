@@ -127,10 +127,10 @@
                             <li><a href="#06-multi-head-attention-in-transformers">06 - Multi-head Attention in
                                     Transformers</a>
                                 <ul>
-                                    <li><a
-                                            href="#addressing-the-limitations-of-self-attention-the-role-of-multi-head-attention">Addressing
-                                            the Limitations of Self-Attention: The Role of Multi-Head Attention?</a>
-                                    </li>
+                                    <li><a href="#details-mha-dimensions">Dimension Changes &amp; Vector Shapes</a></li>
+                                    <li><a href="#details-mha-efficiency">Computational &amp; Memory Efficiency</a></li>
+                                    <li><a href="#details-mha-semantics">Multi-Perspective Semantic Capture</a></li>
+                                    <li><a href="#details-mha-limitations">Limitations of Self-Attention Resolved</a></li>
                                 </ul>
                             </li>
                             <li><a href="#07-positional-encoding-in-transformers">07 -Positional Encoding in
@@ -5748,8 +5748,7 @@ M834 80h400000v40h-400000z"></path>
                     </div>
                     <div dir="auto">
                         <details id="06-multi-head-attention-in-transformers">
-                            <summary class="pro-heading style-h2"><strong>06 - Multi-head Attention in
-                                    Transformers</strong></summary>
+                            <summary class="pro-heading style-h2">06 - <strong>Multi-head Attention in Transformers</strong></summary>
                             <div class="indented">
                                 <div dir="ltr">
                                     <div class="resource-card-container">
@@ -5773,786 +5772,295 @@ M834 80h400000v40h-400000z"></path>
                                         </a>
                                     </div>
                                 </div>
+                                
+                                <div dir="auto">
+                                    <p>To systematically understand the core structural, computational, and perspective-handling differences between standard Self-Attention and Multi-Head Attention, refer to the technical comparison below:</p>
+
+                                    <!-- Technical Concept Comparison Table -->
+                                    <div class="tech-table-wrap" style="margin: 24px 0;">
+                                        <table class="tech-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 14%;">Mechanism Name</th>
+                                                    <th style="width: 18%;">Key Objective</th>
+                                                    <th style="width: 18%;">Weight Matrices Used</th>
+                                                    <th style="width: 15%;">Handling of Perspectives</th>
+                                                    <th style="width: 15%;">Output Dimension Compatibility</th>
+                                                    <th style="width: 10%;">Main Advantage</th>
+                                                    <th style="width: 10%;">Limitations</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td data-label="Mechanism Name"><strong>Self-Attention</strong></td>
+                                                    <td data-label="Key Objective" class="stack-mobile">To generate contextual embeddings by capturing semantic meaning and word relationships within a sentence.</td>
+                                                    <td data-label="Weight Matrices Used" class="stack-mobile">One set of weight matrices: \(W_Q\) (Query), \(W_K\) (Key), and \(W_V\) (Value).</td>
+                                                    <td data-label="Handling of Perspectives" class="stack-mobile">Captures only a single perspective or interpretation of a document or sentence.</td>
+                                                    <td data-label="Output Dimension Compatibility" class="stack-mobile">Produces a single contextual representation; shape typically matches the input embedding.</td>
+                                                    <td data-label="Main Advantage" class="stack-mobile">Generates contextual embeddings that solve the problem of static embeddings where words have the same value regardless of context.</td>
+                                                    <td data-label="Limitations" class="stack-mobile">Inability to capture multiple linguistic perspectives or handle ambiguity simultaneously.</td>
+                                                </tr>
+                                                <tr>
+                                                    <td data-label="Mechanism Name"><strong>Multi-Head Attention</strong></td>
+                                                    <td data-label="Key Objective" class="stack-mobile">To capture multiple different perspectives or hidden meanings in a sentence simultaneously by using parallel attention modules.</td>
+                                                    <td data-label="Weight Matrices Used" class="stack-mobile">Multiple sets of \(W_Q\), \(W_K\), and \(W_V\) matrices (one set per head) and a final output matrix \(W_O\).</td>
+                                                    <td data-label="Handling of Perspectives" class="stack-mobile">Manages multiple perspectives by having each "head" focus on different semantic or syntactic relationships.</td>
+                                                    <td data-label="Output Dimension Compatibility" class="stack-mobile">Outputs from all heads are concatenated and linearly transformed using \(W_O\) to match the input dimension.</td>
+                                                    <td data-label="Main Advantage" class="stack-mobile">Allows the model to focus on different positions and perspectives at once; improves summarization and disambiguation with high computational efficiency.</td>
+                                                    <td data-label="Limitations" class="stack-mobile">Requires final linear projection overhead (\(W_O\)) and additional parameter calculation layers.</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
                                 <div dir="ltr">
-                                    <figure class="image" id="1938a6d6-2b53-80eb-8a8b-e3d0a23e80c3"><a
-                                            href="assets/images/part-1/12.png"><img
-                                                src="assets/images/part-1/12.png" /></a></figure>
+                                    <figure class="image" id="fig-mha-projection-dims">
+                                        <a href="assets/images/part-1/12.png">
+                                            <img src="assets/images/part-1/12.png" alt="Multi-Head Attention Projection Dimensions" />
+                                        </a>
+                                    </figure>
                                 </div>
                                 <div dir="ltr">
-                                    <figure class="image" id="1938a6d6-2b53-80b8-aa7d-c335d656f6ec"><a
-                                            href="assets/images/part-1/13.png"><img
-                                                src="assets/images/part-1/13.png" /></a></figure>
+                                    <figure class="image" id="fig-mha-concatenation-projection">
+                                        <a href="assets/images/part-1/13.png">
+                                            <img src="assets/images/part-1/13.png" alt="Multi-Head Attention Concatenation and Final Projection" />
+                                        </a>
+                                    </figure>
                                 </div>
+
+                                <!-- Subsection 1 -->
                                 <div dir="auto">
-                                    <h2 class="" id="1938a6d6-2b53-8014-a976-df80d751b03e"><strong>Dimension
-                                            Changes</strong></h2>
-                                </div>
-                                <div dir="auto">
-                                    <p class="" id="1938a6d6-2b53-80a1-9ca4-fd1d07b21aa3"><strong>1. Input
-                                            Embeddings</strong></p>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-80f9-ade7-e9c0063a7f7b">
-                                        <li style="list-style-type:disc">Each word (e.g., <code>Money</code>,
-                                            <code>Bank</code>) is represented as a
-                                            <code><strong>512</strong></code><strong>- dimensional</strong> vector.
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-mha-dimensions">
+                                                <summary class="pro-heading style-h4">1. Dimension Changes &amp; Vector Shapes</summary>
+                                                <div class="indented" dir="auto">
+                                                     <h4 style="margin-top: 1em;">1. Input Embeddings</h4>
+                                                     <ul class="bulleted-list">
+                                                         <li style="list-style-type:disc">Each word (e.g., <code>Money</code>, <code>Bank</code>) is represented as a <strong><code>512</code>-dimensional</strong> vector.</li>
+                                                         <li style="list-style-type:disc">Since there are <strong><code>2</code> words</strong> in the sequence, the input has a shape of:
+                                                             <div dir="auto">
+                                                                 <ul class="bulleted-list">
+                                                                     <li style="list-style-type:circle"><strong>(\(2 \times 512\))</strong> &rarr; (<code>2</code> words, each with <code>512</code>-dimensional embeddings).</li>
+                                                                 </ul>
+                                                             </div>
+                                                         </li>
+                                                     </ul>
+                                                     
+                                                     <h4 style="margin-top: 1.5em;">2. Linear Transformations for <code>Q</code>, <code>K</code>, <code>V</code></h4>
+                                                     <ul class="bulleted-list">
+                                                         <li style="list-style-type:disc">The model learns three separate weight matrices <strong><code>Wq</code> (query), <code>Wk</code> (key), <code>Wv</code> (value)</strong> per attention head.</li>
+                                                         <li style="list-style-type:disc">Each of these matrices transforms the <strong><code>512</code>-dim</strong> input into <strong><code>64</code>-dim</strong> per head.</li>
+                                                         <li style="list-style-type:disc">Since there are <strong><code>8 attention heads</code></strong>, each has:
+                                                             <div dir="auto">
+                                                                 <ul class="bulleted-list">
+                                                                     <li style="list-style-type:circle"><strong>Weight matrix shape:</strong> \(512 \times 64\) for <code>Wq</code>, <code>Wk</code>, and <code>Wv</code>.</li>
+                                                                     <li style="list-style-type:circle"><strong>Q, K, V output shape per head:</strong> \(2 \times 64\) &rarr; (<code>2</code> words, <code>64</code> features per word).</li>
+                                                                 </ul>
+                                                             </div>
+                                                         </li>
+                                                         <li style="list-style-type:disc">This results in <strong><code>8</code> separate <code>Q</code>, <code>K</code>, <code>V</code> matrices</strong>, each of size <strong>(\(2 \times 64\))</strong>.</li>
+                                                     </ul>
+
+                                                     <h4 style="margin-top: 1.5em;">3. Multi-Head Attention Processing</h4>
+                                                     <ul class="bulleted-list">
+                                                         <li style="list-style-type:disc"><strong><code>8</code> independent attention heads</strong> compute <code>self-attention</code> separately.</li>
+                                                         <li style="list-style-type:disc">Each head processes its <strong>(\(2 \times 64\)) <code>Q</code>, <code>K</code>, <code>V</code> matrices</strong> and produces an output of <strong>(\(2 \times 64\))</strong>.</li>
+                                                         <li style="list-style-type:disc">The outputs from all <strong><code>8</code> heads</strong> are concatenated together:
+                                                             <div dir="auto">
+                                                                 <ul class="bulleted-list">
+                                                                     <li style="list-style-type:circle"><strong>Final concatenated shape:</strong> \(2 \times (64 \times 8)\) = <strong>(\(2 \times 512\))</strong>.</li>
+                                                                     <li style="list-style-type:circle">This restores the original input size but now enriched with multi-head attention features.</li>
+                                                                 </ul>
+                                                             </div>
+                                                         </li>
+                                                     </ul>
+
+                                                     <h4 style="margin-top: 1.5em;">4. Final Linear Projection</h4>
+                                                     <ul class="bulleted-list">
+                                                         <li style="list-style-type:disc">A learned weight matrix <strong><code>W₀</code></strong> (\(512 \times 512\)) is applied to the concatenated output.</li>
+                                                         <li style="list-style-type:disc">This projects the multi-head attention output back into the original input space:
+                                                             <div dir="auto">
+                                                                 <ul class="bulleted-list">
+                                                                     <li style="list-style-type:circle"><strong>Final shape:</strong> (\(2 \times 512\)) &rarr; same as input but now transformed by attention.</li>
+                                                                 </ul>
+                                                             </div>
+                                                         </li>
+                                                     </ul>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
                                 </div>
+
+                                <!-- Subsection 2 -->
                                 <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-806d-9ad0-ce4d08f2d47e">
-                                        <li style="list-style-type:disc">Since there are
-                                            <code><strong>2</strong></code><strong> words</strong> in the sequence, the
-                                            input has a shape of:<div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-8035-a9b8-d8b796d419e1">
-                                                    <li style="list-style-type:circle">
-                                                        <strong>(</strong><code><strong>2 × 512</strong></code><strong>)</strong>
-                                                        → (<code>2</code> words, each with <code>512</code>-dimensional
-                                                        embeddings).
-                                                    </li>
-                                                </ul>
-                                            </div>
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-mha-efficiency">
+                                                <summary class="pro-heading style-h4">2. Computational &amp; Memory Efficiency</summary>
+                                                <div class="indented" dir="auto">
+                                                     <ul class="bulleted-list">
+                                                         <li style="list-style-type:disc"><strong>Dimensionality Reduction per Head:</strong>
+                                                             <div dir="auto">
+                                                                 <ul class="bulleted-list">
+                                                                     <li style="list-style-type:circle">Instead of processing a single large <strong>(<code>512</code>-dim)</strong> attention operation, it splits into <strong><code>8</code> smaller <code>64</code>-dim operations</strong>.</li>
+                                                                     <li style="list-style-type:circle">Reduces complexity from &rarr; <strong>\(O(512^2)\)</strong> &rarr; to <strong>\(8 \times O(64^2) = O(8 \times 4096) = O(32768)\)</strong>.</li>
+                                                                     <li style="list-style-type:circle">Which is significantly more efficient than <strong>\(O(512^2) = O(262144)\)</strong> (an 8x reduction in total dot product variance operations!).</li>
+                                                                 </ul>
+                                                             </div>
+                                                         </li>
+                                                         <li style="list-style-type:disc"><strong>Parallel Computation:</strong>
+                                                             <div dir="auto">
+                                                                 <ul class="bulleted-list">
+                                                                     <li style="list-style-type:circle">Since attention heads operate independently, they can be computed in parallel, improving training and inference speed.</li>
+                                                                 </ul>
+                                                             </div>
+                                                         </li>
+                                                         <li style="list-style-type:disc"><strong>Efficient Memory Usage:</strong>
+                                                             <div dir="auto">
+                                                                 <ul class="bulleted-list">
+                                                                     <li style="list-style-type:circle">Instead of computing large dot products, working with smaller 64-dimensional matrices per head reduces memory footprint.</li>
+                                                                 </ul>
+                                                             </div>
+                                                         </li>
+                                                     </ul>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
                                 </div>
+
+                                <!-- Subsection 3 -->
                                 <div dir="auto">
-                                    <hr id="1938a6d6-2b53-802b-b37b-db1a5f630198" />
-                                </div>
-                                <div dir="auto">
-                                    <p class="" id="1938a6d6-2b53-80b1-8d93-e414101b859f"><strong>2. Linear
-                                            Transformations for </strong><code><strong>Q</strong></code><strong>,
-                                        </strong><code><strong>K</strong></code><strong>,
-                                        </strong><code><strong>V</strong></code></p>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-80ff-b1ef-c19e5eae6509">
-                                        <li style="list-style-type:disc">The model learns three separate weight matrices
-                                            <code><strong>Wq</strong></code><strong> (query),
-                                            </strong><code><strong>Wk</strong></code><strong> (key),
-                                            </strong><code><strong>Wv</strong></code><strong> (value)</strong> per
-                                            attention head.
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-mha-semantics">
+                                                <summary class="pro-heading style-h4">3. Multi-Perspective Semantic Capture</summary>
+                                                <div class="indented" dir="auto">
+                                                     <ul class="bulleted-list">
+                                                         <li style="list-style-type:disc"><strong>Specialization of Attention Heads:</strong>
+                                                             <div dir="auto">
+                                                                 <ul class="bulleted-list">
+                                                                     <li style="list-style-type:circle">Different heads focus on different aspects (e.g., syntax, word relationships, dependencies).</li>
+                                                                     <li style="list-style-type:circle">Some heads capture local relationships, while others handle global context.</li>
+                                                                 </ul>
+                                                             </div>
+                                                         </li>
+                                                         <li style="list-style-type:disc"><strong>Better Word Disambiguation:</strong>
+                                                             <div dir="auto">
+                                                                 <ul class="bulleted-list">
+                                                                     <li style="list-style-type:circle">Example: "Bank" can mean <strong>financial institution</strong> or <strong>riverbank</strong>.</li>
+                                                                     <li style="list-style-type:circle">Different heads might focus on different contextual meanings, allowing better word-sense disambiguation.</li>
+                                                                 </ul>
+                                                             </div>
+                                                         </li>
+                                                         <li style="list-style-type:disc"><strong>Preserves Information While Learning Complex Relations:</strong>
+                                                             <div dir="auto">
+                                                                 <ul class="bulleted-list">
+                                                                     <li style="list-style-type:circle">The final projection layer combines multiple perspectives from different attention heads.</li>
+                                                                     <li style="list-style-type:circle">Ensures the model learns both <strong>local</strong> and <strong>global</strong> context efficiently.</li>
+                                                                 </ul>
+                                                             </div>
+                                                         </li>
+                                                     </ul>
+                                                     <p style="margin-top: 1em;">This structure makes transformers both <strong>powerful</strong> and <strong>computationally efficient</strong>, enabling superior performance in NLP tasks. 🚀</p>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
                                 </div>
+
+                                <!-- Subsection 4 -->
                                 <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-8035-acc2-f607f4469560">
-                                        <li style="list-style-type:disc">Each of these matrices transforms the
-                                            <code><strong>512</strong></code><strong>-dim</strong> input into
-                                            <code><strong>64</strong></code><strong>-dim</strong> per head.
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-mha-limitations">
+                                                <summary class="pro-heading style-h4">4. Limitations of Self-Attention Resolved</summary>
+                                                <div class="indented" dir="auto">
+                                                     <h4 style="margin-top: 1em;">Drawbacks of Self-Attention</h4>
+                                                     <ol class="numbered-list" start="1" type="1">
+                                                         <li><strong>Quadratic Computational Complexity:</strong>
+                                                             <blockquote style="border-left: 4px solid var(--primary, #0f4c81); padding-left: 1em; color: var(--muted, #666); margin: 12px 0;">
+                                                                 <em>Quadratic complexity, or <strong>\(O(N^2)\)</strong>, means the computation time or resources required grow with the square of the input size <strong>N</strong>. In Transformers, it occurs in the self-attention mechanism where each token in the input attends to every other token, resulting in <strong>N &times; N</strong> operations.</em>
+                                                             </blockquote>
+                                                             <div dir="auto">
+                                                                 <ul class="bulleted-list">
+                                                                     <li style="list-style-type:disc">Self-attention computes pairwise interactions between all tokens in a sequence, resulting in <strong>\(O(N^2)\)</strong> time and memory complexity for a sequence of length <code>N</code>.</li>
+                                                                     <li style="list-style-type:disc">This becomes prohibitive for long sequences (e.g., documents or high-resolution images).</li>
+                                                                 </ul>
+                                                             </div>
+                                                         </li>
+                                                         <li style="margin-top: 1em;"><strong>Homogenization of Features:</strong>
+                                                             <p>A single attention head may blend different types of relationships (e.g., <code>syntactic</code>, <code>semantic</code>, <code>positional</code>) into a single representation, limiting its ability to capture diverse patterns.</p>
+                                                         </li>
+                                                         <li style="margin-top: 1em;"><strong>Over-Smoothing:</strong>
+                                                             <p>Aggregating information from all tokens can dilute local or specialized features, leading to overly uniform representations.</p>
+                                                         </li>
+                                                         <li style="margin-top: 1em;"><strong>Fixed Attention Patterns:</strong>
+                                                             <p>A single set of attention weights may struggle to simultaneously focus on multiple distinct aspects of the input (e.g., short- vs. long-range dependencies).</p>
+                                                         </li>
+                                                     </ol>
+                                                     
+                                                     <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border, #e5e7eb);" />
+                                                     
+                                                     <h4 style="margin-top: 1.5em;">Multi-Head Attention Solution</h4>
+                                                     <div class="callout" style="background: var(--card-bg, rgba(255, 255, 255, 0.05)); border: 1px solid var(--border, #e5e7eb); border-radius: 8px; padding: 16px; margin: 16px 0; display: flex; align-items: flex-start; gap: 12px;">
+                                                         <div style="font-size: 1.5em; line-height: 1;">💡</div>
+                                                         <p style="margin: 0; font-size: 0.95em;">
+                                                             Multi-head attention splits the input into <code>h</code> parallel <code>heads</code> each with its own set of learnable <code>query</code>, <code>key</code>, and <code>value</code> matrices. Each head computes attention independently, and their outputs are concatenated and linearly transformed to produce the final result.
+                                                         </p>
+                                                     </div>
+                                                     
+                                                     <h5 style="font-weight: 700; margin-top: 1em;">Key Mechanism</h5>
+                                                     <ul class="bulleted-list">
+                                                         <li style="list-style-type:disc"><strong>Input:</strong> Embeddings of dimension \(d\).</li>
+                                                         <li style="list-style-type:disc"><strong>Split:</strong> Each head operates on a lower-dimensional subspace \(d/h\).</li>
+                                                         <li style="list-style-type:disc"><strong>Parallel Processing:</strong> All heads compute scaled dot-product attention simultaneously.</li>
+                                                         <li style="list-style-type:disc"><strong>Concatenation:</strong> Outputs from all heads are combined to restore dimension \(d\).</li>
+                                                     </ul>
+
+                                                     <h5 style="font-weight: 700; margin-top: 1.5em;">How Multi-Head Attention Addresses Drawbacks</h5>
+                                                     <ol class="numbered-list" start="1" type="1">
+                                                         <li><strong>Diverse Feature Learning:</strong> Each head specializes in different types of relationships (e.g., <strong>one head focuses on syntax, another on semantics</strong>). This mitigates homogenization by capturing varied patterns across heads.</li>
+                                                         <li style="margin-top: 1em;"><strong>Increased Representational Capacity:</strong> By splitting into subspaces, the model learns richer features. For example:
+                                                             <div dir="auto">
+                                                                 <ul class="bulleted-list">
+                                                                     <li style="list-style-type:circle"><em>One head can attend to local dependencies.</em></li>
+                                                                     <li style="list-style-type:circle"><em>Another can capture long-range interactions.</em></li>
+                                                                     <li style="list-style-type:circle"><em>Others might focus on positional or hierarchical relationships.</em></li>
+                                                                 </ul>
+                                                             </div>
+                                                         </li>
+                                                         <li style="margin-top: 1em;"><strong>Robustness to Over-Smoothing:</strong> Combining outputs from multiple heads preserves distinct patterns learned in different subspaces, preventing token representations from becoming overly uniform.</li>
+                                                         <li style="margin-top: 1em;"><strong>Efficient Parameterization:</strong>
+                                                             <blockquote style="border-left: 4px solid var(--primary, #0f4c81); padding-left: 1em; color: var(--muted, #666); margin: 12px 0;">
+                                                                 Despite using <code>h</code> heads, the total parameters remain comparable to single-head attention because each head operates on reduced dimensions <code>d/h</code>. This balances expressiveness and computational cost.
+                                                             </blockquote>
+                                                         </li>
+                                                     </ol>
+
+                                                     <h5 style="font-weight: 700; margin-top: 1.5em;">Example</h5>
+                                                     <p>For a sequence "The cat sat on the mat," different heads might learn:</p>
+                                                     <ul class="bulleted-list">
+                                                         <li style="list-style-type:disc"><strong>Head 1:</strong> Attention between "cat" and "sat" (subject-verb agreement).</li>
+                                                         <li style="list-style-type:disc"><strong>Head 2:</strong> Attention between "on" and "mat" (prepositional phrase).</li>
+                                                         <li style="list-style-type:disc"><strong>Head 3:</strong> Long-range attention between "cat" and "mat" (coreference).</li>
+                                                     </ul>
+                                                     <p>By aggregating these diverse perspectives, multi-head attention produces more nuanced representations than single-head self-attention.</p>
+
+                                                     <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border, #e5e7eb);" />
+
+                                                     <h5 style="font-weight: 700; margin-top: 1.5em;">Limitations Multi-Head Attention Does <em>Not</em> Solve</h5>
+                                                     <ul class="bulleted-list">
+                                                         <li style="list-style-type:disc"><strong>Quadratic Complexity:</strong> Multi-head attention still scales as <strong>\(O(N^2)\)</strong>. Solutions like sparse attention or linear transformers address this separately.</li>
+                                                         <li style="list-style-type:disc"><strong>Interpretability:</strong> While heads may specialize, their roles are not explicitly enforced and can overlap unpredictably.</li>
+                                                     </ul>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-805e-9318-c87ea13a9046">
-                                        <li style="list-style-type:disc">Since there are
-                                            <code><strong>8 attention heads</strong></code>, each has:<div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-8078-b71a-c67400649eb7">
-                                                    <li style="list-style-type:circle"><strong>Weight matrix
-                                                            shape:</strong> (<code>512 × 64</code>) for <code>Wq</code>,
-                                                        <code>Wk</code>, and <code>Wv</code>.
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-80ef-bb9f-fe72675cabf5">
-                                                    <li style="list-style-type:circle"><strong>Q, K, V output shape per
-                                                            head:</strong> (<code>2 × 64</code>) → (<code>2</code>
-                                                        words, <code>64</code> features per word).</li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-806d-a010-c5e001ed1671">
-                                        <li style="list-style-type:disc">This results in
-                                            <code><strong>8</strong></code><strong> separate
-                                            </strong><code><strong>Q</strong></code><strong>,
-                                            </strong><code><strong>K</strong></code><strong>,
-                                            </strong><code><strong>V</strong></code><strong> matrices</strong>, each of
-                                            size
-                                            <strong>(</strong><code><strong>2 × 64</strong></code><strong>)</strong>.
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <hr id="1938a6d6-2b53-80da-9464-cf58228cebfd" />
-                                </div>
-                                <div dir="auto">
-                                    <p class="" id="1938a6d6-2b53-8096-aa49-d901505a84bc"><strong>3. Multi-Head
-                                            Attention Processing</strong></p>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-80fb-a149-daecc2f023b8">
-                                        <li style="list-style-type:disc"><code><strong>8</strong></code><strong>
-                                                independent attention heads</strong> compute <code>self-attention</code>
-                                            separately.</li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-80d9-8242-de8bc17992c7">
-                                        <li style="list-style-type:disc">Each head processes its
-                                            <strong>(</strong><code><strong>2 × 64</strong></code><strong>)
-                                            </strong><code><strong>Q</strong></code><strong>,
-                                            </strong><code><strong>K</strong></code><strong>,
-                                            </strong><code><strong>V</strong></code><strong> matrices</strong> and
-                                            produces an output of
-                                            <strong>(</strong><code><strong>2 × 64</strong></code><strong>)</strong>.
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-80f3-a014-fe1f81bd0c77">
-                                        <li style="list-style-type:disc">The outputs from all
-                                            <code><strong>8</strong></code><strong> heads</strong> are concatenated
-                                            together:<div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-80e6-81c7-ff2e7b334925">
-                                                    <li style="list-style-type:circle"><strong>Final concatenated
-                                                            shape:</strong> (<code>2 × (64 × 8)</code>) =
-                                                        <strong>(</strong><code><strong>2 × 512</strong></code><strong>)</strong>.
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-8044-8a2b-dd52fbcae1c4">
-                                                    <li style="list-style-type:circle">This restores the original input
-                                                        size but now enriched with multi-head attention features.</li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <hr id="1938a6d6-2b53-80ba-8481-d18becc27e15" />
-                                </div>
-                                <div dir="auto">
-                                    <p class="" id="1938a6d6-2b53-80ad-9ae6-c256952c5580"><strong>4. Final Linear
-                                            Projection</strong></p>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-80b6-a72e-cb21333c0234">
-                                        <li style="list-style-type:disc">A learned weight matrix
-                                            <code><strong>W₀</strong></code> (<code>512 × 512</code>) is applied to the
-                                            concatenated output.
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-804d-894c-d1df1412c4a5">
-                                        <li style="list-style-type:disc">This projects the multi-head attention output
-                                            back into the original input space:<div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-806a-ac7a-fc03d6585925">
-                                                    <li style="list-style-type:circle"><strong>Final shape:</strong>
-                                                        (<code>2 × 512</code>) → same as input but now transformed by
-                                                        attention.</li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <hr id="1938a6d6-2b53-808f-bf28-cf8bf97929ae" />
-                                </div>
-                                <div dir="auto">
-                                    <h3 class="" id="1938a6d6-2b53-804d-a0f9-d96544b61440"><strong>Computation
-                                            Efficiency</strong></h3>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-8090-a02d-dfc7b7c269c4">
-                                        <li style="list-style-type:disc"><strong>Dimensionality Reduction per
-                                                Head:</strong>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-8030-b65e-dedfb0b4a0dc">
-                                                    <li style="list-style-type:circle">Instead of processing a single
-                                                        large
-                                                        <strong>(</strong><code><strong>512</strong></code><strong>-dim)</strong>
-                                                        attention operation,<div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="1938a6d6-2b53-8021-9395-e67946d4f803">
-                                                                <li style="list-style-type:square">It splits into
-                                                                    <code><strong>8</strong></code><strong> smaller
-                                                                    </strong><code><strong>64</strong></code><strong>-dim
-                                                                        operations</strong>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="1938a6d6-2b53-80f0-a9fc-cb15acc683df">
-                                                                <li style="list-style-type:square">Reduces complexity
-                                                                    from → <strong>O(512²)</strong> → to <strong>8 ×
-                                                                        O(64²) → O(8 × 4096) ≈ O(32768)</strong>,</li>
-                                                            </ul>
-                                                        </div>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="1938a6d6-2b53-8077-8098-d32113fccaed">
-                                                                <li style="list-style-type:square">Which is
-                                                                    significantly more efficient than
-                                                                    <strong>O(512²)</strong> <strong>=
-                                                                        O(262144)</strong>.
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-80ae-8acf-e40c8fede176">
-                                        <li style="list-style-type:disc"><strong>Parallel Computation:</strong>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-806f-a7c4-c078416439b5">
-                                                    <li style="list-style-type:circle">Since attention heads operate
-                                                        independently, they can be computed in parallel, improving
-                                                        speed.</li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-806e-a24f-d83a3998763e">
-                                        <li style="list-style-type:disc"><strong>Efficient Memory Usage:</strong>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-8082-abdc-cc61c7e76bf3">
-                                                    <li style="list-style-type:circle">Instead of computing large dot
-                                                        products, working with smaller 64-dimensional matrices per head
-                                                        reduces memory footprint.</li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <hr id="1938a6d6-2b53-8002-aae6-e2c7a0a87d09" />
-                                </div>
-                                <div dir="auto">
-                                    <h3 class="" id="1938a6d6-2b53-80ad-8238-f8e4a1b53434"><strong>Capturing More
-                                            Semantic Meaning</strong></h3>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-80c6-9203-e9f8cd1ca9dc">
-                                        <li style="list-style-type:disc"><strong>Specialization of Attention
-                                                Heads:</strong>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-80c2-b53b-c414a22ea29d">
-                                                    <li style="list-style-type:circle">Different heads focus on
-                                                        different aspects (e.g., syntax, word relationships,
-                                                        dependencies).</li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-80ba-ad0e-d2da4b2ff4d8">
-                                                    <li style="list-style-type:circle">Some heads capture local
-                                                        relationships, while others handle global context.</li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-8017-af4f-f4b0d7599ae3">
-                                        <li style="list-style-type:disc"><strong>Better Word Disambiguation:</strong>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-8054-abc8-fc89e30b64a2">
-                                                    <li style="list-style-type:circle">Example: "Bank" can mean
-                                                        <strong>financial institution</strong> or
-                                                        <strong>riverbank</strong>.
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-805e-8b7d-cd7ee58abe98">
-                                                    <li style="list-style-type:circle">Different heads might focus on
-                                                        different contextual meanings, allowing better word-sense
-                                                        disambiguation.</li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <ul class="bulleted-list" id="1938a6d6-2b53-8091-8b5a-dda88b9d8534">
-                                        <li style="list-style-type:disc"><strong>Preserves Information While Learning
-                                                Complex Relations:</strong>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-80ae-ba6b-fac489ab684d">
-                                                    <li style="list-style-type:circle">The final projection layer
-                                                        combines multiple perspectives from different attention heads.
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1938a6d6-2b53-8084-9e24-ceda73368c6a">
-                                                    <li style="list-style-type:circle">Ensures the model learns both
-                                                        <strong>local</strong> and <strong>global</strong> context
-                                                        efficiently.
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div dir="auto">
-                                    <p class="" id="1938a6d6-2b53-80a2-aef6-fbb43c4eeda2">This structure makes
-                                        transformers both <strong>powerful</strong> and <strong>computationally
-                                            efficient</strong>, enabling superior performance in NLP tasks. 🚀</p>
-                                </div>
-                                <div dir="auto">
-                                    <details
-                                        id="addressing-the-limitations-of-self-attention-the-role-of-multi-head-attention">
-                                        <summary class="pro-heading style-h3"> Addressing the Limitations of
-                                            Self-Attention: The Role of Multi-Head Attention?</summary>
-                                        <div class="indented">
-                                            <div dir="auto">
-                                                <h3 class="" id="1928a6d6-2b53-809d-8bdc-c000725232df">Drawbacks of
-                                                    Self-Attention:</h3>
-                                            </div>
-                                            <div dir="auto">
-                                                <ol class="numbered-list" id="1928a6d6-2b53-80e5-b3b0-c1d8ff9dc0d3"
-                                                    start="1" type="1">
-                                                    <li><strong>Quadratic Computational Complexity</strong>:<div
-                                                            dir="auto">
-                                                            <blockquote class=""
-                                                                id="1928a6d6-2b53-80cd-8182-fa882969e3b5"><em>Quadratic
-                                                                    complexity, or
-                                                                </em><em><strong>O(n²)</strong></em><em>, means the
-                                                                    computation time or resources required grow with the
-                                                                    square of the input size
-                                                                </em><em><strong>n</strong></em><em>. In Transformers,
-                                                                    it occurs in the self-attention mechanism where each
-                                                                    token in the input attends to every other token,
-                                                                    resulting in </em><em><strong>n ×
-                                                                        n</strong></em><em> operations.</em>
-                                                            </blockquote>
-                                                        </div>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="1928a6d6-2b53-80f2-bccf-ca40f72005bb">
-                                                                <li style="list-style-type:disc">Self-attention computes
-                                                                    pairwise interactions between all tokens in a
-                                                                    sequence, resulting in <style>
-                                                                        @import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css');
-                                                                    </style><span class="notion-text-equation-token"
-                                                                        contenteditable="false" data-token-index="0"
-                                                                        style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span
-                                                                                class="katex"><span
-                                                                                    class="katex-mathml"><math
-                                                                                        xmlns="http://www.w3.org/1998/Math/MathML">
-                                                                                        <semantics>
-                                                                                            <mrow>
-                                                                                                <mi>O</mi>
-                                                                                                <mo stretchy="false">(
-                                                                                                </mo>
-                                                                                                <msup>
-                                                                                                    <mi>N</mi>
-                                                                                                    <mn>2</mn>
-                                                                                                </msup>
-                                                                                                <mo stretchy="false">)
-                                                                                                </mo>
-                                                                                            </mrow>
-                                                                                            <annotation
-                                                                                                encoding="application/x-tex">
-                                                                                                O(N^2)</annotation>
-                                                                                        </semantics>
-                                                                                    </math></span><span
-                                                                                    aria-hidden="true"
-                                                                                    class="katex-html"><span
-                                                                                        class="base"><span class="strut"
-                                                                                            style="height:1.0641em;vertical-align:-0.25em;"></span><span
-                                                                                            class="mord mathnormal"
-                                                                                            style="margin-right:0.02778em;">O</span><span
-                                                                                            class="mopen">(</span><span
-                                                                                            class="mord"><span
-                                                                                                class="mord mathnormal"
-                                                                                                style="margin-right:0.10903em;">N</span><span
-                                                                                                class="msupsub"><span
-                                                                                                    class="vlist-t"><span
-                                                                                                        class="vlist-r"><span
-                                                                                                            class="vlist"
-                                                                                                            style="height:0.8141em;"><span
-                                                                                                                style="top:-3.063em;margin-right:0.05em;"><span
-                                                                                                                    class="pstrut"
-                                                                                                                    style="height:2.7em;"></span><span
-                                                                                                                    class="sizing reset-size6 size3 mtight"><span
-                                                                                                                        class="mord mtight">2</span></span></span></span></span></span></span></span><span
-                                                                                            class="mclose">)</span></span></span></span></span><span>﻿</span></span>
-                                                                    time and memory complexity for a sequence of length
-                                                                    <code>N</code>.
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="1928a6d6-2b53-8044-8112-db78feb860fc">
-                                                                <li style="list-style-type:disc">This becomes
-                                                                    prohibitive for long sequences (e.g., documents or
-                                                                    high-resolution images).</li>
-                                                            </ul>
-                                                        </div>
-                                                    </li>
-                                                </ol>
-                                            </div>
-                                            <div dir="auto">
-                                                <ol class="numbered-list" id="1928a6d6-2b53-8073-b3d5-f1e9bfde735a"
-                                                    start="2" type="1">
-                                                    <li><strong>Homogenization of Features</strong>:<div dir="auto">
-                                                            <p class="" id="1928a6d6-2b53-801f-90ce-f407ff977444">A
-                                                                single attention head may blend different types of
-                                                                relationships (e.g., <code>syntactic</code>,
-                                                                <code>semantic</code>, <code>positional</code>) into a
-                                                                single representation, limiting its ability to capture
-                                                                diverse patterns.
-                                                            </p>
-                                                        </div>
-                                                    </li>
-                                                </ol>
-                                            </div>
-                                            <div dir="auto">
-                                                <ol class="numbered-list" id="1928a6d6-2b53-80e1-8d20-ed4890289e36"
-                                                    start="3" type="1">
-                                                    <li><strong>Over-Smoothing</strong>:<div dir="auto">
-                                                            <p class="" id="1928a6d6-2b53-8072-b031-e312258f01ac">
-                                                                Aggregating information from all tokens can dilute local
-                                                                or specialized features, leading to overly uniform
-                                                                representations.</p>
-                                                        </div>
-                                                    </li>
-                                                </ol>
-                                            </div>
-                                            <div dir="auto">
-                                                <ol class="numbered-list" id="1928a6d6-2b53-806b-9505-d403c6d7bb34"
-                                                    start="4" type="1">
-                                                    <li><strong>Fixed Attention Patterns</strong>:<div dir="auto">
-                                                            <p class="" id="1928a6d6-2b53-8047-b591-d7e3708584a2">A
-                                                                single set of attention weights may struggle to
-                                                                simultaneously focus on multiple distinct aspects of the
-                                                                input (e.g., short- vs. long-range dependencies).</p>
-                                                        </div>
-                                                    </li>
-                                                </ol>
-                                            </div>
-                                            <div dir="auto">
-                                                <hr id="1928a6d6-2b53-80de-aad3-d528b2cba834" />
-                                            </div>
-                                            <div dir="auto">
-                                                <h3 class="" id="1928a6d6-2b53-807a-9ad9-e36ffb02afc9">Multi-Head
-                                                    Attention:</h3>
-                                            </div>
-                                            <div dir="auto">
-                                                <p class="" id="1928a6d6-2b53-80c9-a10c-ce216ca25ab6">
-                                                    <strong>Definition</strong>:
-                                                </p>
-                                            </div>
-                                            <div dir="ltr">
-                                                <figure class="block-color-gray_background callout"
-                                                    id="1928a6d6-2b53-8064-8a73-c681102b3d42">
-                                                    <div style="font-size:1.5em"><span class="icon">💡</span></div>
-                                                    <div>
-                                                        <div dir="auto">
-                                                            <p class="" id="1928a6d6-2b53-804f-9e24-e5115f7537cb">
-                                                                Multi-head attention splits the input into
-                                                                <code>h</code> parallel <code>heads</code> each with its
-                                                                own set of learnable <code>query</code>,
-                                                                <code>key</code>, and <code>value</code> matrices. Each
-                                                                head computes attention independently, and their outputs
-                                                                are concatenated and linearly transformed to produce the
-                                                                final result.
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </figure>
-                                            </div>
-                                            <div dir="auto">
-                                                <p class="" id="1928a6d6-2b53-805c-8079-d55b9f8d68c4"><strong>Key
-                                                        Mechanism</strong>:</p>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1928a6d6-2b53-808a-885b-e47d4fab2339">
-                                                    <li style="list-style-type:disc"><strong>Input</strong>: Embeddings
-                                                        of dimension <style>
-                                                            @import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css');
-                                                        </style><span class="notion-text-equation-token"
-                                                            contenteditable="false" data-token-index="0"
-                                                            style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span
-                                                                    class="katex"><span class="katex-mathml"><math
-                                                                            xmlns="http://www.w3.org/1998/Math/MathML">
-                                                                            <semantics>
-                                                                                <mrow>
-                                                                                    <mi>d</mi>
-                                                                                </mrow>
-                                                                                <annotation
-                                                                                    encoding="application/x-tex">d
-                                                                                </annotation>
-                                                                            </semantics>
-                                                                        </math></span><span aria-hidden="true"
-                                                                        class="katex-html"><span class="base"><span
-                                                                                class="strut"
-                                                                                style="height:0.6944em;"></span><span
-                                                                                class="mord mathnormal">d</span></span></span></span></span><span>﻿</span></span>.
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1928a6d6-2b53-80f0-b223-c7043d0ace57">
-                                                    <li style="list-style-type:disc"><strong>Split</strong>: Each head
-                                                        operates on a lower-dimensional subspace <style>
-                                                            @import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css');
-                                                        </style><span class="notion-text-equation-token"
-                                                            contenteditable="false" data-token-index="0"
-                                                            style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span
-                                                                    class="katex"><span class="katex-mathml"><math
-                                                                            xmlns="http://www.w3.org/1998/Math/MathML">
-                                                                            <semantics>
-                                                                                <mrow>
-                                                                                    <mi>d</mi>
-                                                                                    <mi mathvariant="normal">/</mi>
-                                                                                    <mi>h</mi>
-                                                                                </mrow>
-                                                                                <annotation
-                                                                                    encoding="application/x-tex">d/h
-                                                                                </annotation>
-                                                                            </semantics>
-                                                                        </math></span><span aria-hidden="true"
-                                                                        class="katex-html"><span class="base"><span
-                                                                                class="strut"
-                                                                                style="height:1em;vertical-align:-0.25em;"></span><span
-                                                                                class="mord mathnormal">d</span><span
-                                                                                class="mord">/</span><span
-                                                                                class="mord mathnormal">h</span></span></span></span></span><span>﻿</span></span>.
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1928a6d6-2b53-80eb-9c56-ee815c78db00">
-                                                    <li style="list-style-type:disc"><strong>Parallel
-                                                            Processing</strong>: All heads compute scaled dot-product
-                                                        attention simultaneously.</li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1928a6d6-2b53-80a3-8813-f47ccdf2d6c2">
-                                                    <li style="list-style-type:disc"><strong>Concatenation</strong>:
-                                                        Outputs from all heads are combined to restore dimension <style>
-                                                            @import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css');
-                                                        </style><span class="notion-text-equation-token"
-                                                            contenteditable="false" data-token-index="0"
-                                                            style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span
-                                                                    class="katex"><span class="katex-mathml"><math
-                                                                            xmlns="http://www.w3.org/1998/Math/MathML">
-                                                                            <semantics>
-                                                                                <mrow>
-                                                                                    <mi>d</mi>
-                                                                                </mrow>
-                                                                                <annotation
-                                                                                    encoding="application/x-tex">d
-                                                                                </annotation>
-                                                                            </semantics>
-                                                                        </math></span><span aria-hidden="true"
-                                                                        class="katex-html"><span class="base"><span
-                                                                                class="strut"
-                                                                                style="height:0.6944em;"></span><span
-                                                                                class="mord mathnormal">d</span></span></span></span></span><span>﻿</span></span>.
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <hr id="1928a6d6-2b53-8090-96f1-cc58125c6f54" />
-                                            </div>
-                                            <div dir="auto">
-                                                <h3 class="" id="1928a6d6-2b53-80ff-b052-c7eef3987af7">How Multi-Head
-                                                    Attention Addresses the Drawbacks:</h3>
-                                            </div>
-                                            <div dir="auto">
-                                                <ol class="numbered-list" id="1928a6d6-2b53-80fe-9195-c9bb96fef213"
-                                                    start="1" type="1">
-                                                    <li><strong>Diverse Feature Learning</strong>:<div dir="auto">
-                                                            <p class="" id="1928a6d6-2b53-80d6-a438-f81fb1c8ce00">Each
-                                                                head specializes in different types of relationships
-                                                                (e.g., <strong>one head focuses on syntax, another on
-                                                                    semantics</strong>). This mitigates homogenization
-                                                                by capturing varied patterns across heads.</p>
-                                                        </div>
-                                                    </li>
-                                                </ol>
-                                            </div>
-                                            <div dir="auto">
-                                                <ol class="numbered-list" id="1928a6d6-2b53-80c9-8ded-d2f901fe0535"
-                                                    start="2" type="1">
-                                                    <li><strong>Increased Representational Capacity</strong>:<div
-                                                            dir="auto">
-                                                            <p class="" id="1928a6d6-2b53-80da-8b51-d85e452c143e">By
-                                                                splitting into subspaces, the model learns richer
-                                                                features. For example:</p>
-                                                        </div>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="1928a6d6-2b53-80c2-b6ee-fab02befc5e9">
-                                                                <li style="list-style-type:disc"><em><strong>One head
-                                                                            can attend to local
-                                                                            dependencies.</strong></em></li>
-                                                            </ul>
-                                                        </div>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="1928a6d6-2b53-80db-8baa-da3fcb9347a8">
-                                                                <li style="list-style-type:disc"><em><strong>Another can
-                                                                            capture long-range
-                                                                            interactions.</strong></em></li>
-                                                            </ul>
-                                                        </div>
-                                                        <div dir="auto">
-                                                            <ul class="bulleted-list"
-                                                                id="1928a6d6-2b53-8019-8c3a-d4942698b0b9">
-                                                                <li style="list-style-type:disc"><em><strong>Others
-                                                                            might focus on positional or hierarchical
-                                                                            relationships.</strong></em></li>
-                                                            </ul>
-                                                        </div>
-                                                    </li>
-                                                </ol>
-                                            </div>
-                                            <div dir="auto">
-                                                <ol class="numbered-list" id="1928a6d6-2b53-80d3-8872-e939562bad1b"
-                                                    start="3" type="1">
-                                                    <li><strong>Robustness to Over-Smoothing</strong>:<div dir="auto">
-                                                            <p class="" id="1928a6d6-2b53-80bb-ae94-f00816291ef0">
-                                                                Combining outputs from multiple heads preserves distinct
-                                                                patterns learned in different subspaces, preventing
-                                                                token representations from becoming overly uniform.</p>
-                                                        </div>
-                                                    </li>
-                                                </ol>
-                                            </div>
-                                            <div dir="auto">
-                                                <ol class="numbered-list" id="1928a6d6-2b53-8063-8bb9-fa79741ebe6f"
-                                                    start="4" type="1">
-                                                    <li><strong>Efficient Parameterization</strong>:<div dir="ltr">
-                                                            <figure class="block-color-gray_background callout"
-                                                                id="1928a6d6-2b53-80cd-96c7-d99d35bb91a4">
-                                                                <div style="font-size:1.5em"><span
-                                                                        class="icon">💡</span></div>
-                                                                <div>
-                                                                    <div dir="auto">
-                                                                        <blockquote class=""
-                                                                            id="1928a6d6-2b53-805e-b10e-ce8de9d708dd">
-                                                                            Despite using <code>h</code> heads, the
-                                                                            total parameters remain comparable to
-                                                                            single-head attention because each head
-                                                                            operates on reduced dimensions
-                                                                            <code>d/h</code>. This balances
-                                                                            expressiveness and computational cost.
-                                                                        </blockquote>
-                                                                    </div>
-                                                                </div>
-                                                            </figure>
-                                                        </div>
-                                                    </li>
-                                                </ol>
-                                            </div>
-                                            <div dir="auto">
-                                                <hr id="1928a6d6-2b53-8027-91c6-d4250a7fcf08" />
-                                            </div>
-                                            <div dir="auto">
-                                                <h3 class="" id="1928a6d6-2b53-8097-9375-d49ca85769fd">Example:</h3>
-                                            </div>
-                                            <div dir="auto">
-                                                <p class="" id="1928a6d6-2b53-80e8-98de-c2a37d9734c6">For a sequence
-                                                    "The cat sat on the mat," different heads might learn:</p>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1928a6d6-2b53-80b5-a844-ce7cd0b89457">
-                                                    <li style="list-style-type:disc"><strong>Head 1</strong>: Attention
-                                                        between "cat" and "sat" (subject-verb agreement).</li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1928a6d6-2b53-80fb-be50-ccfdc1fd3665">
-                                                    <li style="list-style-type:disc"><strong>Head 2</strong>: Attention
-                                                        between "on" and "mat" (prepositional phrase).</li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1928a6d6-2b53-803b-a660-d53c174e5ad1">
-                                                    <li style="list-style-type:disc"><strong>Head 3</strong>: Long-range
-                                                        attention between "cat" and "mat" (coreference).</li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <p class="" id="1928a6d6-2b53-805b-bce5-f512f7a6f6d9">By aggregating
-                                                    these diverse perspectives, multi-head attention produces more
-                                                    nuanced representations than single-head self-attention.</p>
-                                            </div>
-                                            <div dir="auto">
-                                                <hr id="1928a6d6-2b53-800b-a020-ddd2afdbbda6" />
-                                            </div>
-                                            <div dir="auto">
-                                                <h3 class="" id="1928a6d6-2b53-80a2-85b2-ed5dc48ceb0e">Limitations
-                                                    Multi-Head Attention Does <em>Not</em> Solve:</h3>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1928a6d6-2b53-80e8-a02f-d95dc6510fb8">
-                                                    <li style="list-style-type:disc"><strong>Quadratic
-                                                            Complexity</strong>: Multi-head attention still scales as
-                                                        <style>
-                                                            @import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css');
-                                                        </style><span class="notion-text-equation-token"
-                                                            contenteditable="false" data-token-index="0"
-                                                            style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span
-                                                                    class="katex"><span class="katex-mathml"><math
-                                                                            xmlns="http://www.w3.org/1998/Math/MathML">
-                                                                            <semantics>
-                                                                                <mrow>
-                                                                                    <mi>O</mi>
-                                                                                    <mo stretchy="false">(</mo>
-                                                                                    <msup>
-                                                                                        <mi>N</mi>
-                                                                                        <mn>2</mn>
-                                                                                    </msup>
-                                                                                    <mo stretchy="false">)</mo>
-                                                                                </mrow>
-                                                                                <annotation
-                                                                                    encoding="application/x-tex">O(N^2)
-                                                                                </annotation>
-                                                                            </semantics>
-                                                                        </math></span><span aria-hidden="true"
-                                                                        class="katex-html"><span class="base"><span
-                                                                                class="strut"
-                                                                                style="height:1.0641em;vertical-align:-0.25em;"></span><span
-                                                                                class="mord mathnormal"
-                                                                                style="margin-right:0.02778em;">O</span><span
-                                                                                class="mopen">(</span><span
-                                                                                class="mord"><span
-                                                                                    class="mord mathnormal"
-                                                                                    style="margin-right:0.10903em;">N</span><span
-                                                                                    class="msupsub"><span
-                                                                                        class="vlist-t"><span
-                                                                                            class="vlist-r"><span
-                                                                                                class="vlist"
-                                                                                                style="height:0.8141em;"><span
-                                                                                                    style="top:-3.063em;margin-right:0.05em;"><span
-                                                                                                        class="pstrut"
-                                                                                                        style="height:2.7em;"></span><span
-                                                                                                        class="sizing reset-size6 size3 mtight"><span
-                                                                                                            class="mord mtight">2</span></span></span></span></span></span></span></span><span
-                                                                                class="mclose">)</span></span></span></span></span><span>﻿</span></span>.
-                                                        Solutions like sparse attention or linear transformers address
-                                                        this separately.
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div dir="auto">
-                                                <ul class="bulleted-list" id="1928a6d6-2b53-80fd-b44d-d5b7785fff61">
-                                                    <li style="list-style-type:disc"><strong>Interpretability</strong>:
-                                                        While heads may specialize, their roles are not explicitly
-                                                        enforced and can overlap unpredictably.</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </details>
                                 </div>
                             </div>
                         </details>
