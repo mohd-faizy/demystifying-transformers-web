@@ -2280,6 +2280,7 @@ summary.style-h2::before {
 #how-does-the-dimensionality-of-vectors-affect-self-attention>summary.style-h3,
 #\34 -why-addition-instead-of-concatenation>summary.style-h3,
 #what-is-normalization-and-why-is-it-useful-in-deep-learning>summary.style-h3,
+#details-geo-embeddings>summary.style-h4,
 #cross-attention-in-transformers>summary.style-h3 {
   --h3-bg: rgba(37, 99, 235, 0.05);
   --h3-border: rgba(37, 99, 235, 0.15);
@@ -2292,6 +2293,7 @@ body.dark-mode #self-attention-mechanismin-the-transformer-model>summary.style-h
 body.dark-mode #how-does-the-dimensionality-of-vectors-affect-self-attention>summary.style-h3,
 body.dark-mode #\34 -why-addition-instead-of-concatenation>summary.style-h3,
 body.dark-mode #what-is-normalization-and-why-is-it-useful-in-deep-learning>summary.style-h3,
+body.dark-mode #details-geo-embeddings>summary.style-h4,
 body.dark-mode #cross-attention-in-transformers>summary.style-h3 {
   --h3-bg: rgba(96, 165, 250, 0.08);
   --h3-border: rgba(96, 165, 250, 0.2);
@@ -2304,6 +2306,7 @@ body.dark-mode #cross-attention-in-transformers>summary.style-h3 {
 #how-does-the-dimensionality-of-vectors-affect-self-attention[open]>.indented,
 #\34 -why-addition-instead-of-concatenation[open]>.indented,
 #what-is-normalization-and-why-is-it-useful-in-deep-learning[open]>.indented,
+#details-geo-embeddings[open]>.indented,
 #cross-attention-in-transformers[open]>.indented {
   border-left: 3px solid #2563eb !important;
 }
@@ -2312,6 +2315,7 @@ body.dark-mode #self-attention-mechanismin-the-transformer-model[open]>.indented
 body.dark-mode #how-does-the-dimensionality-of-vectors-affect-self-attention[open]>.indented,
 body.dark-mode #\34 -why-addition-instead-of-concatenation[open]>.indented,
 body.dark-mode #what-is-normalization-and-why-is-it-useful-in-deep-learning[open]>.indented,
+body.dark-mode #details-geo-embeddings[open]>.indented,
 body.dark-mode #cross-attention-in-transformers[open]>.indented {
   border-left: 3px solid #3b82f6 !important;
 }
@@ -2321,6 +2325,7 @@ body.dark-mode #cross-attention-in-transformers[open]>.indented {
 #why-does-high-dimensionality-cause-instability-in-training>summary.style-h3,
 #\35 -a-simple-analogy-river-and-bank>summary.style-h3,
 #what-are-the-different-types-of-normalization>summary.style-h3,
+#details-geo-matrices>summary.style-h4,
 #decoder-training-non-auto-regressive>summary.style-h3 {
   --h3-bg: rgba(5, 150, 105, 0.05);
   --h3-border: rgba(5, 150, 105, 0.15);
@@ -2333,6 +2338,7 @@ body.dark-mode #why-word-embeddings-fail-to-capture-thesemanticmeaning-of-a-sent
 body.dark-mode #why-does-high-dimensionality-cause-instability-in-training>summary.style-h3,
 body.dark-mode #\35 -a-simple-analogy-river-and-bank>summary.style-h3,
 body.dark-mode #what-are-the-different-types-of-normalization>summary.style-h3,
+body.dark-mode #details-geo-matrices>summary.style-h4,
 body.dark-mode #decoder-training-non-auto-regressive>summary.style-h3 {
   --h3-bg: rgba(52, 211, 153, 0.08);
   --h3-border: rgba(52, 211, 153, 0.2);
@@ -2345,6 +2351,7 @@ body.dark-mode #decoder-training-non-auto-regressive>summary.style-h3 {
 #why-does-high-dimensionality-cause-instability-in-training[open]>.indented,
 #\35 -a-simple-analogy-river-and-bank[open]>.indented,
 #what-are-the-different-types-of-normalization[open]>.indented,
+#details-geo-matrices[open]>.indented,
 #decoder-training-non-auto-regressive[open]>.indented {
   border-left: 3px solid #059669 !important;
 }
@@ -2353,6 +2360,7 @@ body.dark-mode #why-word-embeddings-fail-to-capture-thesemanticmeaning-of-a-sent
 body.dark-mode #why-does-high-dimensionality-cause-instability-in-training[open]>.indented,
 body.dark-mode #\35 -a-simple-analogy-river-and-bank[open]>.indented,
 body.dark-mode #what-are-the-different-types-of-normalization[open]>.indented,
+body.dark-mode #details-geo-matrices[open]>.indented,
 body.dark-mode #decoder-training-non-auto-regressive[open]>.indented {
   border-left: 3px solid #10b981 !important;
 }
@@ -2362,6 +2370,7 @@ body.dark-mode #decoder-training-non-auto-regressive[open]>.indented {
 #why-this-specific-scaling-factordk-sqrt-d-k-dk-is-used-is-used>summary.style-h3,
 #\36 -summing-up-how-the-sinusoidal-approach-solves-the-three-key-problems>summary.style-h3,
 #what-is-internal-covariate-shift-and-how-does-normalization-address-it>summary.style-h3,
+#details-geo-qkv>summary.style-h4,
 #decoder-inference-auto-regressive>summary.style-h3 {
   --h3-bg: rgba(220, 38, 38, 0.05);
   --h3-border: rgba(220, 38, 38, 0.15);
@@ -2374,6 +2383,7 @@ body.dark-mode #what-problem-with-word-embeddings-does-self-attention-address>su
 body.dark-mode #why-this-specific-scaling-factordk-sqrt-d-k-dk-is-used-is-used>summary.style-h3,
 body.dark-mode #\36 -summing-up-how-the-sinusoidal-approach-solves-the-three-key-problems>summary.style-h3,
 body.dark-mode #what-is-internal-covariate-shift-and-how-does-normalization-address-it>summary.style-h3,
+body.dark-mode #details-geo-qkv>summary.style-h4,
 body.dark-mode #decoder-inference-auto-regressive>summary.style-h3 {
   --h3-bg: rgba(248, 113, 113, 0.08);
   --h3-border: rgba(248, 113, 113, 0.2);
@@ -2386,6 +2396,7 @@ body.dark-mode #decoder-inference-auto-regressive>summary.style-h3 {
 #why-this-specific-scaling-factordk-sqrt-d-k-dk-is-used-is-used[open]>.indented,
 #\36 -summing-up-how-the-sinusoidal-approach-solves-the-three-key-problems[open]>.indented,
 #what-is-internal-covariate-shift-and-how-does-normalization-address-it[open]>.indented,
+#details-geo-qkv[open]>.indented,
 #decoder-inference-auto-regressive[open]>.indented {
   border-left: 3px solid #dc2626 !important;
 }
@@ -2394,6 +2405,7 @@ body.dark-mode #what-problem-with-word-embeddings-does-self-attention-address[op
 body.dark-mode #why-this-specific-scaling-factordk-sqrt-d-k-dk-is-used-is-used[open]>.indented,
 body.dark-mode #\36 -summing-up-how-the-sinusoidal-approach-solves-the-three-key-problems[open]>.indented,
 body.dark-mode #what-is-internal-covariate-shift-and-how-does-normalization-address-it[open]>.indented,
+body.dark-mode #details-geo-qkv[open]>.indented,
 body.dark-mode #decoder-inference-auto-regressive[open]>.indented {
   border-left: 3px solid #ef4444 !important;
 }
@@ -2402,6 +2414,7 @@ body.dark-mode #decoder-inference-auto-regressive[open]>.indented {
 #why-are-three-vectors-generated-from-one-embedding>summary.style-h3,
 #addressing-the-limitations-of-self-attention-the-role-of-multi-head-attention>summary.style-h3,
 #\37 -how-positional-encoding-affects-self-attention-in-attention-is-all-you-need>summary.style-h3,
+#details-geo-scores>summary.style-h4,
 #why-can-t-batch-normalization-be-applied-to-sequential-data>summary.style-h3 {
   --h3-bg: rgba(124, 58, 237, 0.05);
   --h3-border: rgba(124, 58, 237, 0.15);
@@ -2413,6 +2426,7 @@ body.dark-mode #decoder-inference-auto-regressive[open]>.indented {
 body.dark-mode #why-are-three-vectors-generated-from-one-embedding>summary.style-h3,
 body.dark-mode #addressing-the-limitations-of-self-attention-the-role-of-multi-head-attention>summary.style-h3,
 body.dark-mode #\37 -how-positional-encoding-affects-self-attention-in-attention-is-all-you-need>summary.style-h3,
+body.dark-mode #details-geo-scores>summary.style-h4,
 body.dark-mode #why-can-t-batch-normalization-be-applied-to-sequential-data>summary.style-h3 {
   --h3-bg: rgba(192, 132, 252, 0.08);
   --h3-border: rgba(192, 132, 252, 0.2);
@@ -2424,6 +2438,7 @@ body.dark-mode #why-can-t-batch-normalization-be-applied-to-sequential-data>summ
 #why-are-three-vectors-generated-from-one-embedding[open]>.indented,
 #addressing-the-limitations-of-self-attention-the-role-of-multi-head-attention[open]>.indented,
 #\37 -how-positional-encoding-affects-self-attention-in-attention-is-all-you-need[open]>.indented,
+#details-geo-scores[open]>.indented,
 #why-can-t-batch-normalization-be-applied-to-sequential-data[open]>.indented {
   border-left: 3px solid #7c3aed !important;
 }
@@ -2431,6 +2446,7 @@ body.dark-mode #why-can-t-batch-normalization-be-applied-to-sequential-data>summ
 body.dark-mode #why-are-three-vectors-generated-from-one-embedding[open]>.indented,
 body.dark-mode #addressing-the-limitations-of-self-attention-the-role-of-multi-head-attention[open]>.indented,
 body.dark-mode #\37 -how-positional-encoding-affects-self-attention-in-attention-is-all-you-need[open]>.indented,
+body.dark-mode #details-geo-scores[open]>.indented,
 body.dark-mode #why-can-t-batch-normalization-be-applied-to-sequential-data[open]>.indented {
   border-left: 3px solid #a855f7 !important;
 }
@@ -2439,6 +2455,7 @@ body.dark-mode #why-can-t-batch-normalization-be-applied-to-sequential-data[open
 #the-problem-with-static-word-embeddings>summary.style-h3,
 #\31 -what-is-positional-encoding-and-why-do-we-need-it>summary.style-h3,
 #\38 -determining-the-frequency-the-role-of-the-denominator>summary.style-h3,
+#details-geo-scaling>summary.style-h4,
 #why-is-layer-normalization-preferred-over-batch-normalization-in-transformers-how-does-layer-normalization-work-in-transformers>summary.style-h3 {
   --h3-bg: rgba(13, 148, 136, 0.05);
   --h3-border: rgba(13, 148, 136, 0.15);
@@ -2450,6 +2467,7 @@ body.dark-mode #why-can-t-batch-normalization-be-applied-to-sequential-data[open
 body.dark-mode #the-problem-with-static-word-embeddings>summary.style-h3,
 body.dark-mode #\31 -what-is-positional-encoding-and-why-do-we-need-it>summary.style-h3,
 body.dark-mode #\38 -determining-the-frequency-the-role-of-the-denominator>summary.style-h3,
+body.dark-mode #details-geo-scaling>summary.style-h4,
 body.dark-mode #why-is-layer-normalization-preferred-over-batch-normalization-in-transformers-how-does-layer-normalization-work-in-transformers>summary.style-h3 {
   --h3-bg: rgba(45, 212, 191, 0.08);
   --h3-border: rgba(45, 212, 191, 0.2);
@@ -2461,6 +2479,7 @@ body.dark-mode #why-is-layer-normalization-preferred-over-batch-normalization-in
 #the-problem-with-static-word-embeddings[open]>.indented,
 #\31 -what-is-positional-encoding-and-why-do-we-need-it[open]>.indented,
 #\38 -determining-the-frequency-the-role-of-the-denominator[open]>.indented,
+#details-geo-scaling[open]>.indented,
 #why-is-layer-normalization-preferred-over-batch-normalization-in-transformers-how-does-layer-normalization-work-in-transformers[open]>.indented {
   border-left: 3px solid #0d9488 !important;
 }
@@ -2468,6 +2487,7 @@ body.dark-mode #why-is-layer-normalization-preferred-over-batch-normalization-in
 body.dark-mode #the-problem-with-static-word-embeddings[open]>.indented,
 body.dark-mode #\31 -what-is-positional-encoding-and-why-do-we-need-it[open]>.indented,
 body.dark-mode #\38 -determining-the-frequency-the-role-of-the-denominator[open]>.indented,
+body.dark-mode #details-geo-scaling[open]>.indented,
 body.dark-mode #why-is-layer-normalization-preferred-over-batch-normalization-in-transformers-how-does-layer-normalization-work-in-transformers[open]>.indented {
   border-left: 3px solid #14b8a6 !important;
 }
@@ -2476,6 +2496,7 @@ body.dark-mode #why-is-layer-normalization-preferred-over-batch-normalization-in
 #what-is-separation-of-concerns-and-why-this-is-important>summary.style-h3,
 #\32 -the-na-ve-approach-simple-counting-its-pitfalls>summary.style-h3,
 #\39 -final-summary>summary.style-h3,
+#details-geo-output>summary.style-h4,
 #questions-1>summary.style-h3 {
   --h3-bg: rgba(217, 119, 6, 0.05);
   --h3-border: rgba(217, 119, 6, 0.15);
@@ -2487,6 +2508,7 @@ body.dark-mode #why-is-layer-normalization-preferred-over-batch-normalization-in
 body.dark-mode #what-is-separation-of-concerns-and-why-this-is-important>summary.style-h3,
 body.dark-mode #\32 -the-na-ve-approach-simple-counting-its-pitfalls>summary.style-h3,
 body.dark-mode #\39 -final-summary>summary.style-h3,
+body.dark-mode #details-geo-output>summary.style-h4,
 body.dark-mode #questions-1>summary.style-h3 {
   --h3-bg: rgba(251, 146, 60, 0.08);
   --h3-border: rgba(251, 146, 60, 0.2);
@@ -2498,6 +2520,7 @@ body.dark-mode #questions-1>summary.style-h3 {
 #what-is-separation-of-concerns-and-why-this-is-important[open]>.indented,
 #\32 -the-na-ve-approach-simple-counting-its-pitfalls[open]>.indented,
 #\39 -final-summary[open]>.indented,
+#details-geo-output[open]>.indented,
 #questions-1[open]>.indented {
   border-left: 3px solid #d97706 !important;
 }
@@ -2505,6 +2528,7 @@ body.dark-mode #questions-1>summary.style-h3 {
 body.dark-mode #what-is-separation-of-concerns-and-why-this-is-important[open]>.indented,
 body.dark-mode #\32 -the-na-ve-approach-simple-counting-its-pitfalls[open]>.indented,
 body.dark-mode #\39 -final-summary[open]>.indented,
+body.dark-mode #details-geo-output[open]>.indented,
 body.dark-mode #questions-1[open]>.indented {
   border-left: 3px solid #f97316 !important;
 }
@@ -3608,4 +3632,4 @@ body.dark-mode .vocab-table td code {
     margin-bottom: 2px;
     text-align: left;
   }
-}
+}

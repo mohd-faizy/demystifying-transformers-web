@@ -114,7 +114,16 @@
                                 </ul>
                             </li>
                             <li><a href="#05-self-attention-geometric-intuition">05 - Self-Attention Geometric
-                                    Intuition</a></li>
+                                    Intuition</a>
+                                <ul>
+                                    <li><a href="#details-geo-embeddings">Word Embeddings in Multi-Dimensional Space</a></li>
+                                    <li><a href="#details-geo-matrices">Transformation Matrices &amp; Linear Projection</a></li>
+                                    <li><a href="#details-geo-qkv">Geometric Meaning of Queries, Keys, and Values</a></li>
+                                    <li><a href="#details-geo-scores">Attention Scores &amp; Dot Product Alignment</a></li>
+                                    <li><a href="#details-geo-scaling">Scaling Step &amp; Softmax Probability Mapping</a></li>
+                                    <li><a href="#details-geo-output">Weighted Sum &amp; Resultant Contextual Vector</a></li>
+                                </ul>
+                            </li>
                             <li><a href="#06-multi-head-attention-in-transformers">06 - Multi-head Attention in
                                     Transformers</a>
                                 <ul>
@@ -5399,300 +5408,340 @@ M834 80h400000v40h-400000z"></path>
                     </div>
                     <div dir="auto">
                         <details id="05-self-attention-geometric-intuition">
-                            <summary class="pro-heading style-h2">05 - Self-Attention Geometric Intuition</summary>
+                            <summary class="pro-heading style-h2">05 - <strong>Self-Attention Geometric Intuition</strong></summary>
                             <div class="indented">
                                 <div dir="ltr">
-                                    <figure class="image" id="1938a6d6-2b53-80eb-a915-fdac0430657c"><a
-                                            href="assets/images/part-1/11.png"><img
-                                                src="assets/images/part-1/11.png" /></a></figure>
+                                    <figure class="image" id="fig-river-bank-geometric">
+                                        <a href="assets/images/part-1/11.png">
+                                            <img src="assets/images/part-1/11.png" alt="Self-Attention Geometric Intuition" />
+                                        </a>
+                                    </figure>
                                 </div>
                                 <div dir="auto">
-                                    <ul class="bulleted-list" id="1928a6d6-2b53-8060-b622-ca26717db4e9">
+                                    <ul class="bulleted-list" id="list-river-bank-intro">
                                         <li style="list-style-type:disc">The example given using the words "river bank"
                                             shows how the contextual embedding of "bank" changes when the context is
                                             changed from "money" to "river"</li>
                                     </ul>
+                                    
+                                    <p>To systematically understand how the vector components evolve from static word representations to contextual vectors, refer to the geometric and mathematical concept comparison table below:</p>
 
-                                    <h3 style="margin-top: 1em;">1. Initial Word Embeddings</h3>
-                                    <p>The sentence is: <strong>“money, bank”</strong></p>
-                                    <p>Each word is converted into a vector (embedding).</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">\(e_{money}\)</li>
-                                        <li style="list-style-type:disc">\(e_{bank}\)</li>
-                                    </ul>
-                                    <p>These vectors represent the semantic meaning of words in vector space.</p>
-                                    <h4>Geometric View</h4>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">Every word = an arrow from the origin.</li>
-                                        <li style="list-style-type:disc">Direction = meaning.</li>
-                                        <li style="list-style-type:disc">Similar directions &rarr; related meanings.
-                                        </li>
-                                    </ul>
-                                    <p>In the diagram:</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">\(e_{money}\) points upward.</li>
-                                        <li style="list-style-type:disc">\(e_{bank}\) points more horizontally.</li>
-                                    </ul>
-                                    <p>This means both words have different semantic positions.</p>
-
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
-
-                                    <h3 style="margin-top: 1em;">2. Self-Attention Uses Three Transformations</h3>
-                                    <p>The embedding vectors are transformed into:</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">Query vectors (Q)</li>
-                                        <li style="list-style-type:disc">Key vectors (K)</li>
-                                        <li style="list-style-type:disc">Value vectors (V)</li>
-                                    </ul>
-                                    <p>Using three learned matrices:</p>
-                                    <div>
-                                        \[ W_q = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix} \]
-                                        \[ W_k = \begin{bmatrix} 3 & 4 \\ 5 & 1 \end{bmatrix} \]
-                                        \[ W_v = \begin{bmatrix} 4 & 1 \\ 2 & 1 \end{bmatrix} \]
+                                    <!-- Technical Concept Comparison Table -->
+                                    <div class="tech-table-wrap" style="margin: 24px 0;">
+                                        <table class="tech-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 18%;">Concept</th>
+                                                    <th style="width: 15%;">Vector/Matrix Symbol</th>
+                                                    <th style="width: 25%;">Role in Self-Attention</th>
+                                                    <th style="width: 22%;">Geometric Description</th>
+                                                    <th style="width: 20%;">Mathematical Operation</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td data-label="Concept"><strong>Word Embeddings</strong></td>
+                                                    <td data-label="Vector/Matrix Symbol"><code>E</code> (e.g., <code>E<sub>money</sub></code>, <code>E<sub>bank</sub></code>)</td>
+                                                    <td data-label="Role in Self-Attention" class="stack-mobile">Initial numerical representation of words serving as the starting point for the mechanism.</td>
+                                                    <td data-label="Geometric Description" class="stack-mobile">Vectors in a multi-dimensional space where semantic meaning is captured by position.</td>
+                                                    <td data-label="Mathematical Operation" class="stack-mobile">Extracted via techniques like Word2Vec; plotted as points or arrows in space.</td>
+                                                </tr>
+                                                <tr>
+                                                    <td data-label="Concept"><strong>Transformation Matrices</strong></td>
+                                                    <td data-label="Vector/Matrix Symbol"><code>W<sub>Q</sub></code>, <code>W<sub>K</sub></code>, <code>W<sub>V</sub></code></td>
+                                                    <td data-label="Role in Self-Attention" class="stack-mobile">Learnable parameters used to project word embeddings into specific functional spaces (Query, Key, Value).</td>
+                                                    <td data-label="Geometric Description" class="stack-mobile">Act as operators for linear transformation, moving or rotating vectors to new locations.</td>
+                                                    <td data-label="Mathematical Operation" class="stack-mobile">Matrix Multiplication (Dot Product with the embedding vector).</td>
+                                                </tr>
+                                                <tr>
+                                                    <td data-label="Concept"><strong>Query, Key, and Value Vectors</strong></td>
+                                                    <td data-label="Vector/Matrix Symbol"><code>q</code>, <code>k</code>, <code>v</code> (e.g., <code>q<sub>money</sub></code>, <code>k<sub>bank</sub></code>)</td>
+                                                    <td data-label="Role in Self-Attention" class="stack-mobile">Functional components: Query searches, Key is matched against, and Value contains the actual content.</td>
+                                                    <td data-label="Geometric Description" class="stack-mobile">Six new vectors generated from the original word embeddings through linear projection.</td>
+                                                    <td data-label="Mathematical Operation" class="stack-mobile"><code>q = E &middot; W<sub>Q</sub></code>; <code>k = E &middot; W<sub>K</sub></code>; <code>v = E &middot; W<sub>V</sub></code></td>
+                                                </tr>
+                                                <tr>
+                                                    <td data-label="Concept"><strong>Similarity/Attention Scores</strong></td>
+                                                    <td data-label="Vector/Matrix Symbol"><code>s</code> (or Score)</td>
+                                                    <td data-label="Role in Self-Attention" class="stack-mobile">Measures the relevance or relatedness between words in the sentence.</td>
+                                                    <td data-label="Geometric Description" class="stack-mobile">Based on the angular distance between vectors; smaller angles result in higher scores.</td>
+                                                    <td data-label="Mathematical Operation" class="stack-mobile">Dot product of Query and Key vectors (<code>q &middot; k</code>).</td>
+                                                </tr>
+                                                <tr>
+                                                    <td data-label="Concept"><strong>Scaling and Normalization</strong></td>
+                                                    <td data-label="Vector/Matrix Symbol"><code>Softmax</code>, <code>&sum;w = 1</code></td>
+                                                    <td data-label="Role in Self-Attention" class="stack-mobile">Prevents vanishing/exploding gradients and converts similarity scores into probabilistic weights.</td>
+                                                    <td data-label="Geometric Description" class="stack-mobile">Mapping raw scores to a range that determines how much "pull" one word has on another.</td>
+                                                    <td data-label="Mathematical Operation" class="stack-mobile">Division by <code>&radic;d<sub>k</sub></code> followed by the Softmax function.</td>
+                                                </tr>
+                                                <tr>
+                                                    <td data-label="Concept"><strong>Weighted Sum/Attention Output</strong></td>
+                                                    <td data-label="Vector/Matrix Symbol"><code>y</code> (e.g., <code>y<sub>bank</sub></code>)</td>
+                                                    <td data-label="Role in Self-Attention" class="stack-mobile">The final contextual embedding of a word, influenced by all other words in the sequence.</td>
+                                                    <td data-label="Geometric Description" class="stack-mobile">Resultant vector from scaling Value vectors and adding them; acts like "gravity" pulling words toward relevant contexts.</td>
+                                                    <td data-label="Mathematical Operation" class="stack-mobile">Scalar multiplication of Value vectors by weights, followed by Vector Addition (Parallelogram/Triangle Law).</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
+                                </div>
 
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
-
-                                    <h3 style="margin-top: 1em;">3. Linear Transformation Intuition</h3>
-                                    <p>Each matrix changes the direction and scale of the original embeddings.</p>
-                                    <p>From the image:</p>
-                                    <h4>Query Space</h4>
-                                    <p>Transforms:</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">\(e_{money} \rightarrow q_{money}\)</li>
-                                        <li style="list-style-type:disc">\(e_{bank} \rightarrow q_{bank}\)</li>
-                                    </ul>
-                                    <h4>Key Space</h4>
-                                    <p>Transforms:</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">\(e_{money} \rightarrow k_{money}\)</li>
-                                        <li style="list-style-type:disc">\(e_{bank} \rightarrow k_{bank}\)</li>
-                                    </ul>
-                                    <h4>Value Space</h4>
-                                    <p>Transforms:</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">\(e_{money} \rightarrow v_{money}\)</li>
-                                        <li style="list-style-type:disc">\(e_{bank} \rightarrow v_{bank}\)</li>
-                                    </ul>
-
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
-
-                                    <h3 style="margin-top: 1em;">4. Geometric Meaning of Q, K, and V</h3>
-                                    <h4>Query (Q)</h4>
-                                    <p>Query asks:</p>
-                                    <blockquote
-                                        style="border-left: 4px solid var(--primary, #0f4c81); padding-left: 1em; color: var(--muted, #666);">
-                                        “What information am I searching for?”</blockquote>
-                                    <p>Example from image:</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">\(q_{bank}\) searches for related information.
+                                <!-- Subsection 1 -->
+                                <div dir="auto">
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-geo-embeddings">
+                                                <summary class="pro-heading style-h4">1. Word Embeddings in Multi-Dimensional Space</summary>
+                                                <div class="indented" dir="auto">
+                                                    <p>The sentence is: <strong>“money, bank”</strong></p>
+                                                    <p>Each word is converted into a vector (embedding):</p>
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc">\(e_{money}\)</li>
+                                                        <li style="list-style-type:disc">\(e_{bank}\)</li>
+                                                    </ul>
+                                                    <p>These vectors represent the semantic meaning of words in vector space.</p>
+                                                    
+                                                    <h4 style="margin-top: 1.5em;">Geometric View</h4>
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc">Every word = an arrow from the origin.</li>
+                                                        <li style="list-style-type:disc">Direction = meaning.</li>
+                                                        <li style="list-style-type:disc">Similar directions &rarr; related meanings.</li>
+                                                    </ul>
+                                                    <p>In the diagram:</p>
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc">\(e_{money}\) points upward.</li>
+                                                        <li style="list-style-type:disc">\(e_{bank}\) points more horizontally.</li>
+                                                    </ul>
+                                                    <p>This means both words have different semantic positions initially.</p>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
-
-                                    <h4>Key (K)</h4>
-                                    <p>Key represents:</p>
-                                    <blockquote
-                                        style="border-left: 4px solid var(--primary, #0f4c81); padding-left: 1em; color: var(--muted, #666);">
-                                        “What information do I contain?”</blockquote>
-                                    <p>Dot product between Query and Key measures similarity.</p>
-
-                                    <h4>Value (V)</h4>
-                                    <p>Value contains the actual information that will be combined.</p>
-                                    <p>Final output is built using Value vectors.</p>
-
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
-
-                                    <h3 style="margin-top: 1em;">5. Attention Score Computation</h3>
-                                    <p>The image computes attention for the word: <strong>bank</strong></p>
-                                    <p>Using:</p>
-                                    <div>
-                                        \[ q_{bank} \cdot k_{money} = s_{21} \]
-                                        \[ q_{bank} \cdot k_{bank} = s_{22} \]
-                                    </div>
-                                    <p>From the diagram:</p>
-                                    <div>
-                                        \[ s_{21} = 10 \]
-                                        \[ s_{22} = 32 \]
-                                    </div>
-
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
-
-                                    <h3 style="margin-top: 1em;">6. Dot Product = Geometric Alignment</h3>
-                                    <p>The dot product measures how aligned two vectors are.</p>
-                                    <h4>Interpretation</h4>
-                                    <p><strong>Small Dot Product</strong><br>
-                                        Vectors point in different directions. &rarr; Weak relation</p>
-                                    <p><strong>Large Dot Product</strong><br>
-                                        Vectors point in similar directions. &rarr; Strong relation</p>
-                                    <p>In the image:</p>
-                                    <div>\[ s_{22} > s_{21} \]</div>
-                                    <p>Meaning:</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">\(q_{bank}\) aligns much more strongly with
-                                            \(k_{bank}\)</li>
-                                        <li style="list-style-type:disc">So the word <strong>bank attends more to
-                                                itself</strong></li>
-                                    </ul>
-
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
-
-                                    <h3 style="margin-top: 1em;">7. Scaling Step</h3>
-                                    <p>The scores are scaled using:</p>
-                                    <div>\[ \frac{1}{\sqrt{d_k}} \]</div>
-                                    <p>From the image:</p>
-                                    <div>\[ d_k = 2 \]</div>
-                                    <p>So:</p>
-                                    <div>\[ \frac{1}{\sqrt{2}} \]</div>
-                                    <p>Scaled scores:</p>
-                                    <div>
-                                        \[ s'_{21} = \frac{10}{\sqrt{2}} \approx 7.09 \]
-                                        \[ s'_{22} = \frac{32}{\sqrt{2}} \approx 22.69 \]
-                                    </div>
-
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
-
-                                    <h3 style="margin-top: 1em;">8. Why Scaling?</h3>
-                                    <p>Without scaling:</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">Dot products become too large.</li>
-                                        <li style="list-style-type:disc">Softmax becomes unstable.</li>
-                                        <li style="list-style-type:disc">One vector dominates completely.</li>
-                                    </ul>
-                                    <p>Scaling keeps values numerically stable.</p>
-
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
-
-                                    <h3 style="margin-top: 1em;">9. Softmax Converts Scores into Weights</h3>
-                                    <p>Softmax transforms scores into probabilities.</p>
-                                    <p>From the image:</p>
-                                    <div>
-                                        \[ w_{21} = 0.2 \]
-                                        \[ w_{22} = 0.8 \]
-                                    </div>
-                                    <p>Interpretation:</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">bank gives:
-                                            <ul style="margin-left: 20px;">
-                                                <li style="list-style-type:circle">20% attention to money</li>
-                                                <li style="list-style-type:circle">80% attention to itself</li>
-                                            </ul>
+                                </div>
+                                
+                                <!-- Subsection 2 -->
+                                <div dir="auto">
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-geo-matrices">
+                                                <summary class="pro-heading style-h4">2. Transformation Matrices &amp; Linear Projection</summary>
+                                                <div class="indented" dir="auto">
+                                                    <p>The embedding vectors are transformed into Query vectors (Q), Key vectors (K), and Value vectors (V) using three learned transformation matrices:</p>
+                                                    <div style="margin: 16px 0;">
+                                                        \[ W_q = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix} \]
+                                                        \[ W_k = \begin{bmatrix} 3 & 4 \\ 5 & 1 \end{bmatrix} \]
+                                                        \[ W_v = \begin{bmatrix} 4 & 1 \\ 2 & 1 \end{bmatrix} \]
+                                                    </div>
+                                                    
+                                                    <h4 style="margin-top: 1.5em;">Linear Transformation Intuition</h4>
+                                                    <p>Each matrix changes the direction and scale of the original embeddings. The spatial maps are projected as follows:</p>
+                                                    <div style="margin-left: 20px; margin-top: 10px;">
+                                                        <h5 style="font-weight: 700; margin-top: 1em;">Query Space</h5>
+                                                        <p>Transforms:</p>
+                                                        <ul class="bulleted-list">
+                                                            <li style="list-style-type:disc">\(e_{money} \rightarrow q_{money}\)</li>
+                                                            <li style="list-style-type:disc">\(e_{bank} \rightarrow q_{bank}\)</li>
+                                                        </ul>
+                                                        
+                                                        <h5 style="font-weight: 700; margin-top: 1em;">Key Space</h5>
+                                                        <p>Transforms:</p>
+                                                        <ul class="bulleted-list">
+                                                            <li style="list-style-type:disc">\(e_{money} \rightarrow k_{money}\)</li>
+                                                            <li style="list-style-type:disc">\(e_{bank} \rightarrow k_{bank}\)</li>
+                                                        </ul>
+                                                        
+                                                        <h5 style="font-weight: 700; margin-top: 1em;">Value Space</h5>
+                                                        <p>Transforms:</p>
+                                                        <ul class="bulleted-list">
+                                                            <li style="list-style-type:disc">\(e_{money} \rightarrow v_{money}\)</li>
+                                                            <li style="list-style-type:disc">\(e_{bank} \rightarrow v_{bank}\)</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </details>
                                         </li>
                                     </ul>
+                                </div>
 
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
+                                <!-- Subsection 3 -->
+                                <div dir="auto">
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-geo-qkv">
+                                                <summary class="pro-heading style-h4">3. Geometric Meaning of Queries, Keys, and Values</summary>
+                                                <div class="indented" dir="auto">
+                                                    <h4 style="margin-top: 1em;">Query (Q)</h4>
+                                                    <p>Query asks:</p>
+                                                    <blockquote style="border-left: 4px solid var(--primary, #0f4c81); padding-left: 1em; color: var(--muted, #666); margin: 12px 0;">
+                                                        “What information am I searching for?”
+                                                    </blockquote>
+                                                    <p>Example from the image:</p>
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc">\(q_{bank}\) searches for related information.</li>
+                                                    </ul>
 
-                                    <h3 style="margin-top: 1em;">10. Weighted Value Combination</h3>
-                                    <p>Now attention weights multiply Value vectors.</p>
-                                    <p>From the diagram:</p>
-                                    <div>
-                                        \[ 0.2 \cdot v_{money} \]
-                                        \[ 0.8 \cdot v_{bank} \]
-                                    </div>
-                                    <p>These scaled vectors are added together.</p>
+                                                    <h4 style="margin-top: 1.5em;">Key (K)</h4>
+                                                    <p>Key represents:</p>
+                                                    <blockquote style="border-left: 4px solid var(--primary, #0f4c81); padding-left: 1em; color: var(--muted, #666); margin: 12px 0;">
+                                                        “What information do I contain?”
+                                                    </blockquote>
+                                                    <p>The dot product between the Query vector of one word and Key vector of another measures their semantic alignment.</p>
 
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
-
-                                    <h3 style="margin-top: 1em;">11. Vector Addition Geometry</h3>
-                                    <p>The image shows vector addition geometrically.</p>
-                                    <h4>Important Idea</h4>
-                                    <p>Self-attention does not choose one vector. It blends vectors together.</p>
-                                    <p>The resultant vector becomes:</p>
-                                    <div>\[ y_{bank} \]</div>
-
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
-
-                                    <h3 style="margin-top: 1em;">12. Final Attention Output</h3>
-                                    <div>\[ y_{bank} = 0.2v_{money} + 0.8v_{bank} \]</div>
-                                    <p>Geometrically:</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">The final vector points closer to \(v_{bank}\)
+                                                    <h4 style="margin-top: 1.5em;">Value (V)</h4>
+                                                    <p>Value contains the actual information and content that will be combined. The final aggregated representation output is constructed as a weighted combination of these Value vectors.</p>
+                                                </div>
+                                            </details>
                                         </li>
-                                        <li style="list-style-type:disc">Because its weight is larger (0.8)</li>
                                     </ul>
-                                    <p>This is exactly shown in the resultant vector diagram.</p>
+                                </div>
 
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
+                                <!-- Subsection 4 -->
+                                <div dir="auto">
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-geo-scores">
+                                                <summary class="pro-heading style-h4">4. Attention Scores &amp; Dot Product Alignment</summary>
+                                                <div class="indented" dir="auto">
+                                                    <p>The image computes the raw attention alignment scores for the word: <strong>bank</strong></p>
+                                                    <p>Using:</p>
+                                                    <div style="margin: 16px 0;">
+                                                        \[ q_{bank} \cdot k_{money} = s_{21} \]
+                                                        \[ q_{bank} \cdot k_{bank} = s_{22} \]
+                                                    </div>
+                                                    <p>From the geometric coordinates in the diagram, these scores evaluate to:</p>
+                                                    <div style="margin: 16px 0;">
+                                                        \[ s_{21} = 10 \]
+                                                        \[ s_{22} = 32 \]
+                                                    </div>
 
-                                    <h3 style="margin-top: 1em;">13. Geometric Intuition of Self-Attention</h3>
-                                    <p>The image compares self-attention to: <strong>Gravity / Pull</strong></p>
-                                    <p>Words attract other relevant words.</p>
-                                    <h4>In the diagram:</h4>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">\(e_{money}\)</li>
-                                        <li style="list-style-type:disc">\(e_{bank}\)</li>
+                                                    <h4 style="margin-top: 1.5em;">Dot Product = Geometric Alignment</h4>
+                                                    <p>The dot product mathematically measures how aligned two vectors are in high-dimensional space:</p>
+                                                    <div style="margin-left: 20px; margin-top: 10px;">
+                                                        <p><strong>Small Dot Product:</strong> Vectors point in orthogonal or different directions, representing a weak contextual relation.</p>
+                                                        <p><strong>Large Dot Product:</strong> Vectors point in similar directions, representing a strong semantic relation.</p>
+                                                    </div>
+                                                    <p>In the diagram:</p>
+                                                    <div style="margin: 16px 0;">\[ s_{22} > s_{21} \]</div>
+                                                    <p>Meaning:</p>
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc">\(q_{bank}\) aligns much more strongly with \(k_{bank}\) than it does with \(k_{money}\).</li>
+                                                        <li style="list-style-type:disc">Consequently, the word <strong>bank attends more strongly to itself</strong> under this configuration.</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
+                                        </li>
                                     </ul>
-                                    <p>pull each other based on semantic similarity. More aligned vectors create
-                                        stronger attraction.</p>
+                                </div>
 
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
+                                <!-- Subsection 5 -->
+                                <div dir="auto">
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-geo-scaling">
+                                                <summary class="pro-heading style-h4">5. Scaling Step &amp; Softmax Probability Mapping</summary>
+                                                <div class="indented" dir="auto">
+                                                    <p>The scores are scaled using the dimensionality scaling factor:</p>
+                                                    <div style="margin: 16px 0;">\[ \frac{1}{\sqrt{d_k}} \]</div>
+                                                    <p>From the image, key vector dimension is \(d_k = 2\). Therefore, the scaling factor is \(1 / \sqrt{2}\). The scaled scores compute to:</p>
+                                                    <div style="margin: 16px 0;">
+                                                        \[ s'_{21} = \frac{10}{\sqrt{2}} \approx 7.09 \]
+                                                        \[ s'_{22} = \frac{32}{\sqrt{2}} \approx 22.69 \]
+                                                    </div>
 
-                                    <h3 style="margin-top: 1em;">14. Complete Flow of Self-Attention</h3>
-                                    <h4>Step-by-Step Pipeline</h4>
-                                    <ol class="bulleted-list" style="margin-left: 20px;">
-                                        <li><strong>Step 1 &mdash; Input Embeddings</strong><br>
-                                            <div>\[ e_{money}, e_{bank} \]</div>
-                                        </li>
-                                        <li><strong>Step 2 &mdash; Linear Transformations</strong><br>
-                                            Generate: Queries, Keys, Values
-                                        </li>
-                                        <li><strong>Step 3 &mdash; Similarity Scores</strong><br>
-                                            Using dot products:
-                                            <div>\[ QK^T \]</div>
-                                        </li>
-                                        <li><strong>Step 4 &mdash; Scaling</strong><br>
-                                            <div>\[ \frac{QK^T}{\sqrt{d_k}} \]</div>
-                                        </li>
-                                        <li><strong>Step 5 &mdash; Softmax</strong><br>
-                                            Convert scores into attention weights.
-                                        </li>
-                                        <li><strong>Step 6 &mdash; Weighted Sum</strong><br>
-                                            <div>\[ \text{Attention}(Q,K,V) =
-                                                \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V \]</div>
-                                        </li>
-                                        <li><strong>Step 7 &mdash; Final Contextual Vector</strong><br>
-                                            <div>\[ y_{bank} \]</div>
-                                        </li>
-                                    </ol>
+                                                    <h4 style="margin-top: 1.5em;">Why Scaling?</h4>
+                                                    <p>Without scaling, as vector dimensions grow larger, dot products grow extremely large in magnitude, pushing the Softmax function into regions with near-zero gradients (vanishing gradient problem). One vector would dominate completely, leading to training instability. Scaling keeps the values in a stable numerical range.</p>
 
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
-
-                                    <h3 style="margin-top: 1em;">15. Core Geometric Insight</h3>
-                                    <p>Self-attention can be understood geometrically as:</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">Words are vectors in space.</li>
-                                        <li style="list-style-type:disc">Queries search directions.</li>
-                                        <li style="list-style-type:disc">Keys provide matching directions.</li>
-                                        <li style="list-style-type:disc">Dot products measure alignment.</li>
-                                        <li style="list-style-type:disc">Softmax determines attraction strength.</li>
-                                        <li style="list-style-type:disc">Values are blended using weighted vector
-                                            addition.</li>
-                                        <li style="list-style-type:disc">Final vectors shift toward semantically
-                                            important words.</li>
+                                                    <h4 style="margin-top: 1.5em;">Softmax Converts Scores into Weights</h4>
+                                                    <p>Softmax transforms these scaled scores into normalized probability weights (summing to 1):</p>
+                                                    <div style="margin: 16px 0;">
+                                                        \[ w_{21} = 0.2 \]
+                                                        \[ w_{22} = 0.8 \]
+                                                    </div>
+                                                    <p>This gives the following distribution of attention for <strong>bank</strong>:</p>
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc"><strong>20% attention weight</strong> allocated to the context word <em>money</em>.</li>
+                                                        <li style="list-style-type:disc"><strong>80% attention weight</strong> allocated to itself (<em>bank</em>).</li>
+                                                    </ul>
+                                                </div>
+                                            </details>
+                                        </li>
                                     </ul>
+                                </div>
 
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
+                                <!-- Subsection 6 -->
+                                <div dir="auto">
+                                    <ul class="toggle">
+                                        <li>
+                                            <details id="details-geo-output">
+                                                <summary class="pro-heading style-h4">6. Weighted Sum &amp; Resultant Contextual Vector</summary>
+                                                <div class="indented" dir="auto">
+                                                    <h4 style="margin-top: 1.5em;">Weighted Value Combination</h4>
+                                                    <p>The attention weights multiply their respective Value vectors, scaling them proportionally to their semantic relevance:</p>
+                                                    <div style="margin: 16px 0;">
+                                                        \[ 0.2 \cdot v_{money} \]
+                                                        \[ 0.8 \cdot v_{bank} \]
+                                                    </div>
+                                                    <p>These scaled vectors are then aggregated together using standard vector addition.</p>
 
-                                    <h3 style="margin-top: 1em;">16. Important Observations from the Diagram</h3>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc"><strong>Observation 1:</strong> Self-attention
-                                            is entirely vector geometry.</li>
-                                        <li style="list-style-type:disc"><strong>Observation 2:</strong> Dot product
-                                            acts like similarity measurement.</li>
-                                        <li style="list-style-type:disc"><strong>Observation 3:</strong> Attention
-                                            weights determine vector influence.</li>
-                                        <li style="list-style-type:disc"><strong>Observation 4:</strong> Final
-                                            representation is a weighted geometric mixture.</li>
+                                                    <h4 style="margin-top: 1.5em;">Vector Addition Geometry</h4>
+                                                    <p>Self-attention does not act as a hard switch selector; it is a smooth, continuous blender. Geometrically, the addition of two scaled vectors forms the diagonal of a parallelogram (following the triangle/parallelogram law of vector addition), resulting in the final contextualized output vector:</p>
+                                                    <div style="margin: 16px 0;">\[ y_{bank} \]</div>
+
+                                                    <h4 style="margin-top: 1.5em;">Final Attention Output</h4>
+                                                    <p>The complete mathematical combination for the output is:</p>
+                                                    <div style="margin: 16px 0;">\[ y_{bank} = 0.2v_{money} + 0.8v_{bank} \]</div>
+                                                    <p>Geometrically, because the self-attention weight is significantly larger (0.8 vs 0.2), the resultant vector \(y_{bank}\) points much closer to \(v_{bank}\) in space, but is pulled slightly in the direction of \(v_{money}\). This perfectly matches the resultant vector shown in the coordinate diagram.</p>
+
+                                                    <h4 style="margin-top: 2em; border-top: 1px solid var(--line, #e2e8f0); padding-top: 1.5em;">Geometric Intuition: Gravity &amp; Pull</h4>
+                                                    <p>Self-attention behaves like semantic **gravity**. Every word in a sequence exerts a pull on every other word, attracting them based on semantic similarity. More aligned vectors in Query/Key space generate a stronger gravitational pull, pulling the final contextual embedding toward the cluster of relevant context.</p>
+
+                                                    <h4 style="margin-top: 2em; border-top: 1px solid var(--line, #e2e8f0); padding-top: 1.5em;">Complete Flow of Self-Attention</h4>
+                                                    <p>Here is the full step-by-step pipeline visualized in the geometric analysis:</p>
+                                                    <ol class="bulleted-list" style="margin-left: 20px; line-height: 1.8;">
+                                                        <li><strong>Step 1 &mdash; Input Embeddings:</strong> We begin with static vectors in space:
+                                                            <div>\[ e_{money}, e_{bank} \]</div>
+                                                        </li>
+                                                        <li><strong>Step 2 &mdash; Linear Transformations:</strong> Project embeddings into specific functional subspaces to yield: Queries, Keys, and Values.</li>
+                                                        <li><strong>Step 3 &mdash; Similarity Scores:</strong> Take the dot product between Queries and Keys to measure directional alignment:
+                                                            <div>\[ QK^T \]</div>
+                                                        </li>
+                                                        <li><strong>Step 4 &mdash; Scaling:</strong> Divide by the root-dimension to ensure numerical and gradient stability:
+                                                            <div>\[ \frac{QK^T}{\sqrt{d_k}} \]</div>
+                                                        </li>
+                                                        <li><strong>Step 5 &mdash; Softmax:</strong> Apply Softmax to map scaled scores to attention weights (probabilities).</li>
+                                                        <li><strong>Step 6 &mdash; Weighted Sum:</strong> Blend the Value vectors based on the attention weights:
+                                                            <div>\[ \text{Attention}(Q,K,V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V \]</div>
+                                                        </li>
+                                                        <li><strong>Step 7 &mdash; Final Contextual Vector:</strong> Produce the resultant vector:
+                                                            <div>\[ y_{bank} \]</div>
+                                                        </li>
+                                                    </ol>
+
+                                                    <h4 style="margin-top: 2em; border-top: 1px solid var(--line, #e2e8f0); padding-top: 1.5em;">Core Geometric Insights</h4>
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc"><strong>Spatial meaning:</strong> Words exist as coordinates in a multi-dimensional semantic space.</li>
+                                                        <li style="list-style-type:disc"><strong>Searching &amp; Matching:</strong> Queries define search directions, and Keys represent matching characteristics.</li>
+                                                        <li style="list-style-type:disc"><strong>Attraction:</strong> Dot products measure spatial alignment, and Softmax determines the gravitational pull between concepts.</li>
+                                                        <li style="list-style-type:disc"><strong>Blending:</strong> Values are combined using vector addition (parallelogram/triangle law) to construct context.</li>
+                                                        <li style="list-style-type:disc"><strong>Result:</strong> Contextual vectors dynamically shift toward relevant neighbors, capturing contextual nuance.</li>
+                                                    </ul>
+
+                                                    <h4 style="margin-top: 2.5em;">Key Observations from the Coordinate Maps</h4>
+                                                    <ul class="bulleted-list">
+                                                        <li style="list-style-type:disc"><strong>Self-attention is vector geometry:</strong> The entire mechanism can be computed and visualized as simple dot products and vector offsets.</li>
+                                                        <li style="list-style-type:disc"><strong>Dot product as similarity:</strong> It serves as a natural measure of angular proximity and semantic relatedness.</li>
+                                                        <li style="list-style-type:disc"><strong>Contextual mixtures:</strong> The final output is not a replacement but a geometric mixture (blend) of all sequence elements.</li>
+                                                    </ul>
+
+                                                    <h4 style="margin-top: 2em; border-top: 1px solid var(--line, #e2e8f0); padding-top: 1.5em;">Final Intuition</h4>
+                                                    <p>Self-attention is:</p>
+                                                    <blockquote style="border-left: 4px solid var(--primary, #0f4c81); padding-left: 1em; font-style: italic; color: var(--muted, #666); margin: 12px 0;">
+                                                        “A mechanism where vectors pull related vectors toward themselves and create a new contextual representation through weighted geometric combination.”
+                                                    </blockquote>
+                                                </div>
+                                            </details>
+                                        </li>
                                     </ul>
-
-                                    <hr style="margin: 2em 0; border-top: 1px solid var(--line, #e2e8f0);">
-
-                                    <h3 style="margin-top: 1em;">17. Final Intuition</h3>
-                                    <p>Self-attention is:</p>
-                                    <blockquote
-                                        style="border-left: 4px solid var(--primary, #0f4c81); padding-left: 1em; font-style: italic; color: var(--muted, #666);">
-                                        “A mechanism where vectors pull related vectors toward themselves and create a
-                                        new contextual representation through weighted geometric combination.”
-                                    </blockquote>
                                 </div>
                             </div>
                         </details>
