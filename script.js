@@ -181,4 +181,97 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }());
+
+    /* ── Collapsible Sections ────────────────────────────────── */
+    const collapsibleSections = document.querySelectorAll(".section-collapsible");
+    const globalToggleBtn = document.getElementById("part-toggle-all");
+
+    function updateGlobalToggleState() {
+        if (!globalToggleBtn || collapsibleSections.length === 0) return;
+        const allCollapsed = Array.from(collapsibleSections).every(s => s.classList.contains("collapsed"));
+        if (allCollapsed) {
+            globalToggleBtn.classList.add("active");
+        } else {
+            globalToggleBtn.classList.remove("active");
+        }
+    }
+
+    collapsibleSections.forEach(section => {
+        const header = section.querySelector(".section-header");
+        if (!header) return;
+        
+        // Create toggle button
+        const toggleBtn = document.createElement("button");
+        toggleBtn.className = "section-toggle-btn";
+        toggleBtn.setAttribute("aria-label", "Toggle Section");
+        toggleBtn.innerHTML = `
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        `;
+        header.appendChild(toggleBtn);
+        
+        // Add collapsed indicator badge
+        const indicator = document.createElement("div");
+        indicator.className = "collapsed-indicator";
+        indicator.innerHTML = `
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: middle;">
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="19" cy="12" r="1"></circle>
+                <circle cx="5" cy="12" r="1"></circle>
+            </svg>
+            <span>Section minimized (click to expand)</span>
+        `;
+        header.appendChild(indicator);
+        
+        // Make header clickable
+        header.addEventListener("click", (e) => {
+            // Prevent toggling if user clicks on a link or button inside the header (other than toggle itself)
+            if (e.target.closest("a") || e.target.closest("input")) return;
+            
+            const isCollapsed = section.classList.toggle("collapsed");
+            const content = section.querySelector(".note-shell");
+            
+            if (content) {
+                if (isCollapsed) {
+                    content.style.maxHeight = "0px";
+                } else {
+                    // Temporarily set to scrollHeight, then clean up after transition
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    setTimeout(() => {
+                        if (!section.classList.contains("collapsed")) {
+                            content.style.maxHeight = "";
+                        }
+                    }, 400);
+                }
+            }
+            updateGlobalToggleState();
+        });
+    });
+
+    /* ── Global Section Minimizer Toggle ───────────────────────── */
+    if (globalToggleBtn) {
+        globalToggleBtn.addEventListener("click", () => {
+            const isPressed = globalToggleBtn.classList.toggle("active");
+            
+            collapsibleSections.forEach(section => {
+                const content = section.querySelector(".note-shell");
+                if (isPressed) {
+                    section.classList.add("collapsed");
+                    if (content) content.style.maxHeight = "0px";
+                } else {
+                    section.classList.remove("collapsed");
+                    if (content) {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        setTimeout(() => {
+                            if (!section.classList.contains("collapsed")) {
+                                content.style.maxHeight = "";
+                            }
+                        }, 400);
+                    }
+                }
+            });
+        });
+    }
 });
+
