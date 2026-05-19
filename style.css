@@ -188,23 +188,76 @@ a {
 
 .hero {
   display: grid;
-  gap: 28px;
+  gap: 20px;
   border-bottom: 1px solid var(--line);
+  padding: 80px clamp(20px, 5vw, 68px) 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle premium radial glow in the background of the hero */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 10% 20%, rgba(var(--accent-rgb, 15, 118, 110), 0.03) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hero .eyebrow {
+  background: rgba(var(--accent-rgb, 15, 118, 110), 0.08);
+  border: 1px solid rgba(var(--accent-rgb, 15, 118, 110), 0.15);
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  width: fit-content;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 .hero h1 {
-  max-width: 900px;
+  max-width: 950px;
   margin: 0;
-  font-size: clamp(2.25rem, 6vw, 5.5rem);
-  line-height: 0.96;
-  letter-spacing: 0;
+  font-size: clamp(2.4rem, 5.5vw, 4.6rem); /* Beautiful balanced size */
+  font-weight: 850;
+  line-height: 1.06;
+  letter-spacing: -0.035em; /* Premium modern tight tracking */
+  background: linear-gradient(135deg, var(--ink) 45%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: var(--ink); /* Fallback */
+}
+
+/* Adjust gradient for dark mode hero title */
+body.dark-mode .hero h1 {
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .hero p {
-  max-width: 760px;
+  max-width: 740px;
   margin: 0;
   color: var(--muted);
-  font-size: 1.08rem;
+  font-size: 1.12rem;
+  line-height: 1.68;
+  font-weight: 450;
+  letter-spacing: -0.01em;
 }
 
 .quick-grid,
@@ -475,27 +528,34 @@ a {
     right: 0;
     height: 58px;
     padding: 0 18px;
-    background: var(--bg-color, #ffffff);
+    background: rgba(255, 255, 255, 0.82) !important;
     border-bottom: 1px solid var(--line);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(20px) saturate(190%);
+    -webkit-backdrop-filter: blur(20px) saturate(190%);
     z-index: 900;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
   }
 
   .mobile-topbar-title {
-    font-size: 0.98rem;
-    font-weight: 700;
+    font-size: 0.95rem;
+    font-weight: 500;
     color: var(--ink);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.025em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: inline-block;
   }
 
   .mobile-topbar-title span {
+    font-weight: 800;
     color: var(--accent);
+    background: linear-gradient(135deg, var(--accent) 30%, rgba(var(--accent-rgb, 15, 118, 110), 0.85) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-right: 4px;
   }
 
   /* Hamburger button inside the top-bar */
@@ -3354,4 +3414,9 @@ body {
 /* Dark mode variable overrides for accent rgb values if needed */
 .dark-mode {
   --accent-rgb: 20, 184, 166; /* lighter/brighter teal for dark mode */
+}
+
+/* Translucent dark glass background override for mobile topbar in dark mode */
+body.dark-mode .mobile-topbar {
+  background: rgba(2, 6, 23, 0.82) !important;
 }
