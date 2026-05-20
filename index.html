@@ -466,9 +466,6 @@
             <section class="hero" id="overview">
                 <span class="eyebrow">From components to full architecture</span>
                 <h1>Transformer Architecture Notes</h1>
-                <p>A clean white-theme study page that merges both exported HTML note folders into one systematic
-                    walkthrough. The image assets are copied into chronological folders so the page stays organized and
-                    easy to publish.</p>
             </section>
             <section class="section" id="attention-paper">
                 <div class="section-header">
@@ -3768,7 +3765,8 @@
                                                                                 The vector's size equals the vocabulary
                                                                                 size, containing a single <code>1</code>
                                                                                 at the word's designated index and
-                                                                                <code>0</code>s everywhere else.</li>
+                                                                                <code>0</code>s everywhere else.
+                                                                            </li>
                                                                             <li style="list-style-type:disc"><mark
                                                                                     class="highlight-yellow_background"><strong>Bottleneck:</strong>
                                                                                     This method is highly inefficient
@@ -3799,7 +3797,8 @@
                                                                                 one-hot encoding by counting the
                                                                                 occurrences of each word in a document
                                                                                 or sentence, rather than just marking
-                                                                                binary presence.</li>
+                                                                                binary presence.
+                                                                            </li>
                                                                             <li style="list-style-type:disc"><mark
                                                                                     class="highlight-yellow_background"><strong>Bottleneck:</strong>
                                                                                     Although it captures word frequency
@@ -3896,7 +3895,8 @@
                                                 <div class="indented" dir="auto">
                                                     <p>Despite their power, traditional word embeddings suffer from a
                                                         critical architectural constraint: they are completely
-                                                        <strong>static</strong>.</p>
+                                                        <strong>static</strong>.
+                                                    </p>
                                                     <ul class="bulleted-list">
                                                         <li style="list-style-type:disc"><strong>Context
                                                                 Insensitivity:</strong> A word always receives the same
@@ -3913,7 +3913,8 @@
                                                                     towards food dimensions, even in the sentence
                                                                     <em>"Apple launched a new phone"</em>, where it
                                                                     refers to a tech company. The vector cannot
-                                                                    dynamically adjust to this contextual shift.</li>
+                                                                    dynamically adjust to this contextual shift.
+                                                                </li>
                                                             </ul>
                                                         </li>
                                                         <li style="list-style-type:disc"><strong>Problematic for
@@ -3939,13 +3940,15 @@
                                                 <div class="indented" dir="auto">
                                                     <p>Self-attention is the core mathematical breakthrough that
                                                         addresses static embedding limitations by generating
-                                                        <strong>contextual embeddings</strong> dynamically.</p>
+                                                        <strong>contextual embeddings</strong> dynamically.
+                                                    </p>
                                                     <ul class="bulleted-list">
                                                         <li style="list-style-type:disc"><strong>Contextual
                                                                 Understanding:</strong> Self-attention generates
                                                             <strong>contextual word embeddings</strong> where the vector
                                                             representation of a word changes dynamically based on the
-                                                            context in which it is used in a sentence.</li>
+                                                            context in which it is used in a sentence.
+                                                        </li>
                                                         <li style="list-style-type:disc"><strong>Dynamic
                                                                 Embeddings:</strong> Unlike static word embeddings,
                                                             contextual embeddings are generated on the fly, considering
@@ -4234,7 +4237,8 @@
                                                             high, and the final contextual embedding for
                                                             <code>"bank"</code> will contain a significant portion of
                                                             <code>"money"</code>'s information, making its meaning
-                                                            task-specific and dynamic.</li>
+                                                            task-specific and dynamic.
+                                                        </li>
                                                         <li style="list-style-type:disc"><strong>The Role of Q, K, and
                                                                 V:</strong> To make this process learnable and
                                                             task-specific, the mechanism transforms the original static
@@ -4324,7 +4328,8 @@
                                                                     <td data-label="Learnable Parameters"
                                                                         class="stack-mobile">
                                                                         <strong>Yes</strong><br><small>(Weight matrix
-                                                                            <code>W<sub>Q</sub></code>)</small></td>
+                                                                            <code>W<sub>Q</sub></code>)</small>
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td data-label="Component Name"><strong>Key
@@ -4348,7 +4353,8 @@
                                                                     <td data-label="Learnable Parameters"
                                                                         class="stack-mobile">
                                                                         <strong>Yes</strong><br><small>(Weight matrix
-                                                                            <code>W<sub>K</sub></code>)</small></td>
+                                                                            <code>W<sub>K</sub></code>)</small>
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td data-label="Component Name"><strong>Value
@@ -4372,7 +4378,8 @@
                                                                     <td data-label="Learnable Parameters"
                                                                         class="stack-mobile">
                                                                         <strong>Yes</strong><br><small>(Weight matrix
-                                                                            <code>W<sub>V</sub></code>)</small></td>
+                                                                            <code>W<sub>V</sub></code>)</small>
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td data-label="Component Name"><strong>Contextual
@@ -4410,7 +4417,8 @@
                                                                         context.</td>
                                                                     <td data-label="Mathematical Representation"
                                                                         class="stack-mobile">
-                                                                        <code>Vector e<sub>i</sub></code></td>
+                                                                        <code>Vector e<sub>i</sub></code>
+                                                                    </td>
                                                                     <td data-label="Role in Mechanism"
                                                                         class="stack-mobile">Acts as the starting point
                                                                         for the transformation; the raw material from
@@ -4422,7 +4430,8 @@
                                                                     <td data-label="Learnable Parameters"
                                                                         class="stack-mobile">
                                                                         <strong>Yes</strong><br><small>(Weights in
-                                                                            embedding layer)</small></td>
+                                                                            embedding layer)</small>
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td data-label="Component Name"><strong>Dot Product
@@ -4445,11 +4454,13 @@
                                                                     <td data-label="Learnable Parameters"
                                                                         class="stack-mobile">
                                                                         <strong>No</strong><br><small>(Fixed
-                                                                            mathematical operation)</small></td>
+                                                                            mathematical operation)</small>
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td data-label="Component Name">
-                                                                        <strong>Softmax</strong></td>
+                                                                        <strong>Softmax</strong>
+                                                                    </td>
                                                                     <td data-label="Description" class="stack-mobile">An
                                                                         activation function that normalizes raw
                                                                         similarity scores into probabilities that sum to
@@ -4470,7 +4481,8 @@
                                                                     <td data-label="Learnable Parameters"
                                                                         class="stack-mobile">
                                                                         <strong>No</strong><br><small>(Fixed
-                                                                            mathematical operation)</small></td>
+                                                                            mathematical operation)</small>
+                                                                    </td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -5161,7 +5173,8 @@ M834 80h400000v40h-400000z"></path>
                                                                     <td data-label="Concept"><strong>Scaling
                                                                             Factor</strong></td>
                                                                     <td data-label="Symbol">
-                                                                        <code>1 / &radic;d<sub>k</sub></code></td>
+                                                                        <code>1 / &radic;d<sub>k</sub></code>
+                                                                    </td>
                                                                     <td data-label="Definition" class="stack-mobile">The
                                                                         factor used to divide the dot product scores
                                                                         before applying the softmax function.</td>
@@ -5174,7 +5187,8 @@ M834 80h400000v40h-400000z"></path>
                                                                         <code>&radic;d<sub>k</sub></code>, the variance
                                                                         is brought back to a constant level, preventing
                                                                         extreme softmax values and the vanishing
-                                                                        gradient problem.</td>
+                                                                        gradient problem.
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td data-label="Concept"><strong>Vector
@@ -5193,7 +5207,8 @@ M834 80h400000v40h-400000z"></path>
                                                                         the variance of the dot product
                                                                         <code>Q &middot; K<sup>T</sup></code> increases
                                                                         linearly (roughly d<sub>k</sub> times the
-                                                                        variance of a 1D vector).</td>
+                                                                        variance of a 1D vector).
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td data-label="Concept"><strong>Softmax
@@ -5217,7 +5232,8 @@ M834 80h400000v40h-400000z"></path>
                                                                     <td data-label="Concept"><strong>Dot Product
                                                                             Variance</strong></td>
                                                                     <td data-label="Symbol">
-                                                                        <code>Var(Q &middot; K<sup>T</sup>)</code></td>
+                                                                        <code>Var(Q &middot; K<sup>T</sup>)</code>
+                                                                    </td>
                                                                     <td data-label="Definition" class="stack-mobile">The
                                                                         statistical spread of the values resulting from
                                                                         the dot product of high-dimensional vectors.
@@ -5361,7 +5377,8 @@ M834 80h400000v40h-400000z"></path>
                                                     <div dir="auto">
                                                         <h3 class="" id="1928a6d6-2b53-805f-959c-d3ab83860020">
                                                             <strong>Step 1:
-                                                                Definition of Variance</strong></h3>
+                                                                Definition of Variance</strong>
+                                                        </h3>
                                                     </div>
                                                     <div dir="auto">
                                                         <p class="" id="1928a6d6-2b53-8029-95d1-d8c9017084a0">The
@@ -5625,7 +5642,8 @@ M834 80h400000v40h-400000z"></path>
                                                     <div dir="auto">
                                                         <h3 class="" id="1928a6d6-2b53-8010-af21-e1738b42afbf">
                                                             <strong>Step 2:
-                                                                Define the Scaled Random Variable</strong></h3>
+                                                                Define the Scaled Random Variable</strong>
+                                                        </h3>
                                                     </div>
                                                     <div dir="auto">
                                                         <p class="" id="1928a6d6-2b53-8069-877b-fb654b9312f7">We define
@@ -5715,7 +5733,8 @@ M834 80h400000v40h-400000z"></path>
                                                                                     class="strut"
                                                                                     style="height:0.4306em;"></span><span
                                                                                     class="mord mathnormal">c</span></span></span></span></span><span>﻿</span></span>
-                                                            is a constant.</p>
+                                                            is a constant.
+                                                        </p>
                                                     </div>
                                                     <div dir="auto">
                                                         <h3 class="" id="1928a6d6-2b53-806f-b927-c2ec7d487c7e">
@@ -5827,7 +5846,8 @@ M834 80h400000v40h-400000z"></path>
                                                     <div dir="auto">
                                                         <h3 class="" id="1928a6d6-2b53-802c-a72e-fd140cb19b81">
                                                             <strong>Step 4:
-                                                                Compute the Variance of YY</strong></h3>
+                                                                Compute the Variance of YY</strong>
+                                                        </h3>
                                                     </div>
                                                     <div dir="auto">
                                                         <p class="" id="1928a6d6-2b53-8007-910b-c094b4773148">By
@@ -6528,7 +6548,8 @@ M834 80h400000v40h-400000z"></path>
                                                     <div dir="auto">
                                                         <h3 class="" id="1928a6d6-2b53-8010-89ac-ec96c6d2d697">
                                                             <strong>Scaling
-                                                                Key Mathematical Concepts:</strong></h3>
+                                                                Key Mathematical Concepts:</strong>
+                                                        </h3>
                                                     </div>
                                                     <div dir="auto">
                                                         <ol class="numbered-list"
@@ -7413,7 +7434,8 @@ M834 80h400000v40h-400000z"></path>
                                                     <td data-label="Concept"><strong>Transformation Matrices</strong>
                                                     </td>
                                                     <td data-label="Vector/Matrix Symbol"><code>W<sub>Q</sub></code>,
-                                                        <code>W<sub>K</sub></code>, <code>W<sub>V</sub></code></td>
+                                                        <code>W<sub>K</sub></code>, <code>W<sub>V</sub></code>
+                                                    </td>
                                                     <td data-label="Role in Self-Attention" class="stack-mobile">
                                                         Learnable parameters used to project word embeddings into
                                                         specific functional spaces (Query, Key, Value).</td>
@@ -7439,7 +7461,8 @@ M834 80h400000v40h-400000z"></path>
                                                     <td data-label="Mathematical Operation" class="stack-mobile">
                                                         <code>q = E &middot; W<sub>Q</sub></code>;
                                                         <code>k = E &middot; W<sub>K</sub></code>;
-                                                        <code>v = E &middot; W<sub>V</sub></code></td>
+                                                        <code>v = E &middot; W<sub>V</sub></code>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td data-label="Concept"><strong>Similarity/Attention
@@ -7459,7 +7482,8 @@ M834 80h400000v40h-400000z"></path>
                                                     <td data-label="Concept"><strong>Scaling and Normalization</strong>
                                                     </td>
                                                     <td data-label="Vector/Matrix Symbol"><code>Softmax</code>,
-                                                        <code>&sum;w = 1</code></td>
+                                                        <code>&sum;w = 1</code>
+                                                    </td>
                                                     <td data-label="Role in Self-Attention" class="stack-mobile">
                                                         Prevents vanishing/exploding gradients and converts similarity
                                                         scores into probabilistic weights.</td>
@@ -7474,7 +7498,8 @@ M834 80h400000v40h-400000z"></path>
                                                     <td data-label="Concept"><strong>Weighted Sum/Attention
                                                             Output</strong></td>
                                                     <td data-label="Vector/Matrix Symbol"><code>y</code> (e.g.,
-                                                        <code>y<sub>bank</sub></code>)</td>
+                                                        <code>y<sub>bank</sub></code>)
+                                                    </td>
                                                     <td data-label="Role in Self-Attention" class="stack-mobile">The
                                                         final contextual embedding of a word, influenced by all other
                                                         words in the sequence.</td>
@@ -7666,7 +7691,8 @@ M834 80h400000v40h-400000z"></path>
                                                         </li>
                                                         <li style="list-style-type:disc">Consequently, the word
                                                             <strong>bank attends more strongly to itself</strong> under
-                                                            this configuration.</li>
+                                                            this configuration.
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </details>
@@ -7710,11 +7736,13 @@ M834 80h400000v40h-400000z"></path>
                                                         \[ w_{22} = 0.8 \]
                                                     </div>
                                                     <p>This gives the following distribution of attention for
-                                                        <strong>bank</strong>:</p>
+                                                        <strong>bank</strong>:
+                                                    </p>
                                                     <ul class="bulleted-list">
                                                         <li style="list-style-type:disc"><strong>20% attention
                                                                 weight</strong> allocated to the context word
-                                                            <em>money</em>.</li>
+                                                            <em>money</em>.
+                                                        </li>
                                                         <li style="list-style-type:disc"><strong>80% attention
                                                                 weight</strong> allocated to itself (<em>bank</em>).
                                                         </li>
@@ -7991,7 +8019,8 @@ M834 80h400000v40h-400000z"></path>
                                                     <ul class="bulleted-list">
                                                         <li style="list-style-type:disc">Each word (e.g.,
                                                             <code>Money</code>, <code>Bank</code>) is represented as a
-                                                            <strong><code>512</code>-dimensional</strong> vector.</li>
+                                                            <strong><code>512</code>-dimensional</strong> vector.
+                                                        </li>
                                                         <li style="list-style-type:disc">Since there are
                                                             <strong><code>2</code> words</strong> in the sequence, the
                                                             input has a shape of:
@@ -8000,14 +8029,16 @@ M834 80h400000v40h-400000z"></path>
                                                                     <li style="list-style-type:circle"><strong>(\(2
                                                                             \times 512\))</strong> &rarr;
                                                                         (<code>2</code> words, each with
-                                                                        <code>512</code>-dimensional embeddings).</li>
+                                                                        <code>512</code>-dimensional embeddings).
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                         </li>
                                                     </ul>
 
                                                     <h4 style="margin-top: 1.5em;">2. Linear Transformations for
-                                                        <code>Q</code>, <code>K</code>, <code>V</code></h4>
+                                                        <code>Q</code>, <code>K</code>, <code>V</code>
+                                                    </h4>
                                                     <ul class="bulleted-list">
                                                         <li style="list-style-type:disc">The model learns three separate
                                                             weight matrices <strong><code>Wq</code> (query),
@@ -8023,18 +8054,21 @@ M834 80h400000v40h-400000z"></path>
                                                                     <li style="list-style-type:circle"><strong>Weight
                                                                             matrix shape:</strong> \(512 \times 64\) for
                                                                         <code>Wq</code>, <code>Wk</code>, and
-                                                                        <code>Wv</code>.</li>
+                                                                        <code>Wv</code>.
+                                                                    </li>
                                                                     <li style="list-style-type:circle"><strong>Q, K, V
                                                                             output shape per head:</strong> \(2 \times
                                                                         64\) &rarr; (<code>2</code> words,
-                                                                        <code>64</code> features per word).</li>
+                                                                        <code>64</code> features per word).
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                         </li>
                                                         <li style="list-style-type:disc">This results in
                                                             <strong><code>8</code> separate <code>Q</code>,
                                                                 <code>K</code>, <code>V</code> matrices</strong>, each
-                                                            of size <strong>(\(2 \times 64\))</strong>.</li>
+                                                            of size <strong>(\(2 \times 64\))</strong>.
+                                                        </li>
                                                     </ul>
 
                                                     <h4 style="margin-top: 1.5em;">3. Multi-Head Attention Processing
@@ -8042,11 +8076,13 @@ M834 80h400000v40h-400000z"></path>
                                                     <ul class="bulleted-list">
                                                         <li style="list-style-type:disc"><strong><code>8</code>
                                                                 independent attention heads</strong> compute
-                                                            <code>self-attention</code> separately.</li>
+                                                            <code>self-attention</code> separately.
+                                                        </li>
                                                         <li style="list-style-type:disc">Each head processes its
                                                             <strong>(\(2 \times 64\)) <code>Q</code>, <code>K</code>,
                                                                 <code>V</code> matrices</strong> and produces an output
-                                                            of <strong>(\(2 \times 64\))</strong>.</li>
+                                                            of <strong>(\(2 \times 64\))</strong>.
+                                                        </li>
                                                         <li style="list-style-type:disc">The outputs from all
                                                             <strong><code>8</code> heads</strong> are concatenated
                                                             together:
@@ -8068,7 +8104,8 @@ M834 80h400000v40h-400000z"></path>
                                                     <ul class="bulleted-list">
                                                         <li style="list-style-type:disc">A learned weight matrix
                                                             <strong><code>W₀</code></strong> (\(512 \times 512\)) is
-                                                            applied to the concatenated output.</li>
+                                                            applied to the concatenated output.
+                                                        </li>
                                                         <li style="list-style-type:disc">This projects the multi-head
                                                             attention output back into the original input space:
                                                             <div dir="auto">
@@ -8111,12 +8148,14 @@ M834 80h400000v40h-400000z"></path>
                                                                         complexity from &rarr;
                                                                         <strong>\(O(512^2)\)</strong> &rarr; to
                                                                         <strong>\(8 \times O(64^2) = O(8 \times 4096) =
-                                                                            O(32768)\)</strong>.</li>
+                                                                            O(32768)\)</strong>.
+                                                                    </li>
                                                                     <li style="list-style-type:circle">Which is
                                                                         significantly more efficient than
                                                                         <strong>\(O(512^2) = O(262144)\)</strong> (an 8x
                                                                         reduction in total dot product variance
-                                                                        operations!).</li>
+                                                                        operations!).
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                         </li>
@@ -8202,7 +8241,8 @@ M834 80h400000v40h-400000z"></path>
                                                     <p style="margin-top: 1em;">This structure makes transformers both
                                                         <strong>powerful</strong> and <strong>computationally
                                                             efficient</strong>, enabling superior performance in NLP
-                                                        tasks. 🚀</p>
+                                                        tasks. 🚀
+                                                    </p>
                                                 </div>
                                             </details>
                                         </li>
@@ -8238,7 +8278,8 @@ M834 80h400000v40h-400000z"></path>
                                                                         tokens in a sequence, resulting in
                                                                         <strong>\(O(N^2)\)</strong> time and memory
                                                                         complexity for a sequence of length
-                                                                        <code>N</code>.</li>
+                                                                        <code>N</code>.
+                                                                    </li>
                                                                     <li style="list-style-type:disc">This becomes
                                                                         prohibitive for long sequences (e.g., documents
                                                                         or high-resolution images).</li>
@@ -8251,7 +8292,8 @@ M834 80h400000v40h-400000z"></path>
                                                                 relationships (e.g., <code>syntactic</code>,
                                                                 <code>semantic</code>, <code>positional</code>) into a
                                                                 single representation, limiting its ability to capture
-                                                                diverse patterns.</p>
+                                                                diverse patterns.
+                                                            </p>
                                                         </li>
                                                         <li style="margin-top: 1em;"><strong>Over-Smoothing:</strong>
                                                             <p>Aggregating information from all tokens can dilute local
@@ -8304,7 +8346,8 @@ M834 80h400000v40h-400000z"></path>
                                                             specializes in different types of relationships (e.g.,
                                                             <strong>one head focuses on syntax, another on
                                                                 semantics</strong>). This mitigates homogenization by
-                                                            capturing varied patterns across heads.</li>
+                                                            capturing varied patterns across heads.
+                                                        </li>
                                                         <li style="margin-top: 1em;"><strong>Increased Representational
                                                                 Capacity:</strong> By splitting into subspaces, the
                                                             model learns richer features. For example:
@@ -8369,7 +8412,8 @@ M834 80h400000v40h-400000z"></path>
                                                         <li style="list-style-type:disc">
                                                             <strong>Interpretability:</strong> While heads may
                                                             specialize, their roles are not explicitly enforced and can
-                                                            overlap unpredictably.</li>
+                                                            overlap unpredictably.
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </details>
@@ -8392,7 +8436,8 @@ M834 80h400000v40h-400000z"></path>
                                         <li style="list-style-type:disc"><strong>What gets combined:</strong> final
                                             input vector = <code>token embedding</code> +
                                             <code>positional encoding</code>, so every token carries both meaning and
-                                            order.</li>
+                                            order.
+                                        </li>
                                         <li style="list-style-type:disc"><strong>Why sine and cosine:</strong> they
                                             create bounded, smooth, multi-frequency patterns that make nearby and
                                             distant positions distinguishable.</li>
@@ -8435,7 +8480,8 @@ M834 80h400000v40h-400000z"></path>
                                                         know which token came first, second, or last.</li>
                                                     <li style="list-style-type:disc"><strong>Need:</strong> every token
                                                         needs a position-aware signal so the model can distinguish
-                                                        <code>man bites dog</code> from <code>dog bites man</code>.</li>
+                                                        <code>man bites dog</code> from <code>dog bites man</code>.
+                                                    </li>
                                                     <li style="list-style-type:disc"><strong>Placement:</strong>
                                                         positional information is injected at the input stage, before
                                                         queries, keys, and values are created.</li>
@@ -8501,7 +8547,8 @@ M834 80h400000v40h-400000z"></path>
                                                     <li style="list-style-type:disc"><strong>Better direction:</strong>
                                                         use smooth bounded functions, especially <code>sin</code> and
                                                         <code>cos</code>, so each position becomes a controlled vector
-                                                        pattern.</li>
+                                                        pattern.
+                                                    </li>
                                                 </ul>
                                             </div>
                                             <div dir="auto">
@@ -8920,7 +8967,8 @@ M834 80h400000v40h-400000z"></path>
                                                 <ul class="bulleted-list">
                                                     <li style="list-style-type:disc"><strong>Denominator role:</strong>
                                                         <code>10000^(2i/d_model)</code> controls the wavelength assigned
-                                                        to each sine-cosine pair.</li>
+                                                        to each sine-cosine pair.
+                                                    </li>
                                                     <li style="list-style-type:disc"><strong>Small dimensions:</strong>
                                                         smaller <code>i</code> values produce faster oscillations for
                                                         fine local distinctions.</li>
@@ -9106,7 +9154,8 @@ M834 80h400000v40h-400000z"></path>
                                                                 <li style="list-style-type:disc">
                                                                     <strong>Example:</strong> if the word embedding is
                                                                     <code>6D</code>, the positional encoding must also
-                                                                    be <code>6D</code>.</li>
+                                                                    be <code>6D</code>.
+                                                                </li>
                                                                 <li style="list-style-type:disc"><strong>Architecture
                                                                         benefit:</strong> the encoder and decoder can
                                                                     keep using a consistent hidden size across all
@@ -9641,7 +9690,8 @@ M834 80h400000v40h-400000z"></path>
                                                                 <li style="list-style-type:disc"><strong>Frequency is
                                                                         dimension-specific:</strong> each sine-cosine
                                                                     pair uses a different scale controlled by
-                                                                    <code>i</code>.</li>
+                                                                    <code>i</code>.
+                                                                </li>
                                                                 <li style="list-style-type:disc"><strong>Left-side
                                                                         dimensions:</strong> faster waves are useful for
                                                                     detecting small local shifts between neighboring
@@ -9812,7 +9862,8 @@ M834 80h400000v40h-400000z"></path>
                                                                 <li style="list-style-type:disc"><strong>Code
                                                                         purpose:</strong> precompute a positional
                                                                     encoding matrix with shape
-                                                                    <code>(max_len, d_model)</code>.</li>
+                                                                    <code>(max_len, d_model)</code>.
+                                                                </li>
                                                                 <li style="list-style-type:disc"><strong>Buffer
                                                                         usage:</strong> <code>register_buffer</code>
                                                                     stores positional encodings with the module but
@@ -9825,7 +9876,8 @@ M834 80h400000v40h-400000z"></path>
                                                                         reading:</strong> rows are positions, columns
                                                                     are embedding dimensions, and colors show
                                                                     sine-cosine values between <code>-1</code> and
-                                                                    <code>1</code>.</li>
+                                                                    <code>1</code>.
+                                                                </li>
                                                             </ul>
                                                             <script crossorigin="anonymous"
                                                                 integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg=="
@@ -10150,7 +10202,8 @@ seq_len = 10, 50, 100, 500    # Number of tokens (positions)</code></pre>
                                                                         property:</strong> for a fixed shift
                                                                     <code>k</code>, <code>PE(pos + k)</code> can be
                                                                     represented as a linear transformation of
-                                                                    <code>PE(pos)</code>.</li>
+                                                                    <code>PE(pos)</code>.
+                                                                </li>
                                                                 <li style="list-style-type:disc"><strong>Why sine-cosine
                                                                         pairs matter:</strong> each pair behaves like a
                                                                     tiny rotation system, making shifts predictable.
@@ -10610,7 +10663,8 @@ seq_len = 10, 50, 100, 500    # Number of tokens (positions)</code></pre>
                                                         creates a <code>1024</code>-dimensional input.</li>
                                                     <li style="list-style-type:disc"><strong>Attention matrices stay
                                                             smaller:</strong> fixed width avoids larger <code>Wq</code>,
-                                                        <code>Wk</code>, and <code>Wv</code> projections.</li>
+                                                        <code>Wk</code>, and <code>Wv</code> projections.
+                                                    </li>
                                                     <li style="list-style-type:disc"><strong>Learning remains
                                                             flexible:</strong> later linear layers can learn how much
                                                         semantic and positional signal to use from the combined vector.
@@ -10666,7 +10720,8 @@ seq_len = 10, 50, 100, 500    # Number of tokens (positions)</code></pre>
                                                     <li style="list-style-type:disc"><strong>Meaning depends on
                                                             order:</strong> <code>river bank</code> and
                                                         <code>bank river</code> contain similar words, but the useful
-                                                        interpretation changes with position.</li>
+                                                        interpretation changes with position.
+                                                    </li>
                                                     <li style="list-style-type:disc"><strong>Self-attention needs a
                                                             clue:</strong> the model must know whether <code>bank</code>
                                                         appears near, after, or before <code>river</code>.</li>
@@ -10862,7 +10917,8 @@ seq_len = 10, 50, 100, 500    # Number of tokens (positions)</code></pre>
                                                     <li style="list-style-type:disc"><strong>Implementation
                                                             answer:</strong> create a
                                                         <code>(sequence_length, d_model)</code> matrix and add the
-                                                        matching row to each token embedding.</li>
+                                                        matching row to each token embedding.
+                                                    </li>
                                                     <li style="list-style-type:disc"><strong>Concept answer:</strong>
                                                         sine-cosine frequencies provide bounded, smooth, unique, and
                                                         relative-position-friendly patterns.</li>
@@ -11294,7 +11350,8 @@ seq_len = 10, 50, 100, 500    # Number of tokens (positions)</code></pre>
                                                     <li style="list-style-type:disc"><strong>Final mental
                                                             model:</strong> embeddings answer
                                                         <code>what token is this?</code>; positional encodings answer
-                                                        <code>where is this token?</code></li>
+                                                        <code>where is this token?</code>
+                                                    </li>
                                                 </ul>
                                                 <ul class="bulleted-list" id="1948a6d6-2b53-80f0-b040-d396482d93a1">
                                                     <li style="list-style-type:disc"><strong>Positional Encoding
@@ -11370,7 +11427,8 @@ seq_len = 10, 50, 100, 500    # Number of tokens (positions)</code></pre>
                                             batch-level statistics.</li>
                                         <li style="list-style-type:disc"><strong>Where it appears:</strong> LayerNorm is
                                             used inside every Transformer block around the residual paths, commonly in
-                                            <code>Add &amp; Norm</code> components.</li>
+                                            <code>Add &amp; Norm</code> components.
+                                        </li>
                                         <li style="list-style-type:disc"><strong>Study path:</strong> first understand
                                             generic normalization, then compare normalization types, then see why
                                             BatchNorm is weak for variable-length sequences, and finally why LayerNorm
@@ -19966,7 +20024,8 @@ M834 80h400000v40h-400000z"></path>
                                             <ul class="bulleted-list">
                                                 <li style="list-style-type:disc"><strong>Input shape intuition:</strong>
                                                     an encoder layer receives one vector per token, usually shaped like
-                                                    <code>(sequence_length, d_model)</code> per example.</li>
+                                                    <code>(sequence_length, d_model)</code> per example.
+                                                </li>
                                                 <li style="list-style-type:disc"><strong>Self-attention phase:</strong>
                                                     each token attends to every other input token to gather context.
                                                 </li>
@@ -26938,7 +26997,8 @@ M834 80h400000v40h-400000z"></path>
                                                         </tr>
                                                         <tr>
                                                             <td data-label="Decoder Component">
-                                                                <strong>Cross-Attention</strong></td>
+                                                                <strong>Cross-Attention</strong>
+                                                            </td>
                                                             <td data-label="What It Looks At">Encoder memory from the
                                                                 source sequence.</td>
                                                             <td data-label="Why It Matters">Lets each generated token
