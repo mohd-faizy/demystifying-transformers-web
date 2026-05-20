@@ -373,29 +373,92 @@ body.dark-mode .hero h1 {
 }
 
 .note-content details {
-  margin: 16px 0;
+  margin: 20px 0;
   border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 8px 24px rgba(31, 41, 51, 0.04);
+  border-left: 4px solid var(--line) !important;
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: 0 4px 12px rgba(31, 41, 51, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+body.dark-mode .note-content details {
+  background: var(--panel);
+  border-color: var(--line);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .note-content details details {
   box-shadow: none;
-  margin: 10px 0;
+  margin: 12px 0 12px 6px;
+  border-left-width: 3px !important;
+}
+
+.note-content details[open] {
+  box-shadow: 0 12px 28px rgba(31, 41, 51, 0.05);
+  border-color: rgba(15, 118, 110, 0.25);
+}
+
+body.dark-mode .note-content details[open] {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  border-color: rgba(45, 212, 191, 0.2);
 }
 
 .note-content summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   cursor: pointer;
-  padding: 14px 16px;
-  color: #162032;
-  font-weight: 800 !important;
-  line-height: 1.3 !important;
+  padding: 16px 20px;
+  color: var(--ink);
+  font-weight: 700;
+  line-height: 1.4;
+  list-style: none; /* Hide standard arrow in Chrome/Firefox */
+  transition: background 0.2s ease, color 0.2s ease;
+  border-bottom: 1px solid transparent;
 }
 
-.note-content details>.indented,
-.note-content details>div {
-  padding: 0 16px 16px;
+.note-content summary::-webkit-details-marker {
+  display: none; /* Hide standard arrow in Safari */
+}
+
+/* Custom interactive rotating chevron */
+.note-content summary::after {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  margin-left: 12px;
+  flex-shrink: 0;
+}
+
+.note-content summary:hover {
+  background: var(--soft);
+  color: var(--accent);
+}
+
+.note-content summary:hover::after {
+  border-color: var(--accent);
+}
+
+.note-content details[open] > summary {
+  border-bottom: 1px solid var(--line);
+  background: var(--soft);
+}
+
+.note-content details[open] > summary::after {
+  transform: rotate(-135deg) translateY(-2px) translateX(-2px);
+  border-color: var(--accent);
+}
+
+.note-content details > .indented,
+.note-content details > div {
+  padding: 20px 24px;
 }
 
 .note-content mark {
