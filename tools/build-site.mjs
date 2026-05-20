@@ -270,7 +270,7 @@ a { color: inherit; }
 }
 .note-content {
   max-width: 100%;
-  color: #2f3742;
+  color: var(--ink);
 }
 .note-content .indented {
   padding-left: clamp(10px, 2vw, 22px);

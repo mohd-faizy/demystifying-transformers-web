@@ -247,9 +247,12 @@
                     </li>
                     <li><a href="#part-2">Encoder and Decoder Architecture Walkthrough</a>
                         <ul>
-                            <li><a href="#encoder">Encoder:</a>
+                            <li><a href="#encoder">Encoder: Source-Side Understanding Stack</a>
                                 <ul>
-                                    <li><a href="#questions-2">Questions</a>
+                                    <li><a href="#encoder-transformer-overview">1. Complete Transformer Architecture Overview</a></li>
+                                    <li><a href="#encoder-layer-tensor-flow">2. Single Encoder Layer Tensor Flow</a></li>
+                                    <li><a href="#encoder-final-takeaways">3. Encoder Final Takeaways</a></li>
+                                    <li><a href="#questions-2">4. Encoder Practice Questions</a>
                                         <ul>
                                             <li><a
                                                     href="#why-we-use-residual-connections-or-skip-connections-in-transformers">🔴
@@ -269,9 +272,9 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li><a href="#decoder">Decoder:</a>
+                            <li><a href="#decoder">Decoder: Target-Side Generation Stack</a>
                                 <ul>
-                                    <li><a href="#masked-self-attention">Masked Self Attention</a>
+                                    <li><a href="#masked-self-attention">1. Masked Self-Attention</a>
                                         <ul>
                                             <li><a
                                                     href="#the-statement-the-transformer-decoder-is-autoregressive-at-inference-time-and-non-autoregressive-at-training-time">The
@@ -345,7 +348,7 @@
                                             <li><a href="#5-critical-summary">5. Critical Summary</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href="#cross-attention-in-transformers">Cross Attention in Transformers</a>
+                                    <li><a href="#cross-attention-in-transformers">2. Cross-Attention in Transformers</a>
                                         <ul>
                                             <li><a href="#overview">Overview</a></li>
                                             <li><a href="#key-aspects-of-cross-attention">Key Aspects of
@@ -386,9 +389,9 @@
                                                     attention</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href="#decoder-training-non-auto-regressive">Decoder
+                                    <li><a href="#decoder-training-non-auto-regressive">3. Decoder
                                             [Training]Non-Auto-regressive</a></li>
-                                    <li><a href="#decoder-inference-auto-regressive">Decoder
+                                    <li><a href="#decoder-inference-auto-regressive">4. Decoder
                                             [Inference]Auto-regressive</a>
                                         <ul>
                                             <li><a href="#at-time-step-1">At time-step → 1</a></li>
@@ -403,6 +406,7 @@
                                                     step?</a></li>
                                         </ul>
                                     </li>
+                                    <li><a href="#decoder-final-takeaways">5. Decoder Final Takeaways</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -16749,6 +16753,7 @@ M834 80h400000v40h-400000z"></path>
                                         </div>
                                     </details>
                                 </div>
+                                
                             </div>
                         </details>
                     </div>
@@ -16767,6 +16772,15 @@ M834 80h400000v40h-400000z"></path>
                 </div>
                 <article class="note-shell note-content">
                     <div dir="auto">
+                        <ul class="bulleted-list">
+                            <li style="list-style-type:disc"><strong>Architecture map:</strong> the Transformer is built from two cooperating stacks: the <strong>encoder</strong>, which reads and contextualizes the source sequence, and the <strong>decoder</strong>, which generates the target sequence step by step.</li>
+                            <li style="list-style-type:disc"><strong>Encoder job:</strong> convert input tokens into contextual memory vectors that capture meaning, order, and relationships across the whole input sentence.</li>
+                            <li style="list-style-type:disc"><strong>Decoder job:</strong> use previously generated target tokens plus encoder memory to predict the next token.</li>
+                            <li style="list-style-type:disc"><strong>Key distinction:</strong> encoder self-attention can see the full input sequence, while decoder masked self-attention must hide future target tokens.</li>
+                            <li style="list-style-type:disc"><strong>Learning path:</strong> start with the encoder flow, then study decoder masking, then cross-attention, then training vs inference behavior.</li>
+                        </ul>
+                    </div>
+                    <div dir="auto">
                         <h1 class="" id="19a8a6d6-2b53-80af-8c78-db390e8db2b3"><mark
                                 class="highlight-yellow">Transformer Architecture:</mark></h1>
                     </div>
@@ -16777,8 +16791,16 @@ M834 80h400000v40h-400000z"></path>
                     </div>
                     <div dir="auto">
                         <details id="encoder">
-                            <summary class="pro-heading style-h2">Encoder:</summary>
+                            <summary class="pro-heading style-h2">Encoder: Source-Side Understanding Stack</summary>
                             <div class="indented">
+                                <div dir="auto">
+                                    <ul class="bulleted-list">
+                                        <li style="list-style-type:disc"><strong>Purpose:</strong> the encoder reads the entire input sequence at once and builds contextual representations for every token.</li>
+                                        <li style="list-style-type:disc"><strong>Input:</strong> token embeddings plus positional encodings.</li>
+                                        <li style="list-style-type:disc"><strong>Main sublayers:</strong> multi-head self-attention, residual connection, layer normalization, feed-forward network, another residual connection, and another layer normalization.</li>
+                                        <li style="list-style-type:disc"><strong>Output:</strong> a sequence of memory vectors consumed by the decoder's cross-attention layer.</li>
+                                    </ul>
+                                </div>
                                 <div dir="auto">
                                     <hr id="19b8a6d6-2b53-8017-b319-e8b61c81022c" />
                                 </div>
@@ -16786,12 +16808,20 @@ M834 80h400000v40h-400000z"></path>
                                 <!-- ==========================================
                                      TOGGLE 1: Complete Transformer Architecture
                                      ========================================== -->
-                                <details style="margin: 24px 0 28px 0;">
+                                <details id="encoder-transformer-overview" style="margin: 24px 0 28px 0;">
                                     <summary class="pro-heading style-h3"
                                         style="--h3-bg: rgba(37,99,235,0.06); --h3-border: rgba(37,99,235,0.18); --h3-border-left: #2563eb; --h3-text: #1d4ed8;">
-                                        Complete Transformer Architecture (Encoder &amp; Decoder Overview)
+                                        1. Complete Transformer Architecture (Encoder &amp; Decoder Overview)
                                     </summary>
                                     <div class="indented" style="margin-top: 16px;">
+                                        <div dir="auto">
+                                            <ul class="bulleted-list">
+                                                <li style="list-style-type:disc"><strong>Read the diagram left to right:</strong> encoder processes source tokens; decoder consumes target tokens and encoder memory; final linear + softmax predicts the next token.</li>
+                                                <li style="list-style-type:disc"><strong>Encoder stack:</strong> repeated <code>N = 6</code> times in the original paper, with each layer refining token context.</li>
+                                                <li style="list-style-type:disc"><strong>Decoder stack:</strong> also repeated <code>N = 6</code> times, but each layer has an extra cross-attention block that attends to encoder output.</li>
+                                                <li style="list-style-type:disc"><strong>Residual pathways:</strong> each major sublayer is wrapped with skip connection plus normalization to preserve gradient flow and stabilize training.</li>
+                                            </ul>
+                                        </div>
                                         <div dir="ltr">
                                             <figure class="image" id="19b8a6d6-2b53-8091-93ef-ff567f72d297"><a
                                                     href="assets/images/part-2/02.png"><img
@@ -16947,12 +16977,20 @@ M834 80h400000v40h-400000z"></path>
                                 <!-- ==========================================
                                      TOGGLE 2: Single Encoder Layer Data Flow
                                      ========================================== -->
-                                <details style="margin: 24px 0 28px 0;">
+                                <details id="encoder-layer-tensor-flow" style="margin: 24px 0 28px 0;">
                                     <summary class="pro-heading style-h3"
                                         style="--h3-bg: rgba(124,58,237,0.06); --h3-border: rgba(124,58,237,0.18); --h3-border-left: #7c3aed; --h3-text: #6d28d9;">
-                                        Single Encoder Layer: Step-by-Step Tensor Data Flow
+                                        2. Single Encoder Layer: Step-by-Step Tensor Data Flow
                                     </summary>
                                     <div class="indented" style="margin-top: 16px;">
+                                        <div dir="auto">
+                                            <ul class="bulleted-list">
+                                                <li style="list-style-type:disc"><strong>Input shape intuition:</strong> an encoder layer receives one vector per token, usually shaped like <code>(sequence_length, d_model)</code> per example.</li>
+                                                <li style="list-style-type:disc"><strong>Self-attention phase:</strong> each token attends to every other input token to gather context.</li>
+                                                <li style="list-style-type:disc"><strong>Feed-forward phase:</strong> each contextual token vector is transformed independently by the same position-wise network.</li>
+                                                <li style="list-style-type:disc"><strong>Output preservation:</strong> the layer returns the same sequence length and hidden width, allowing layers to be stacked cleanly.</li>
+                                            </ul>
+                                        </div>
                                         <div dir="ltr">
                                             <figure class="image" id="19b8a6d6-2b53-8028-a026-e365379485ca"><a
                                                     href="assets/images/part-2/03.png"><img
@@ -17176,8 +17214,23 @@ M834 80h400000v40h-400000z"></path>
                                     </ul>
                                 </div>
                                 <div dir="auto">
+                                    <details id="encoder-final-takeaways">
+                                        <summary class="pro-heading style-h3">3. Encoder Final Takeaways</summary>
+                                        <div class="indented">
+                                            <div dir="auto">
+                                                <ul class="bulleted-list">
+                                                    <li style="list-style-type:disc"><strong>The encoder is not a generator:</strong> it does not predict output words directly; it produces memory representations for the decoder.</li>
+                                                    <li style="list-style-type:disc"><strong>Every token becomes contextual:</strong> after self-attention, each token vector contains information from the surrounding input tokens.</li>
+                                                    <li style="list-style-type:disc"><strong>FFN adds per-token transformation:</strong> after attention mixes information across positions, the feed-forward network deepens each token representation independently.</li>
+                                                    <li style="list-style-type:disc"><strong>Add &amp; Norm keeps the stack trainable:</strong> residual connections preserve information flow, while LayerNorm stabilizes the representation after each sublayer.</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </details>
+                                </div>
+                                <div dir="auto">
                                     <details id="questions-2">
-                                        <summary class="pro-heading style-h2">Questions</summary>
+                                        <summary class="pro-heading style-h3">4. Encoder Practice Questions</summary>
                                         <div class="indented">
                                             <div dir="auto">
                                                 <ul class="toggle" id="19a8a6d6-2b53-8051-be63-c280f5d3f041">
@@ -18334,13 +18387,29 @@ M834 80h400000v40h-400000z"></path>
                     </div>
                     <div dir="auto">
                         <details id="decoder">
-                            <summary class="pro-heading style-h2">Decoder:</summary>
+                            <summary class="pro-heading style-h2">Decoder: Target-Side Generation Stack</summary>
                             <div class="indented">
                                 <div dir="auto">
+                                    <ul class="bulleted-list">
+                                        <li style="list-style-type:disc"><strong>Purpose:</strong> the decoder generates the output sequence by repeatedly predicting the next token.</li>
+                                        <li style="list-style-type:disc"><strong>Inputs:</strong> shifted target tokens during training, or previously generated tokens during inference.</li>
+                                        <li style="list-style-type:disc"><strong>Three attention-related stages:</strong> masked self-attention over target tokens, cross-attention over encoder memory, and feed-forward transformation.</li>
+                                        <li style="list-style-type:disc"><strong>Key safety rule:</strong> the decoder must not look at future target tokens when learning or generating, which is why masking is essential.</li>
+                                    </ul>
+                                </div>
+                                <div dir="auto">
                                     <details id="masked-self-attention">
-                                        <summary class="pro-heading style-h3"><strong>Masked Self Attention</strong>
+                                        <summary class="pro-heading style-h3"><strong>1. Masked Self-Attention: Preventing Future Token Leakage</strong>
                                         </summary>
                                         <div class="indented">
+                                            <div dir="auto">
+                                                <ul class="bulleted-list">
+                                                    <li style="list-style-type:disc"><strong>What it masks:</strong> each target position can attend only to itself and earlier target positions.</li>
+                                                    <li style="list-style-type:disc"><strong>Why it matters:</strong> without the mask, training would leak future answers into the current prediction.</li>
+                                                    <li style="list-style-type:disc"><strong>Training behavior:</strong> all target positions can be processed in parallel because the mask enforces the causal rule.</li>
+                                                    <li style="list-style-type:disc"><strong>Inference behavior:</strong> generation is autoregressive, so tokens are produced one by one and appended to the decoder input.</li>
+                                                </ul>
+                                            </div>
                                             <div dir="ltr">
                                                 <table class="simple-table" id="19b8a6d6-2b53-801b-af99-cf815ebecec9">
                                                     <thead class="simple-table-header">
@@ -21045,9 +21114,16 @@ M834 80h400000v40h-400000z"></path>
                                 </div>
                                 <div dir="auto">
                                     <details id="cross-attention-in-transformers">
-                                        <summary class="pro-heading style-h3"><strong>Cross Attention in
-                                                Transformers</strong></summary>
+                                        <summary class="pro-heading style-h3"><strong>2. Cross-Attention: Connecting Decoder Tokens to Encoder Memory</strong></summary>
                                         <div class="indented">
+                                            <div dir="auto">
+                                                <ul class="bulleted-list">
+                                                    <li style="list-style-type:disc"><strong>Query source:</strong> decoder hidden states produce the queries.</li>
+                                                    <li style="list-style-type:disc"><strong>Key/value source:</strong> encoder output memory produces the keys and values.</li>
+                                                    <li style="list-style-type:disc"><strong>Meaning:</strong> while generating each target token, the decoder can look back at the most relevant source-language tokens.</li>
+                                                    <li style="list-style-type:disc"><strong>Translation intuition:</strong> when predicting an English word, cross-attention lets the decoder align it with the useful Hindi/source words.</li>
+                                                </ul>
+                                            </div>
                                             <div dir="auto">
                                                 <ul class="toggle" id="19c8a6d6-2b53-802c-9f95-f91d05b4f137">
                                                     <li>
@@ -22817,10 +22893,18 @@ M834 80h400000v40h-400000z"></path>
                                 </div>
                                 <div dir="auto">
                                     <details id="decoder-training-non-auto-regressive">
-                                        <summary class="pro-heading style-h3">Decoder [<code>Training</code>]
+                                        <summary class="pro-heading style-h3">3. Decoder During <code>Training</code>:
                                             <code>Non-Auto-regressive</code>
                                         </summary>
                                         <div class="indented">
+                                            <div dir="auto">
+                                                <ul class="bulleted-list">
+                                                    <li style="list-style-type:disc"><strong>Training input:</strong> the decoder receives the shifted correct target sequence, usually through teacher forcing.</li>
+                                                    <li style="list-style-type:disc"><strong>Parallelism:</strong> the model can compute all target positions in parallel because the causal mask prevents future-token leakage.</li>
+                                                    <li style="list-style-type:disc"><strong>Objective:</strong> predict the next correct token at every position and compare predictions with the known target sequence.</li>
+                                                    <li style="list-style-type:disc"><strong>Important nuance:</strong> training is parallel in computation, but the probability model remains autoregressive in its causal structure.</li>
+                                                </ul>
+                                            </div>
                                             <div dir="ltr">
                                                 <figure class="image" id="19e8a6d6-2b53-8063-9fb5-f02d7677bcf1"><a
                                                         href="assets/images/part-2/14.png"><img
@@ -23020,10 +23104,18 @@ M834 80h400000v40h-400000z"></path>
                                 </div>
                                 <div dir="auto">
                                     <details id="decoder-inference-auto-regressive">
-                                        <summary class="pro-heading style-h3">Decoder [<code>Inference</code>]
+                                        <summary class="pro-heading style-h3">4. Decoder During <code>Inference</code>:
                                             <code>Auto-regressive</code>
                                         </summary>
                                         <div class="indented">
+                                            <div dir="auto">
+                                                <ul class="bulleted-list">
+                                                    <li style="list-style-type:disc"><strong>Inference input:</strong> the decoder starts with a start token and then feeds its own previous predictions back into itself.</li>
+                                                    <li style="list-style-type:disc"><strong>Step-by-step generation:</strong> token <code>t</code> cannot be generated until tokens <code>1...t-1</code> already exist.</li>
+                                                    <li style="list-style-type:disc"><strong>Why slower:</strong> each next-token prediction depends on the previous generated sequence, so decoding is sequential.</li>
+                                                    <li style="list-style-type:disc"><strong>Stopping condition:</strong> generation ends when the model predicts an end token or reaches a maximum length.</li>
+                                                </ul>
+                                            </div>
                                             <div dir="ltr">
                                                 <figure class="image" id="1a08a6d6-2b53-8020-9075-d593c1494639"><a
                                                         href="assets/images/part-2/15.png"><img
@@ -23755,6 +23847,55 @@ M834 80h400000v40h-400000z"></path>
                                                 </ul>
                                             </div>
                                             <div dir="auto"></div>
+                                        </div>
+                                    </details>
+                                </div>
+<div dir="auto">
+                                    <details id="decoder-final-takeaways">
+                                        <summary class="pro-heading style-h3">5. Decoder Final Takeaways</summary>
+                                        <div class="indented">
+                                            <div dir="auto">
+                                                <ul class="bulleted-list">
+                                                    <li style="list-style-type:disc"><strong>Masked self-attention</strong> protects causality by blocking access to future target tokens.</li>
+                                                    <li style="list-style-type:disc"><strong>Cross-attention</strong> connects target-side generation to source-side encoder memory.</li>
+                                                    <li style="list-style-type:disc"><strong>Training</strong> is parallel because the correct shifted target sequence is available, but masking still enforces next-token prediction rules.</li>
+                                                    <li style="list-style-type:disc"><strong>Inference</strong> is sequential because the decoder must generate one token, append it, and then generate the next token.</li>
+                                                    <li style="list-style-type:disc"><strong>Linear + softmax</strong> converts the final decoder vector into a probability distribution over the vocabulary.</li>
+                                                </ul>
+                                            </div>
+                                            <div class="tech-table-wrap" style="margin: 24px 0;">
+                                                <table class="tech-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Decoder Component</th>
+                                                            <th>What It Looks At</th>
+                                                            <th>Why It Matters</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td data-label="Decoder Component"><strong>Masked Self-Attention</strong></td>
+                                                            <td data-label="What It Looks At">Previous target tokens only.</td>
+                                                            <td data-label="Why It Matters">Prevents future-token leakage and preserves autoregressive behavior.</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td data-label="Decoder Component"><strong>Cross-Attention</strong></td>
+                                                            <td data-label="What It Looks At">Encoder memory from the source sequence.</td>
+                                                            <td data-label="Why It Matters">Lets each generated token align with relevant input tokens.</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td data-label="Decoder Component"><strong>Feed-Forward Network</strong></td>
+                                                            <td data-label="What It Looks At">Each decoder token representation independently.</td>
+                                                            <td data-label="Why It Matters">Adds non-linear transformation after attention has gathered context.</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td data-label="Decoder Component"><strong>Linear + Softmax</strong></td>
+                                                            <td data-label="What It Looks At">Final decoder hidden vector.</td>
+                                                            <td data-label="Why It Matters">Produces next-token probabilities over the vocabulary.</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </details>
                                 </div>

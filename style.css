@@ -174,6 +174,10 @@ a {
   background: #cbd5e1;
 }
 
+body.dark-mode .sidebar:hover::-webkit-scrollbar-thumb {
+  background: var(--accent); /* Beautiful neon teal scrollbar hover thumb in dark mode */
+}
+
 .content {
   min-width: 0;
 }
@@ -986,6 +990,10 @@ body {
   background-color: var(--panel);
   color: var(--ink);
   border-color: var(--line);
+}
+
+body.dark-mode .note-content {
+  color: var(--ink);
 }
 
 .note-content summary {
@@ -2229,7 +2237,7 @@ body.dark-mode .icon-moon {
 }
 
 body.dark-mode .toggle-thumb {
-  background: #1e293b;
+  background: var(--accent); /* Vibrant neon teal toggle thumb in dark mode */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
@@ -3695,8 +3703,8 @@ body.dark-mode .vocab-table td code {
 
 body.dark-mode .pos-table-wrap {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  border-color: rgba(255, 255, 255, 0.08);
-  background: #111827; /* Rich dark mode gray */
+  border-color: var(--line);
+  background: var(--panel);
 }
 
 .pos-table {
@@ -3709,7 +3717,7 @@ body.dark-mode .pos-table-wrap {
 }
 
 body.dark-mode .pos-table {
-  background: #111827; /* Rich dark mode opaque background backing */
+  background: var(--panel);
 }
 
 /* Stunning gradient header that transitions from accent to secondary color */
@@ -3766,7 +3774,7 @@ body.dark-mode .pos-table tbody td {
 }
 
 body.dark-mode .pos-table tbody tr.highlighted-row td {
-  background: #12222e; /* Solid dark theme highlight (blended 8% teal over #111827) */
+  background: rgba(45, 212, 191, 0.08); /* Glowing translucent cyber-teal highlight */
 }
 
 .pos-table tbody td:first-child {
@@ -3785,7 +3793,7 @@ body.dark-mode .pos-table tbody td:first-child {
 }
 
 body.dark-mode .pos-table tbody tr:hover td {
-  background: #1b2130 !important; /* Solid hover (blended 4% white over #111827) */
+  background: rgba(56, 189, 248, 0.06) !important; /* Beautiful sky blue hover glow */
 }
 
 /* Hover highlights for highlighted row mapped to tds */
@@ -3794,7 +3802,7 @@ body.dark-mode .pos-table tbody tr:hover td {
 }
 
 body.dark-mode .pos-table tbody tr.highlighted-row:hover td {
-  background: #1b2e38 !important; /* Solid highlighted hover (blended 12% teal over #111827) */
+  background: rgba(45, 212, 191, 0.15) !important; /* Glowing highlighted hover */
 }
 
 /* Beautiful custom badges for table data representation */
@@ -3828,7 +3836,7 @@ body.dark-mode .pos-table tbody tr.highlighted-row:hover td {
 }
 
 body.dark-mode .pos-badge-sub {
-  color: #a3a3a3;
+  color: var(--muted);
 }
 
 .pos-badge-sub-warning {
@@ -3957,8 +3965,8 @@ body.dark-mode .pos-table td code {
   }
   
   body.dark-mode .pos-table tbody tr {
-    border-color: rgba(255, 255, 255, 0.08) !important;
-    background: #1f2937 !important;
+    border-color: var(--line) !important;
+    background: var(--panel) !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
   }
 
@@ -3969,8 +3977,8 @@ body.dark-mode .pos-table td code {
   }
 
   body.dark-mode .pos-table tbody tr.highlighted-row {
-    border-color: rgba(15, 118, 110, 0.4) !important;
-    background: #12222e !important;
+    border-color: rgba(45, 212, 191, 0.4) !important;
+    background: rgba(45, 212, 191, 0.08) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
   }
   
@@ -3997,7 +4005,7 @@ body.dark-mode .pos-table td code {
   }
   
   body.dark-mode .pos-table tbody td {
-    border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+    border-bottom-color: var(--line) !important;
   }
   
   .pos-table tbody td:first-child {
