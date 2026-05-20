@@ -8,6 +8,7 @@
     <meta
         content="Clean, systematic notes for learning Transformer architecture from components to encoder and decoder flow."
         name="description" />
+    <link href="assets/favicon.svg" rel="icon" type="image/svg+xml" />
     <link href="style.css" rel="stylesheet" />
 </head>
 
@@ -18,17 +19,13 @@
             document.body.classList.add('dark-mode');
         }
     </script>
-    <div class="cyber-toggle-wrapper">
+    <div class="pro-theme-wrapper desktop-toggle">
         <input aria-label="Toggle dark mode" class="cyber-toggle-checkbox" id="theme-toggle" type="checkbox" />
-        <label class="cyber-toggle" for="theme-toggle">
-            <div class="cyber-toggle-track">
-                <div class="cyber-toggle-track-glow"></div>
-            </div>
+        <label class="pro-theme-toggle" for="theme-toggle">
+            <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <span class="toggle-thumb"></span>
         </label>
-        <div class="cyber-toggle-labels">
-            <span class="cyber-toggle-label-off">Light</span>
-            <span class="cyber-toggle-label-on">Dark</span>
-        </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════
@@ -58,6 +55,16 @@
         </div>
         <div class="drawer-nav" id="drawer-nav-content">
             <!-- nav-list is cloned here by JS at runtime -->
+        </div>
+        <div class="drawer-footer" style="padding: 20px; border-top: 1px solid var(--line); margin-top: 20px;">
+            <div class="pro-theme-wrapper mobile-toggle">
+                <input aria-label="Toggle dark mode" class="cyber-toggle-checkbox" id="theme-toggle-mobile" type="checkbox" />
+                <label class="pro-theme-toggle" for="theme-toggle-mobile">
+                    <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <span class="toggle-thumb"></span>
+                </label>
+            </div>
         </div>
     </nav>
 

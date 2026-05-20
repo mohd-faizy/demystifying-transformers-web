@@ -2164,109 +2164,101 @@ summary.style-h2::before {
 }
 
 /* ================================================================
-   CYBER TOGGLE
+   PROFESSIONAL THEME TOGGLE
    ================================================================ */
-.cyber-toggle-wrapper {
+.pro-theme-wrapper {
   position: fixed;
   top: 20px;
   right: 20px;
   z-index: 9999;
-  animation: cyber-float 4s ease-in-out infinite;
 }
 
 .cyber-toggle-checkbox {
   display: none;
 }
 
-.cyber-toggle {
+.pro-theme-toggle {
+  position: relative;
   display: flex;
   align-items: center;
-  cursor: pointer;
-}
-
-.cyber-toggle-track {
-  position: relative;
-  width: 60px;
-  height: 30px;
+  justify-content: space-between;
+  width: 64px;
+  height: 32px;
   background: var(--soft);
   border: 1px solid var(--line);
-  border-radius: 30px;
-  transition: all 0.3s ease;
+  border-radius: 32px;
+  padding: 0 6px;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.cyber-toggle-track::before {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #fe978a;
-  /* Pale yellow */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.cyber-toggle-checkbox:checked+.cyber-toggle .cyber-toggle-track {
-  background: var(--accent);
+.pro-theme-toggle:hover {
   border-color: var(--accent);
 }
 
-.cyber-toggle-checkbox:checked+.cyber-toggle .cyber-toggle-track::before {
-  transform: translateX(30px);
-  background: #ddc808;
-  /* Pale yellow */
+.icon-sun, .icon-moon {
+  z-index: 1;
+  color: var(--muted);
+  transition: color 0.3s ease;
 }
 
-.cyber-toggle-track-glow {
+.icon-sun {
+  color: #f59e0b; /* Amber */
+}
+
+body.dark-mode .icon-sun {
+  color: var(--muted);
+}
+
+body.dark-mode .icon-moon {
+  color: #60a5fa; /* Blue */
+}
+
+.toggle-thumb {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 30px;
-  box-shadow: 0 0 10px var(--accent);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  top: 2px;
+  left: 2px;
+  width: 26px;
+  height: 26px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
 }
 
-.cyber-toggle-checkbox:checked+.cyber-toggle .cyber-toggle-track-glow {
-  opacity: 0.5;
+body.dark-mode .toggle-thumb {
+  background: #1e293b;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
-.cyber-toggle:hover .cyber-toggle-track::before {
-  background: #fd4747;
-  /* Warm yellow on hover */
-  transform: scale(1.08);
+.cyber-toggle-checkbox:checked + .pro-theme-toggle .toggle-thumb {
+  transform: translateX(32px);
 }
 
-.cyber-toggle-checkbox:checked+.cyber-toggle:hover .cyber-toggle-track::before {
-  background: #fde047;
-  /* Warm yellow on hover */
-  transform: translateX(30px) scale(1.08);
+.cyber-toggle-checkbox:checked + .pro-theme-toggle {
+  background: var(--soft);
 }
 
-.cyber-toggle-checkbox:checked+.cyber-toggle:hover .cyber-toggle-track-glow {
-  opacity: 0.9;
+.mobile-toggle {
+  display: none;
 }
 
-@keyframes cyber-float {
-  0% {
-    transform: translateY(0);
+@media (max-width: 980px) {
+  .desktop-toggle {
+    display: none !important;
   }
-
-  50% {
-    transform: translateY(-4px);
-  }
-
-  100% {
-    transform: translateY(0);
+  .mobile-toggle {
+    display: flex !important;
+    position: static;
+    margin: 0 auto;
+    justify-content: center;
   }
 }
 
 @media (max-width: 640px) {
-  .cyber-toggle-wrapper {
+  .pro-theme-wrapper.desktop-toggle {
     top: 10px;
     right: 10px;
   }

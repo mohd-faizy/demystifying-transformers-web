@@ -1,17 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     /* ── Cyber Theme Toggle (checkbox) ───────────────────────── */
-    const themeToggle = document.getElementById("theme-toggle");
+    const themeToggles = document.querySelectorAll(".cyber-toggle-checkbox");
     const body = document.body;
 
     if (localStorage.getItem("theme") === "dark") {
         body.classList.add("dark-mode");
-        if (themeToggle) themeToggle.checked = true;
+        themeToggles.forEach(t => t.checked = true);
     }
 
-    if (themeToggle) {
-        themeToggle.addEventListener("change", () => {
-            if (themeToggle.checked) {
+    themeToggles.forEach(themeToggle => {
+        themeToggle.addEventListener("change", (e) => {
+            const isDark = e.target.checked;
+            themeToggles.forEach(t => t.checked = isDark);
+            
+            if (isDark) {
                 body.classList.add("dark-mode");
                 localStorage.setItem("theme", "dark");
             } else {
@@ -19,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("theme", "light");
             }
         });
-    }
+    });
 
     /* ── Sidebar collapsible nav ──────────────────────────────── */
     document.querySelectorAll(".nav-list ul").forEach(ul => {
