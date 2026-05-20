@@ -2574,6 +2574,54 @@ body.dark-mode #masked-self-attention[open]>.indented {
   border-left: 3px solid #9ca3af !important;
 }
 
+#positional-encoding-comparison>summary.style-h3 {
+  --h3-bg: rgba(8, 145, 178, 0.06);
+  --h3-border: rgba(8, 145, 178, 0.18);
+  --h3-border-left: #0891b2;
+  --h3-text: #0e7490;
+  --h3-code-bg: rgba(8, 145, 178, 0.1);
+}
+
+body.dark-mode #positional-encoding-comparison>summary.style-h3 {
+  --h3-bg: rgba(34, 211, 238, 0.1);
+  --h3-border: rgba(34, 211, 238, 0.28);
+  --h3-border-left: #22d3ee;
+  --h3-text: #67e8f9;
+  --h3-code-bg: rgba(34, 211, 238, 0.14);
+}
+
+#positional-encoding-comparison[open]>.indented {
+  border-left: 3px solid #0891b2 !important;
+}
+
+body.dark-mode #positional-encoding-comparison[open]>.indented {
+  border-left: 3px solid #22d3ee !important;
+}
+
+#layer-normalization-final-takeaways>summary.style-h3 {
+  --h3-bg: rgba(20, 184, 166, 0.06);
+  --h3-border: rgba(20, 184, 166, 0.18);
+  --h3-border-left: #14b8a6;
+  --h3-text: #0f766e;
+  --h3-code-bg: rgba(20, 184, 166, 0.1);
+}
+
+body.dark-mode #layer-normalization-final-takeaways>summary.style-h3 {
+  --h3-bg: rgba(45, 212, 191, 0.1);
+  --h3-border: rgba(45, 212, 191, 0.28);
+  --h3-border-left: #2dd4bf;
+  --h3-text: #5eead4;
+  --h3-code-bg: rgba(45, 212, 191, 0.14);
+}
+
+#layer-normalization-final-takeaways[open]>.indented {
+  border-left: 3px solid #14b8a6 !important;
+}
+
+body.dark-mode #layer-normalization-final-takeaways[open]>.indented {
+  border-left: 3px solid #2dd4bf !important;
+}
+
 
 /* Fix for code tags inside styled summaries */
 summary.style-h2 code,
@@ -3629,10 +3677,384 @@ body.dark-mode .vocab-table td code {
     gap: 6px;
   }
   
-  .vocab-table tbody td[data-label="Mechanism"]::before,
-  .vocab-table tbody td[data-label="Pros / Strengths"]::before,
-  .vocab-table tbody td[data-label="Cons / Limitations"]::before,
-  .vocab-table tbody td[data-label="Key Applications"]::before {
+  }
+}
+
+/* ================================================================
+   POSITIONAL ENCODING COMPARISON TABLE — High fidelity, responsive
+   ================================================================ */
+.pos-table-wrap {
+  margin: 32px 0;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(15, 118, 110, 0.08); /* Premium subtle theme-accented shadow */
+  border: 1px solid var(--line);
+  background: var(--panel);
+  overflow-x: auto;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark-mode .pos-table-wrap {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #111827; /* Rich dark mode gray */
+}
+
+.pos-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.92rem;
+  min-width: 1100px; /* Spacious, prevents squishing on desktop */
+  background: var(--panel); /* Opaque table background backing */
+}
+
+body.dark-mode .pos-table {
+  background: #111827; /* Rich dark mode opaque background backing */
+}
+
+/* Stunning gradient header that transitions from accent to secondary color */
+.pos-table thead tr {
+  background: linear-gradient(135deg, var(--accent) 0%, #0369a1 100%);
+}
+
+.pos-table thead th {
+  padding: 16px 18px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  color: #ffffff !important;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+/* Column widths on desktop for absolute visual hierarchy and balance */
+.pos-table th:nth-child(1), .pos-table td:nth-child(1) { width: 14%; min-width: 140px; }
+.pos-table th:nth-child(2), .pos-table td:nth-child(2) { width: 18%; min-width: 180px; }
+.pos-table th:nth-child(3), .pos-table td:nth-child(3) { width: 18%; min-width: 180px; }
+.pos-table th:nth-child(4), .pos-table td:nth-child(4) { width: 14%; min-width: 140px; }
+.pos-table th:nth-child(5), .pos-table td:nth-child(5) { width: 12%; min-width: 120px; }
+.pos-table th:nth-child(6), .pos-table td:nth-child(6) { width: 12%; min-width: 130px; text-align: center; }
+.pos-table th:nth-child(7), .pos-table td:nth-child(7) { width: 12%; min-width: 160px; text-align: center; }
+
+.pos-table tbody tr {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pos-table tbody td {
+  padding: 16px 18px;
+  vertical-align: middle;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--panel); /* Solid cell background prevents scroll background leakage */
+  border-bottom: 1px solid var(--line); /* Border on td is fully supported in separate-border collapse mode */
+}
+
+body.dark-mode .pos-table tbody td {
+  color: #d1d5db;
+  background: #111827; /* Rich dark mode cell background */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pos-table tbody tr:last-child td {
+  border-bottom: none; /* Prevent double borders at the very bottom */
+}
+
+/* Style for the highlighting row (Sinusoidal PE) */
+.pos-table tbody tr.highlighted-row td {
+  background: #f8fbfb; /* Solid light theme highlight (blended 3% teal over #ffffff) */
+}
+
+body.dark-mode .pos-table tbody tr.highlighted-row td {
+  background: #12222e; /* Solid dark theme highlight (blended 8% teal over #111827) */
+}
+
+.pos-table tbody td:first-child {
+  font-weight: 700;
+  color: var(--accent) !important;
+  white-space: normal !important;
+}
+
+body.dark-mode .pos-table tbody td:first-child {
+  color: #38bdf8 !important; /* Brighter sky blue in dark mode */
+}
+
+/* Hover highlights for standard rows mapped to tds */
+.pos-table tbody tr:hover td {
+  background: var(--soft) !important;
+}
+
+body.dark-mode .pos-table tbody tr:hover td {
+  background: #1b2130 !important; /* Solid hover (blended 4% white over #111827) */
+}
+
+/* Hover highlights for highlighted row mapped to tds */
+.pos-table tbody tr.highlighted-row:hover td {
+  background: #f1f7f6 !important; /* Solid highlighted hover (blended 6% teal over #ffffff) */
+}
+
+body.dark-mode .pos-table tbody tr.highlighted-row:hover td {
+  background: #1b2e38 !important; /* Solid highlighted hover (blended 12% teal over #111827) */
+}
+
+/* Beautiful custom badges for table data representation */
+.pos-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  white-space: nowrap; /* Prevent any text wrapping inside the badge */
+}
+
+/* Cell badge wrapper for vertical stacking and visual clean-up */
+.pos-cell-badge-wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.pos-badge-sub {
+  font-size: 0.8em;
+  color: var(--muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+body.dark-mode .pos-badge-sub {
+  color: #a3a3a3;
+}
+
+.pos-badge-sub-warning {
+  font-size: 0.78em;
+  font-weight: 600;
+  color: #b45309;
+  white-space: nowrap;
+}
+
+body.dark-mode .pos-badge-sub-warning {
+  color: #fbbf24;
+}
+
+/* Representation badges */
+.pos-badge-vector {
+  background-color: rgba(14, 116, 144, 0.08);
+  color: #0e7490;
+  border: 1px solid rgba(14, 116, 144, 0.15);
+}
+body.dark-mode .pos-badge-vector {
+  background-color: rgba(34, 211, 238, 0.12);
+  color: #22d3ee;
+  border-color: rgba(34, 211, 238, 0.2);
+}
+
+.pos-badge-scalar {
+  background-color: rgba(217, 119, 6, 0.08);
+  color: #d97706;
+  border: 1px solid rgba(217, 119, 6, 0.15);
+}
+body.dark-mode .pos-badge-scalar {
+  background-color: rgba(251, 191, 36, 0.12);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.2);
+}
+
+/* Positional Relationship Badges */
+.pos-badge-absolute {
+  background-color: rgba(109, 40, 217, 0.08);
+  color: #6d28d9;
+  border: 1px solid rgba(109, 40, 217, 0.15);
+}
+body.dark-mode .pos-badge-absolute {
+  background-color: rgba(167, 139, 250, 0.12);
+  color: #a78bfa;
+  border-color: rgba(167, 139, 250, 0.2);
+}
+
+.pos-badge-relative {
+  background-color: rgba(29, 78, 216, 0.08);
+  color: #1d4ed8;
+  border: 1px solid rgba(29, 78, 216, 0.15);
+}
+body.dark-mode .pos-badge-relative {
+  background-color: rgba(96, 165, 250, 0.12);
+  color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.2);
+}
+
+.pos-badge-both {
+  background-color: rgba(4, 120, 87, 0.08);
+  color: #047857;
+  border: 1px solid rgba(4, 120, 87, 0.15);
+}
+body.dark-mode .pos-badge-both {
+  background-color: rgba(52, 211, 153, 0.12);
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.2);
+}
+
+/* Table code styling */
+.pos-table td code {
+  background: rgba(15, 118, 110, 0.04) !important;
+  border: 1px solid rgba(15, 118, 110, 0.12) !important;
+  color: var(--accent) !important;
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85em;
+}
+body.dark-mode .pos-table td code {
+  background: rgba(56, 189, 248, 0.08) !important;
+  border-color: rgba(56, 189, 248, 0.15) !important;
+  color: #38bdf8 !important;
+}
+
+/* ================================================================
+   MOBILE RESPONSIVE LAYOUT — Transforms into elegant cards below 768px
+   ================================================================ */
+@media (max-width: 768px) {
+  .pos-table-wrap {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    margin: 16px 0 !important;
+  }
+  
+  .pos-table {
+    display: block;
+    width: 100% !important;
+    min-width: 0 !important;
+    background: transparent !important;
+    border: none !important;
+  }
+  
+  .pos-table thead {
+    display: none !important;
+  }
+  
+  .pos-table tbody {
+    display: block;
+    width: 100%;
+  }
+  
+  .pos-table tbody tr {
+    display: block;
+    width: 100%;
+    margin-bottom: 24px;
+    border: 1px solid var(--line) !important;
+    border-radius: 14px;
+    padding: 16px 20px;
+    background: var(--panel) !important;
+    box-shadow: 0 4px 15px rgba(31, 41, 51, 0.03) !important;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  body.dark-mode .pos-table tbody tr {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    background: #1f2937 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .pos-table tbody tr.highlighted-row {
+    border: 1px solid rgba(15, 118, 110, 0.3) !important;
+    background: #f8fbfb !important;
+    box-shadow: 0 4px 20px rgba(15, 118, 110, 0.06) !important;
+  }
+
+  body.dark-mode .pos-table tbody tr.highlighted-row {
+    border-color: rgba(15, 118, 110, 0.4) !important;
+    background: #12222e !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+  }
+  
+  .pos-table tbody tr:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(31, 41, 51, 0.06) !important;
+  }
+  
+  body.dark-mode .pos-table tbody tr:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .pos-table tbody td {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0 !important;
+    border: none !important;
+    border-bottom: 1px solid var(--line) !important;
+    width: 100% !important;
+    box-sizing: border-box;
+    background: transparent !important;
+    text-align: right !important;
+  }
+  
+  body.dark-mode .pos-table tbody td {
+    border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+  }
+  
+  .pos-table tbody td:first-child {
+    font-weight: 700;
+    color: var(--accent) !important;
+    font-size: 1.05rem;
+    border-bottom: 2px solid var(--line) !important;
+    padding-bottom: 12px !important;
+    margin-bottom: 6px;
+    justify-content: center !important;
+    text-align: center !important;
+    display: block !important;
+  }
+
+  body.dark-mode .pos-table tbody td:first-child {
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .pos-table tbody td:last-child {
+    border-bottom: none !important;
+  }
+  
+  .pos-badge {
+    margin-left: auto; /* align right inside flex */
+  }
+
+  .pos-cell-badge-wrapper {
+    align-items: flex-end !important; /* Right-align flex children (badge + sub) on mobile */
+    margin-left: auto;
+  }
+
+  .pos-table tbody td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--muted);
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-right: 16px;
+    flex-shrink: 0;
+    text-align: left;
+  }
+  
+  /* Make description, advantages, limitations blocks stack fully for readable paragraph formatting on mobile */
+  .pos-table tbody td[data-label="Approach Description"],
+  .pos-table tbody td[data-label="Key Advantages"],
+  .pos-table tbody td[data-label="Identified Limitations"] {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left !important;
+    padding-top: 12px !important;
+    gap: 6px;
+  }
+  
+  .pos-table tbody td[data-label="Approach Description"]::before,
+  .pos-table tbody td[data-label="Key Advantages"]::before,
+  .pos-table tbody td[data-label="Identified Limitations"]::before {
     margin-bottom: 2px;
     text-align: left;
   }
