@@ -448,12 +448,179 @@ body.dark-mode .hero h1 {
 }
 
 .note-content .bookmark {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
   border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: 14px;
+  padding: 20px 24px;
   text-decoration: none;
-  background: #fff;
+  background: linear-gradient(135deg, #fbfdfd, #f2f8f8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  margin: 28px 0;
+  text-align: left;
+  width: 100%;
+}
+
+body.dark-mode .note-content .bookmark {
+  background: linear-gradient(135deg, #111b27, #080f19);
+  border-color: var(--line);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Subtle gradient indicator on the left */
+.note-content .bookmark::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, var(--accent), var(--accent-2));
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hover animations */
+.note-content .bookmark:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 16px 36px rgba(15, 118, 110, 0.08);
+}
+
+body.dark-mode .note-content .bookmark:hover {
+  box-shadow: 0 16px 36px rgba(45, 212, 191, 0.15);
+  border-color: var(--accent);
+}
+
+.note-content .bookmark:hover::before {
+  width: 6px;
+}
+
+.note-content .bookmark-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.note-content .bookmark-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+
+.note-content .bookmark-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+body.dark-mode .note-content .bookmark-icon-wrapper {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.note-content .bookmark:hover .bookmark-icon-wrapper {
+  transform: scale(1.1);
+}
+
+.note-content .bookmark-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.note-content .bookmark-domain {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.note-content .bookmark-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.note-content .bookmark-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.4;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.note-content .bookmark:hover .bookmark-title {
+  color: var(--accent);
+}
+
+.note-content .bookmark-description {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.note-content .bookmark-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.note-content .bookmark:hover .bookmark-action {
+  background: var(--accent);
+  color: var(--panel);
+  border-color: var(--accent);
+  transform: translateX(4px);
+}
+
+.note-content .bookmark-action .arrow-icon {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+@media (max-width: 640px) {
+  .note-content .bookmark {
+    padding: 16px;
+    gap: 12px;
+  }
+  .note-content .bookmark-action {
+    display: none;
+  }
 }
 
 .equation-container,
