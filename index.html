@@ -465,7 +465,7 @@
         <main class="content">
             <section class="hero" id="overview">
                 <span class="eyebrow">From components to full architecture</span>
-                <h1>Transformer Architecture Notes</h1>
+                <h1>Transformer Architecture Notes - By Mohd Faizy</h1>
             </section>
             <section class="section" id="attention-paper">
                 <div class="section-header">
@@ -10352,25 +10352,45 @@ seq_len = 10, 50, 100, 500    # Number of tokens (positions)</code></pre>
                                                         <div dir="ltr">
                                                             <figure id="1968a6d6-2b53-8079-b800-fa0bc4fadefd">
                                                                 <a class="bookmark source"
-                                                                   href="https://blog.timodenk.com/linear-relationships-in-the-transformers-positional-encoding/"
-                                                                   target="_blank"
-                                                                   rel="noopener noreferrer">
+                                                                    href="https://blog.timodenk.com/linear-relationships-in-the-transformers-positional-encoding/"
+                                                                    target="_blank" rel="noopener noreferrer">
                                                                     <div class="bookmark-info">
                                                                         <div class="bookmark-header">
                                                                             <div class="bookmark-icon-wrapper">
-                                                                                <img class="bookmark-icon" src="https://blog.timodenk.com/favicon.ico" alt="" onerror="this.style.display='none';" />
+                                                                                <img class="bookmark-icon"
+                                                                                    src="https://blog.timodenk.com/favicon.ico"
+                                                                                    alt=""
+                                                                                    onerror="this.style.display='none';" />
                                                                             </div>
-                                                                            <span class="bookmark-domain">blog.timodenk.com</span>
+                                                                            <span
+                                                                                class="bookmark-domain">blog.timodenk.com</span>
                                                                         </div>
                                                                         <div class="bookmark-text">
-                                                                            <div class="bookmark-title">Linear Relationships in the Transformer’s Positional Encoding</div>
-                                                                            <div class="bookmark-description">In June 2017, Vaswani et al. published the paper “Attention Is All You Need” describing the “Transformer” architecture, which is a purely attention based sequence to sequence model. Vaswani et al. use positional encoding to inject information about a token’s position within a sentence. In this post, the author proves the linear relationship between relative positions in the Transformer’s positional encoding.</div>
+                                                                            <div class="bookmark-title">Linear
+                                                                                Relationships in the Transformer’s
+                                                                                Positional Encoding</div>
+                                                                            <div class="bookmark-description">In June
+                                                                                2017, Vaswani et al. published the paper
+                                                                                “Attention Is All You Need” describing
+                                                                                the “Transformer” architecture, which is
+                                                                                a purely attention based sequence to
+                                                                                sequence model. Vaswani et al. use
+                                                                                positional encoding to inject
+                                                                                information about a token’s position
+                                                                                within a sentence. In this post, the
+                                                                                author proves the linear relationship
+                                                                                between relative positions in the
+                                                                                Transformer’s positional encoding.</div>
                                                                         </div>
                                                                     </div>
                                                                     <div class="bookmark-action" aria-hidden="true">
-                                                                        <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                                        <svg class="arrow-icon" viewBox="0 0 24 24"
+                                                                            fill="none" stroke="currentColor"
+                                                                            stroke-width="2.5" stroke-linecap="round"
+                                                                            stroke-linejoin="round">
                                                                             <line x1="5" y1="12" x2="19" y2="12"></line>
-                                                                            <polyline points="12 5 19 12 12 19"></polyline>
+                                                                            <polyline points="12 5 19 12 12 19">
+                                                                            </polyline>
                                                                         </svg>
                                                                     </div>
                                                                 </a>
@@ -19788,16 +19808,18 @@ M834 80h400000v40h-400000z"></path>
                             <div class="indented">
                                 <div dir="auto">
                                     <ul class="bulleted-list">
-                                        <li style="list-style-type:disc"><strong>Purpose:</strong> the encoder reads the
-                                            entire input sequence at once and builds contextual representations for
-                                            every token.</li>
-                                        <li style="list-style-type:disc"><strong>Input:</strong> token embeddings plus
-                                            positional encodings.</li>
-                                        <li style="list-style-type:disc"><strong>Main sublayers:</strong> multi-head
-                                            self-attention, residual connection, layer normalization, feed-forward
-                                            network, another residual connection, and another layer normalization.</li>
-                                        <li style="list-style-type:disc"><strong>Output:</strong> a sequence of memory
-                                            vectors consumed by the decoder's cross-attention layer.</li>
+                                        <li style="list-style-type:disc"><strong>Purpose &amp; Mechanism:</strong> The encoder reads the entire input sequence simultaneously (bidirectionally / in parallel) to build rich, context-aware representations for every token.</li>
+                                        <li style="list-style-type:disc"><strong>Stack Structure:</strong> Composed of a stack of <code>N = 6</code> identical layers, where each layer sequentially refines the token representations.</li>
+                                        <li style="list-style-type:disc"><strong>Input Pipeline:</strong> Receives token embeddings (512-dimensional vectors representing word meaning) combined element-wise with sinusoidal positional encodings to inject sequence order.</li>
+                                        <li style="list-style-type:disc"><strong>Dual Sub-Layers per Block:</strong> Each of the 6 layers contains two core components:
+                                            <ul style="margin-top: 6px;">
+                                                <li style="list-style-type:circle"><strong>Multi-Head Self-Attention:</strong> Allows tokens to dynamically calculate relevance scores and aggregate context from all other tokens in the sequence.</li>
+                                                <li style="list-style-type:circle"><strong>Position-wise Feed-Forward Network (FFN):</strong> Applies a non-linear transformation (expand to 2048 dims with ReLU, contract back to 512 dims) to each position independently.</li>
+                                            </ul>
+                                        </li>
+                                        <li style="list-style-type:disc"><strong>Residual Pathways &amp; Normalization:</strong> Every sub-layer is wrapped in a residual (skip) connection followed by Layer Normalization (Add &amp; Norm) to prevent vanishing gradients and stabilize deep stack training.</li>
+                                        <li style="list-style-type:disc"><strong>Output:</strong> Produces a final sequence of memory vectors consumed by the decoder's cross-attention layer, enabling the decoder to reference any part of the input sequence.</li>
+                                        <li style="list-style-type:disc"><strong>Bidirectional Contextualization:</strong> Unlike sequential models (RNNs/LSTMs), self-attention allows all tokens to interact in a single operation, resulting in an <code>O(1)</code> maximum path length between any two tokens.</li>
                                     </ul>
                                 </div>
                                 <div dir="auto">
@@ -20228,23 +20250,6 @@ M834 80h400000v40h-400000z"></path>
                                     </div>
                                 </details>
 
-                                <div dir="auto">
-                                    <p style="font-weight: bold; margin-top: 16px; margin-bottom: 8px;">Transformer
-                                        Encoder Architecture details:</p>
-                                    <ul class="bulleted-list">
-                                        <li style="list-style-type:disc">The Encoder is composed of a stack of N=6
-                                            identical layers.</li>
-                                        <li style="list-style-type:disc">Each layer contains two primary sub-layers: a
-                                            Multi-Head Self-Attention mechanism, and a position-wise fully connected
-                                            Feed-Forward network.</li>
-                                        <li style="list-style-type:disc">A residual (skip) connection surrounds each
-                                            sub-layer, followed immediately by Layer Normalization (Add &amp; Norm).
-                                        </li>
-                                        <li style="list-style-type:disc">These components work together to process the
-                                            input sequence in parallel and build a rich, context-aware representation
-                                            for each token.</li>
-                                    </ul>
-                                </div>
                                 <div dir="auto">
                                     <details id="encoder-final-takeaways">
                                         <summary class="pro-heading style-h3">3. Encoder Final Takeaways</summary>
