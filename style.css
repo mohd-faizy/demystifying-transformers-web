@@ -1015,6 +1015,119 @@ body.dark-mode .note-content mark {
   color: var(--ink) !important;
 }
 
+/* ================================================================
+   MONOKAI CODE THEME (Applied universally in Day and Night Modes)
+   ================================================================ */
+pre.code,
+pre[class*="language-"],
+code[class*="language-"] {
+  background: #272822 !important;
+  color: #f8f8f2 !important;
+  border: 1px solid #3e3d32 !important;
+  border-radius: 10px !important;
+  text-shadow: none !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace !important;
+  font-size: 0.92rem !important;
+  padding: 18px 22px !important;
+  margin: 16px 0 !important;
+}
+
+/* Eradicate the dynamic Prism stylesheet's ugly operator background boxes */
+pre.code .token,
+pre[class*="language-"] .token {
+  background: none !important;
+  background-color: transparent !important;
+}
+
+/* Nested inner code adjustments */
+pre.code code,
+pre[class*="language-"] code {
+  background: transparent !important;
+  color: inherit !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Syntax Highlighting - Classic Monokai Color Scheme */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #75715e !important; /* Muted olive gray comment */
+  font-style: italic !important;
+}
+
+.token.punctuation {
+  color: #f8f8f2 !important; /* Soft off-white for colons, brackets, commas */
+}
+
+.token.namespace {
+  opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #f92672 !important; /* hot pink */
+}
+
+.token.boolean,
+.token.number {
+  color: #ae81ff !important; /* purple */
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #e6db74 !important; /* yellow */
+}
+
+.token.operator,
+.token.entity,
+.token.url {
+  color: #f92672 !important; /* hot pink operators (e.g. =, *, +) */
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #f92672 !important; /* hot pink keywords (e.g. class, def, import) */
+  font-weight: bold !important;
+}
+
+.token.function,
+.token.class-name {
+  color: #a6e22e !important; /* lime green functions/methods and classes */
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #fd971f !important; /* orange variables/parameters */
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold !important;
+}
+
+.token.italic {
+  font-style: italic !important;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+
+
 /* --- Massive Organization Update: Pro Headings --- */
 
 summary.pro-heading {
@@ -1678,6 +1791,18 @@ summary.style-h3 code {
   padding: 0.1em 0.4em !important;
 }
 
+/* Dark mode default fallback for unmapped subheadings to ensure they are never dark gray */
+body.dark-mode summary.style-h3,
+body.dark-mode summary.style-h3 * {
+  color: var(--h3-text, #cbd5e1) !important;
+  -webkit-text-fill-color: var(--h3-text, #cbd5e1) !important;
+}
+
+body.dark-mode summary.style-h3 code {
+  color: var(--h3-text, #cbd5e1) !important;
+  -webkit-text-fill-color: var(--h3-text, #cbd5e1) !important;
+}
+
 summary.style-h4 {
   color: var(--h1-color) !important;
   -webkit-text-fill-color: var(--h1-color) !important;
@@ -2274,7 +2399,6 @@ body.dark-mode .toggle-thumb {
 
 
 /* --- Custom Glassmorphic/Bordered Colors for H3 Sub-headings --- */
-
 /* Blue Theme Subheadings */
 #self-attention-mechanismin-the-transformer-model>summary.style-h3,
 #how-does-the-dimensionality-of-vectors-affect-self-attention>summary.style-h3,
@@ -2282,7 +2406,9 @@ body.dark-mode .toggle-thumb {
 #what-is-normalization-and-why-is-it-useful-in-deep-learning>summary.style-h3,
 #details-geo-embeddings>summary.style-h4,
 #details-mha-dimensions>summary.style-h4,
-#cross-attention-in-transformers>summary.style-h3 {
+#cross-attention-in-transformers>summary.style-h3,
+#how-positional-encoding-is-use-in-the-paper-attention-is-all-you-need>summary.style-h3,
+#encoder-transformer-overview>summary.style-h3 {
   --h3-bg: rgba(37, 99, 235, 0.05);
   --h3-border: rgba(37, 99, 235, 0.15);
   --h3-border-left: #2563eb;
@@ -2296,7 +2422,9 @@ body.dark-mode #\34 -why-addition-instead-of-concatenation>summary.style-h3,
 body.dark-mode #what-is-normalization-and-why-is-it-useful-in-deep-learning>summary.style-h3,
 body.dark-mode #details-geo-embeddings>summary.style-h4,
 body.dark-mode #details-mha-dimensions>summary.style-h4,
-body.dark-mode #cross-attention-in-transformers>summary.style-h3 {
+body.dark-mode #cross-attention-in-transformers>summary.style-h3,
+body.dark-mode #how-positional-encoding-is-use-in-the-paper-attention-is-all-you-need>summary.style-h3,
+body.dark-mode #encoder-transformer-overview>summary.style-h3 {
   --h3-bg: rgba(96, 165, 250, 0.08);
   --h3-border: rgba(96, 165, 250, 0.2);
   --h3-border-left: #3b82f6;
@@ -2310,7 +2438,9 @@ body.dark-mode #cross-attention-in-transformers>summary.style-h3 {
 #what-is-normalization-and-why-is-it-useful-in-deep-learning[open]>.indented,
 #details-geo-embeddings[open]>.indented,
 #details-mha-dimensions[open]>.indented,
-#cross-attention-in-transformers[open]>.indented {
+#cross-attention-in-transformers[open]>.indented,
+#how-positional-encoding-is-use-in-the-paper-attention-is-all-you-need[open]>.indented,
+#encoder-transformer-overview[open]>.indented {
   border-left: 3px solid #2563eb !important;
 }
 
@@ -2320,7 +2450,9 @@ body.dark-mode #\34 -why-addition-instead-of-concatenation[open]>.indented,
 body.dark-mode #what-is-normalization-and-why-is-it-useful-in-deep-learning[open]>.indented,
 body.dark-mode #details-geo-embeddings[open]>.indented,
 body.dark-mode #details-mha-dimensions[open]>.indented,
-body.dark-mode #cross-attention-in-transformers[open]>.indented {
+body.dark-mode #cross-attention-in-transformers[open]>.indented,
+body.dark-mode #how-positional-encoding-is-use-in-the-paper-attention-is-all-you-need[open]>.indented,
+body.dark-mode #encoder-transformer-overview[open]>.indented {
   border-left: 3px solid #3b82f6 !important;
 }
 
@@ -2331,7 +2463,9 @@ body.dark-mode #cross-attention-in-transformers[open]>.indented {
 #what-are-the-different-types-of-normalization>summary.style-h3,
 #details-geo-matrices>summary.style-h4,
 #details-mha-efficiency>summary.style-h4,
-#decoder-training-non-auto-regressive>summary.style-h3 {
+#decoder-training-non-auto-regressive>summary.style-h3,
+#encoder-layer-tensor-flow>summary.style-h3,
+#\33 -the-sinusoidal-sine-cosine-positional-encoding-approach>summary.style-h3 {
   --h3-bg: rgba(5, 150, 105, 0.05);
   --h3-border: rgba(5, 150, 105, 0.15);
   --h3-border-left: #059669;
@@ -2345,7 +2479,9 @@ body.dark-mode #\35 -a-simple-analogy-river-and-bank>summary.style-h3,
 body.dark-mode #what-are-the-different-types-of-normalization>summary.style-h3,
 body.dark-mode #details-geo-matrices>summary.style-h4,
 body.dark-mode #details-mha-efficiency>summary.style-h4,
-body.dark-mode #decoder-training-non-auto-regressive>summary.style-h3 {
+body.dark-mode #decoder-training-non-auto-regressive>summary.style-h3,
+body.dark-mode #encoder-layer-tensor-flow>summary.style-h3,
+body.dark-mode #\33 -the-sinusoidal-sine-cosine-positional-encoding-approach>summary.style-h3 {
   --h3-bg: rgba(52, 211, 153, 0.08);
   --h3-border: rgba(52, 211, 153, 0.2);
   --h3-border-left: #10b981;
@@ -2359,7 +2495,9 @@ body.dark-mode #decoder-training-non-auto-regressive>summary.style-h3 {
 #what-are-the-different-types-of-normalization[open]>.indented,
 #details-geo-matrices[open]>.indented,
 #details-mha-efficiency[open]>.indented,
-#decoder-training-non-auto-regressive[open]>.indented {
+#decoder-training-non-auto-regressive[open]>.indented,
+#encoder-layer-tensor-flow[open]>.indented,
+#\33 -the-sinusoidal-sine-cosine-positional-encoding-approach[open]>.indented {
   border-left: 3px solid #059669 !important;
 }
 
@@ -2369,7 +2507,9 @@ body.dark-mode #\35 -a-simple-analogy-river-and-bank[open]>.indented,
 body.dark-mode #what-are-the-different-types-of-normalization[open]>.indented,
 body.dark-mode #details-geo-matrices[open]>.indented,
 body.dark-mode #details-mha-efficiency[open]>.indented,
-body.dark-mode #decoder-training-non-auto-regressive[open]>.indented {
+body.dark-mode #decoder-training-non-auto-regressive[open]>.indented,
+body.dark-mode #encoder-layer-tensor-flow[open]>.indented,
+body.dark-mode #\33 -the-sinusoidal-sine-cosine-positional-encoding-approach[open]>.indented {
   border-left: 3px solid #10b981 !important;
 }
 
@@ -2379,7 +2519,8 @@ body.dark-mode #decoder-training-non-auto-regressive[open]>.indented {
 #\36 -summing-up-how-the-sinusoidal-approach-solves-the-three-key-problems>summary.style-h3,
 #what-is-internal-covariate-shift-and-how-does-normalization-address-it>summary.style-h3,
 #details-geo-qkv>summary.style-h4,
-#decoder-inference-auto-regressive>summary.style-h3 {
+#decoder-inference-auto-regressive>summary.style-h3,
+#masked-self-attention>summary.style-h3 {
   --h3-bg: rgba(220, 38, 38, 0.05);
   --h3-border: rgba(220, 38, 38, 0.15);
   --h3-border-left: #dc2626;
@@ -2392,7 +2533,8 @@ body.dark-mode #why-this-specific-scaling-factordk-sqrt-d-k-dk-is-used-is-used>s
 body.dark-mode #\36 -summing-up-how-the-sinusoidal-approach-solves-the-three-key-problems>summary.style-h3,
 body.dark-mode #what-is-internal-covariate-shift-and-how-does-normalization-address-it>summary.style-h3,
 body.dark-mode #details-geo-qkv>summary.style-h4,
-body.dark-mode #decoder-inference-auto-regressive>summary.style-h3 {
+body.dark-mode #decoder-inference-auto-regressive>summary.style-h3,
+body.dark-mode #masked-self-attention>summary.style-h3 {
   --h3-bg: rgba(248, 113, 113, 0.08);
   --h3-border: rgba(248, 113, 113, 0.2);
   --h3-border-left: #ef4444;
@@ -2405,7 +2547,8 @@ body.dark-mode #decoder-inference-auto-regressive>summary.style-h3 {
 #\36 -summing-up-how-the-sinusoidal-approach-solves-the-three-key-problems[open]>.indented,
 #what-is-internal-covariate-shift-and-how-does-normalization-address-it[open]>.indented,
 #details-geo-qkv[open]>.indented,
-#decoder-inference-auto-regressive[open]>.indented {
+#decoder-inference-auto-regressive[open]>.indented,
+#masked-self-attention[open]>.indented {
   border-left: 3px solid #dc2626 !important;
 }
 
@@ -2414,7 +2557,8 @@ body.dark-mode #why-this-specific-scaling-factordk-sqrt-d-k-dk-is-used-is-used[o
 body.dark-mode #\36 -summing-up-how-the-sinusoidal-approach-solves-the-three-key-problems[open]>.indented,
 body.dark-mode #what-is-internal-covariate-shift-and-how-does-normalization-address-it[open]>.indented,
 body.dark-mode #details-geo-qkv[open]>.indented,
-body.dark-mode #decoder-inference-auto-regressive[open]>.indented {
+body.dark-mode #decoder-inference-auto-regressive[open]>.indented,
+body.dark-mode #masked-self-attention[open]>.indented {
   border-left: 3px solid #ef4444 !important;
 }
 
@@ -2423,7 +2567,9 @@ body.dark-mode #decoder-inference-auto-regressive[open]>.indented {
 #details-mha-semantics>summary.style-h4,
 #\37 -how-positional-encoding-affects-self-attention-in-attention-is-all-you-need>summary.style-h3,
 #details-geo-scores>summary.style-h4,
-#why-can-t-batch-normalization-be-applied-to-sequential-data>summary.style-h3 {
+#why-can-t-batch-normalization-be-applied-to-sequential-data>summary.style-h3,
+#questions>summary.style-h3,
+#questions-2>summary.style-h3 {
   --h3-bg: rgba(124, 58, 237, 0.05);
   --h3-border: rgba(124, 58, 237, 0.15);
   --h3-border-left: #7c3aed;
@@ -2435,7 +2581,9 @@ body.dark-mode #why-are-three-vectors-generated-from-one-embedding>summary.style
 body.dark-mode #details-mha-semantics>summary.style-h4,
 body.dark-mode #\37 -how-positional-encoding-affects-self-attention-in-attention-is-all-you-need>summary.style-h3,
 body.dark-mode #details-geo-scores>summary.style-h4,
-body.dark-mode #why-can-t-batch-normalization-be-applied-to-sequential-data>summary.style-h3 {
+body.dark-mode #why-can-t-batch-normalization-be-applied-to-sequential-data>summary.style-h3,
+body.dark-mode #questions>summary.style-h3,
+body.dark-mode #questions-2>summary.style-h3 {
   --h3-bg: rgba(192, 132, 252, 0.08);
   --h3-border: rgba(192, 132, 252, 0.2);
   --h3-border-left: #a855f7;
@@ -2447,7 +2595,9 @@ body.dark-mode #why-can-t-batch-normalization-be-applied-to-sequential-data>summ
 #details-mha-semantics[open]>.indented,
 #\37 -how-positional-encoding-affects-self-attention-in-attention-is-all-you-need[open]>.indented,
 #details-geo-scores[open]>.indented,
-#why-can-t-batch-normalization-be-applied-to-sequential-data[open]>.indented {
+#why-can-t-batch-normalization-be-applied-to-sequential-data[open]>.indented,
+#questions[open]>.indented,
+#questions-2[open]>.indented {
   border-left: 3px solid #7c3aed !important;
 }
 
@@ -2455,7 +2605,9 @@ body.dark-mode #why-are-three-vectors-generated-from-one-embedding[open]>.indent
 body.dark-mode #details-mha-semantics[open]>.indented,
 body.dark-mode #\37 -how-positional-encoding-affects-self-attention-in-attention-is-all-you-need[open]>.indented,
 body.dark-mode #details-geo-scores[open]>.indented,
-body.dark-mode #why-can-t-batch-normalization-be-applied-to-sequential-data[open]>.indented {
+body.dark-mode #why-can-t-batch-normalization-be-applied-to-sequential-data[open]>.indented,
+body.dark-mode #questions[open]>.indented,
+body.dark-mode #questions-2[open]>.indented {
   border-left: 3px solid #a855f7 !important;
 }
 
@@ -2465,7 +2617,10 @@ body.dark-mode #why-can-t-batch-normalization-be-applied-to-sequential-data[open
 #\38 -determining-the-frequency-the-role-of-the-denominator>summary.style-h3,
 #details-geo-scaling>summary.style-h4,
 #details-mha-limitations>summary.style-h4,
-#why-is-layer-normalization-preferred-over-batch-normalization-in-transformers-how-does-layer-normalization-work-in-transformers>summary.style-h3 {
+#why-is-layer-normalization-preferred-over-batch-normalization-in-transformers-how-does-layer-normalization-work-in-transformers>summary.style-h3,
+#encoder-final-takeaways>summary.style-h3,
+#decoder-final-takeaways>summary.style-h3,
+#what-role-does-scaling-play-in-self-attention-mechanisms>summary.style-h3 {
   --h3-bg: rgba(13, 148, 136, 0.05);
   --h3-border: rgba(13, 148, 136, 0.15);
   --h3-border-left: #0d9488;
@@ -2478,7 +2633,10 @@ body.dark-mode #\31 -what-is-positional-encoding-and-why-do-we-need-it>summary.s
 body.dark-mode #\38 -determining-the-frequency-the-role-of-the-denominator>summary.style-h3,
 body.dark-mode #details-geo-scaling>summary.style-h4,
 body.dark-mode #details-mha-limitations>summary.style-h4,
-body.dark-mode #why-is-layer-normalization-preferred-over-batch-normalization-in-transformers-how-does-layer-normalization-work-in-transformers>summary.style-h3 {
+body.dark-mode #why-is-layer-normalization-preferred-over-batch-normalization-in-transformers-how-does-layer-normalization-work-in-transformers>summary.style-h3,
+body.dark-mode #encoder-final-takeaways>summary.style-h3,
+body.dark-mode #decoder-final-takeaways>summary.style-h3,
+body.dark-mode #what-role-does-scaling-play-in-self-attention-mechanisms>summary.style-h3 {
   --h3-bg: rgba(45, 212, 191, 0.08);
   --h3-border: rgba(45, 212, 191, 0.2);
   --h3-border-left: #14b8a6;
@@ -2491,7 +2649,10 @@ body.dark-mode #why-is-layer-normalization-preferred-over-batch-normalization-in
 #\38 -determining-the-frequency-the-role-of-the-denominator[open]>.indented,
 #details-geo-scaling[open]>.indented,
 #details-mha-limitations[open]>.indented,
-#why-is-layer-normalization-preferred-over-batch-normalization-in-transformers-how-does-layer-normalization-work-in-transformers[open]>.indented {
+#why-is-layer-normalization-preferred-over-batch-normalization-in-transformers-how-does-layer-normalization-work-in-transformers[open]>.indented,
+#encoder-final-takeaways[open]>.indented,
+#decoder-final-takeaways[open]>.indented,
+#what-role-does-scaling-play-in-self-attention-mechanisms[open]>.indented {
   border-left: 3px solid #0d9488 !important;
 }
 
@@ -2500,7 +2661,10 @@ body.dark-mode #\31 -what-is-positional-encoding-and-why-do-we-need-it[open]>.in
 body.dark-mode #\38 -determining-the-frequency-the-role-of-the-denominator[open]>.indented,
 body.dark-mode #details-geo-scaling[open]>.indented,
 body.dark-mode #details-mha-limitations[open]>.indented,
-body.dark-mode #why-is-layer-normalization-preferred-over-batch-normalization-in-transformers-how-does-layer-normalization-work-in-transformers[open]>.indented {
+body.dark-mode #why-is-layer-normalization-preferred-over-batch-normalization-in-transformers-how-does-layer-normalization-work-in-transformers[open]>.indented,
+body.dark-mode #encoder-final-takeaways[open]>.indented,
+body.dark-mode #decoder-final-takeaways[open]>.indented,
+body.dark-mode #what-role-does-scaling-play-in-self-attention-mechanisms[open]>.indented {
   border-left: 3px solid #14b8a6 !important;
 }
 
@@ -2545,41 +2709,29 @@ body.dark-mode #questions-1[open]>.indented {
   border-left: 3px solid #f97316 !important;
 }
 
-/* Gray/Slate Theme Subheadings */
-#what-role-does-scaling-play-in-self-attention-mechanisms>summary.style-h3,
-#\33 -the-sinusoidal-sine-cosine-positional-encoding-approach>summary.style-h3,
-#questions>summary.style-h3,
-#masked-self-attention>summary.style-h3 {
-  --h3-bg: rgba(75, 85, 99, 0.05);
-  --h3-border: rgba(75, 85, 99, 0.15);
-  --h3-border-left: #4b5563;
-  --h3-text: #374151;
-  --h3-code-bg: rgba(75, 85, 99, 0.08);
+/* Gray/Slate Theme Subheadings — Restyled to High Contrast Steel/Slate */
+#placeholder-slate-heading>summary.style-h3 {
+  --h3-bg: rgba(71, 85, 105, 0.05);
+  --h3-border: rgba(71, 85, 105, 0.15);
+  --h3-border-left: #475569;
+  --h3-text: #334155;
+  --h3-code-bg: rgba(71, 85, 105, 0.08);
 }
 
-body.dark-mode #what-role-does-scaling-play-in-self-attention-mechanisms>summary.style-h3,
-body.dark-mode #\33 -the-sinusoidal-sine-cosine-positional-encoding-approach>summary.style-h3,
-body.dark-mode #questions>summary.style-h3,
-body.dark-mode #masked-self-attention>summary.style-h3 {
-  --h3-bg: rgba(156, 163, 175, 0.08);
-  --h3-border: rgba(156, 163, 175, 0.2);
-  --h3-border-left: #9ca3af;
-  --h3-text: #d1d5db;
-  --h3-code-bg: rgba(156, 163, 175, 0.12);
+body.dark-mode #placeholder-slate-heading>summary.style-h3 {
+  --h3-bg: rgba(148, 163, 184, 0.08);
+  --h3-border: rgba(148, 163, 184, 0.2);
+  --h3-border-left: #cbd5e1;
+  --h3-text: #f1f5f9;
+  --h3-code-bg: rgba(148, 163, 184, 0.12);
 }
 
-#what-role-does-scaling-play-in-self-attention-mechanisms[open]>.indented,
-#\33 -the-sinusoidal-sine-cosine-positional-encoding-approach[open]>.indented,
-#questions[open]>.indented,
-#masked-self-attention[open]>.indented {
-  border-left: 3px solid #4b5563 !important;
+#placeholder-slate-heading[open]>.indented {
+  border-left: 3px solid #475569 !important;
 }
 
-body.dark-mode #what-role-does-scaling-play-in-self-attention-mechanisms[open]>.indented,
-body.dark-mode #\33 -the-sinusoidal-sine-cosine-positional-encoding-approach[open]>.indented,
-body.dark-mode #questions[open]>.indented,
-body.dark-mode #masked-self-attention[open]>.indented {
-  border-left: 3px solid #9ca3af !important;
+body.dark-mode #placeholder-slate-heading[open]>.indented {
+  border-left: 3px solid #cbd5e1 !important;
 }
 
 #positional-encoding-comparison>summary.style-h3 {
