@@ -926,11 +926,11 @@
                                     
                                     <div class="sentence-flow-card" style="border-left-color: var(--accent-2);">
                                         <div class="flow-label" style="color: var(--accent-2);">Target Sequence Prefix (Decoder Input)</div>
-                                        <div class="flow-text" id="step1-target-text" style="color: var(--accent-3); font-weight: 555;">&lt;bos&gt; Aufmerksamkeit ist alles was</div>
+                                        <div class="flow-text" id="step1-target-text" style="color: var(--accent-3); font-weight: 555;">&lt;bos&gt; Aufmerksamkeit ist alles, was du</div>
                                     </div>
                                     
                                     <div class="concept-tooltip-box">
-                                        💡 <strong>Next Step target word:</strong> The model will predict the next word in the German translation (which should be <strong>"du"</strong> or <strong>"brauchst"</strong>).
+                                        💡 <strong>Next Step target word:</strong> The model will predict the next word in the German translation (which should be <strong>"brauchst"</strong>).
                                     </div>
                                     
                                     <div class="step-math-box" id="step1-math-readout">
@@ -1127,7 +1127,91 @@
                                             <span class="stack-layer-badge">Stacked</span>
                                         </div>
                                     </div>
-                                    
+
+                                    <div class="dimension-explorer-accordion">
+                                        <button class="accordion-header" id="step5-explorer-toggle">
+                                            <span>🔍 Self-Attention Dimensions &amp; Matrix Multiplication Explorer</span>
+                                            <span class="chevron">▼</span>
+                                        </button>
+                                        <div class="accordion-content" id="step5-explorer-content" style="display: none;">
+                                            <!-- 1. Dimension Flow Map -->
+                                            <div class="explorer-section">
+                                                <h5 class="section-title">1. Dimension Flow Map</h5>
+                                                <p class="section-desc">Follow how the shapes transition. Hover over a box to learn about its dimensions.</p>
+                                                <div class="dimension-flow-map">
+                                                    <div class="flow-step clickable-flow-step" data-desc="Input Sequence Z: Contains T tokens (words) projected into d_model (512) feature dimensions.">
+                                                        <span class="flow-step-math">$Z$</span>
+                                                        <span class="flow-step-dims" id="flow-dim-z">$[T \times 512]$</span>
+                                                    </div>
+                                                    <div class="flow-connector">➔</div>
+                                                    <div class="flow-step clickable-flow-step" data-desc="Q, K, V Projections: Z is projected by weight matrices W_Q, W_K, W_V to form Query, Key, and Value vectors of dimension d_k (64) for this head.">
+                                                        <span class="flow-step-math">$Q, K, V$</span>
+                                                        <span class="flow-step-dims" id="flow-dim-qkv">$[T \times 64]$</span>
+                                                    </div>
+                                                    <div class="flow-connector">➔</div>
+                                                    <div class="flow-step clickable-flow-step" data-desc="Attention Score Matrix (QK^T): Query is multiplied by transposed Key (K^T) to form a square similarity grid showing how much each word attends to every other word.">
+                                                        <span class="flow-step-math">$Q K^T$</span>
+                                                        <span class="flow-step-dims" id="flow-dim-qkt">$[T \times T]$</span>
+                                                    </div>
+                                                    <div class="flow-connector">➔</div>
+                                                    <div class="flow-step clickable-flow-step" data-desc="Weighted Value Output (AV): The Softmax-scaled scores weight the Value vectors (V), yielding the contextualized token representation for this head.">
+                                                        <span class="flow-step-math">$\text{Attention} \cdot V$</span>
+                                                        <span class="flow-step-dims" id="flow-dim-attn-v">$[T \times 64]$</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flow-detail-box" id="flow-detail-text">Hover over any shape above to inspect its details.</div>
+                                            </div>
+
+                                            <!-- 2. Step-by-Step Multiplier Sandbox -->
+                                            <div class="explorer-section">
+                                                <h5 class="section-title">2. Interactive Matrix Multiplier Sandbox</h5>
+                                                <p class="section-desc">Choose a step to explore how rows and columns multiply. Hover over cells in the output matrix (C) to see the dot product animation.</p>
+                                                <div class="multiplier-tabs">
+                                                     <button class="mult-tab active" data-tab="q-proj">$Q = Z \times W_Q$</button>
+                                                     <button class="mult-tab" data-tab="q-k">$S = Q \times K^T$</button>
+                                                     <button class="mult-tab" data-tab="a-v">$O = A \times V$</button>
+                                                </div>
+
+                                                <div class="sandbox-workspace">
+                                                    <div class="sandbox-equation-display" id="sandbox-eq-display">
+                                                        <!-- Math equation displays here -->
+                                                    </div>
+
+                                                    <div class="sandbox-matrix-multiplier">
+                                                        <!-- Matrix A -->
+                                                        <div class="matrix-wrap">
+                                                            <span class="matrix-name" id="mat-name-a">Z</span>
+                                                            <div class="matrix-grid-outer" id="mat-grid-a"></div>
+                                                            <span class="matrix-dim-label" id="mat-dim-a">$[T \times 512]$</span>
+                                                        </div>
+
+                                                        <span class="matrix-operator" id="mat-op">×</span>
+
+                                                        <!-- Matrix B -->
+                                                        <div class="matrix-wrap">
+                                                            <span class="matrix-name" id="mat-name-b">W_Q</span>
+                                                            <div class="matrix-grid-outer" id="mat-grid-b"></div>
+                                                            <span class="matrix-dim-label" id="mat-dim-b">$[512 \times 64]$</span>
+                                                        </div>
+
+                                                        <span class="matrix-operator">=</span>
+
+                                                        <!-- Output Matrix -->
+                                                        <div class="matrix-wrap">
+                                                            <span class="matrix-name" id="mat-name-c">Q</span>
+                                                            <div class="matrix-grid-outer highlight-out" id="mat-grid-c"></div>
+                                                            <span class="matrix-dim-label" id="mat-dim-c">$[T \times 64]$</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="sandbox-mult-explain-box" id="sandbox-mult-explain">
+                                                        Hover over an element in the output matrix to trace its dot product calculation.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="step-math-box" id="step5-math-readout">
                                         <!-- Dynamically written via JS with MathJax -->
                                     </div>
@@ -1319,431 +1403,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-
-                <!-- ═══════════════════════════════════════════
-                         DEEP DIVE — Collapsible technical sections
-                         ══════════════════════════════════════════ -->
-                <div style="margin-top:40px;">
-                    <h3
-                        style="font-size:1.1rem;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px;">
-                        ⚡ Short Overview — Click Any Section to Expand</h3>
-
-                    <!-- 1. Scaled Dot-Product Attention Math -->
-                    <details id="dd-scaled-attention"
-                        style="margin-bottom:16px;border-radius:12px;border:1px solid var(--line);overflow:hidden;">
-                        <summary class="tech-summary"
-                            style="cursor:pointer;padding:16px 20px;font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,#0f4c81,#102a43);color:#fff;display:flex;align-items:center;gap:10px;list-style:none;">
-                            <span style="font-size:0.75rem;color:rgba(255,255,255,0.7);">❯</span>
-                            🔑 1. Scaled Dot-Product Attention — The Core Math
-                        </summary>
-                        <div style="padding:20px 24px;background:var(--panel);">
-                            <p><strong>The big idea:</strong> For each word ("query"), we score how relevant every other
-                                word ("key") is, then take a weighted average of the "values".</p>
-                            <div
-                                style="background:var(--soft);border-radius:10px;padding:16px 20px;margin:16px 0;font-family:monospace;font-size:1rem;text-align:center;border-left:4px solid #0f4c81;">
-                                Attention(Q, K, V) = softmax( QKᵀ / √d<sub>k</sub> ) · V
-                            </div>
-                            <table style="width:100%;border-collapse:collapse;font-size:0.93rem;margin-top:12px;">
-                                <thead>
-                                    <tr style="background:var(--soft);">
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">
-                                            Symbol</th>
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">Shape
-                                            (Base Model)</th>
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">
-                                            Plain-English Meaning</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);"><code>Q</code></td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">[seq_len × d_k]</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">"What am I looking
-                                            for?" — each token's query vector.</td>
-                                    </tr>
-                                    <tr style="background:var(--soft);">
-                                        <td style="padding:8px 12px;border:1px solid var(--line);"><code>K</code></td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">[seq_len × d_k]</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">"What do I contain?"
-                                            — each token's key vector.</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);"><code>V</code></td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">[seq_len × d_v]</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">"What do I send
-                                            back?" — each token's value vector.</td>
-                                    </tr>
-                                    <tr style="background:var(--soft);">
-                                        <td style="padding:8px 12px;border:1px solid var(--line);"><code>d_k</code></td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">64 (base), 64 (big)
-                                        </td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Head dimension =
-                                            d_model / h = 512/8 = 64.</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);"><code>√d_k</code>
-                                        </td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">√64 = 8</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Scaling factor —
-                                            prevents dot products from growing so large that softmax gradients vanish.
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <p style="margin-top:14px;"><strong>Step by step:</strong></p>
-                            <ol style="padding-left:20px;line-height:1.9;">
-                                <li><strong>QKᵀ</strong> — matrix multiply Q with the transpose of K → gives a [seq_len
-                                    × seq_len] score matrix. Entry (i,j) = "how much token i attends to token j".</li>
-                                <li><strong>÷ √d_k</strong> — divide every score by 8. Without this, large dot products
-                                    push softmax into regions with near-zero gradients.</li>
-                                <li><strong>softmax</strong> — converts each row into probabilities (all positive, sum =
-                                    1). Row i tells us the attention distribution for token i.</li>
-                                <li><strong>· V</strong> — weighted average of value vectors. Each output token is a
-                                    blend of all value vectors weighted by attention probabilities.</li>
-                            </ol>
-                            <div class="alert-callout alert-callout-info">
-                                <strong>💡 Analogy:</strong> Think of a library search. Your <em>query</em> = search
-                                term. Each book's <em>key</em> = its index keywords. The dot product measures match
-                                score. The <em>value</em> = the actual book content. Attention returns a blend of books
-                                weighted by relevance.
-                            </div>
-                        </div>
-                    </details>
-
-                    <!-- 2. Multi-Head Attention -->
-                    <details id="dd-multihead"
-                        style="margin-bottom:16px;border-radius:12px;border:1px solid var(--line);overflow:hidden;">
-                        <summary class="tech-summary"
-                            style="cursor:pointer;padding:16px 20px;font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,#009473,#064e3b);color:#fff;display:flex;align-items:center;gap:10px;list-style:none;">
-                            <span style="font-size:0.75rem;color:rgba(255,255,255,0.7);">❯</span>
-                            🎭 2. Multi-Head Attention — Running h Attentions in Parallel
-                        </summary>
-                        <div style="padding:20px 24px;background:var(--panel);">
-                            <p>Instead of one d_model-dimensional attention, the paper projects Q, K, V into <strong>h =
-                                    8</strong> lower-dimensional subspaces and runs attention in each independently.</p>
-                            <div
-                                style="background:var(--soft);border-radius:10px;padding:16px 20px;margin:16px 0;font-family:monospace;font-size:0.95rem;border-left:4px solid #009473;">
-                                MultiHead(Q,K,V) = Concat(head₁,…,headₕ) · W<sup>O</sup><br>
-                                where headᵢ = Attention(QW<sup>Q</sup><sub>i</sub>, KW<sup>K</sup><sub>i</sub>,
-                                VW<sup>V</sup><sub>i</sub>)
-                            </div>
-                            <table style="width:100%;border-collapse:collapse;font-size:0.93rem;margin-top:12px;">
-                                <thead>
-                                    <tr style="background:var(--soft);">
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">
-                                            Parameter</th>
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">Base
-                                            Model</th>
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">Big
-                                            Model</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">h (heads)</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">8</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">16</td>
-                                    </tr>
-                                    <tr style="background:var(--soft);">
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">d_k per head</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">64</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">64</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">
-                                            W<sup>Q</sup><sub>i</sub>, W<sup>K</sup><sub>i</sub>,
-                                            W<sup>V</sup><sub>i</sub> shape</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">[512 × 64]</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">[1024 × 64]</td>
-                                    </tr>
-                                    <tr style="background:var(--soft);">
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">W<sup>O</sup> shape
-                                        </td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">[512 × 512]</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">[1024 × 1024]</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <p style="margin-top:14px;"><strong>Why does this help?</strong> Each head specialises. In
-                                practice:</p>
-                            <ul style="padding-left:20px;line-height:1.9;">
-                                <li>Some heads learn <strong>syntactic</strong> relationships (subject → verb agreement)
-                                </li>
-                                <li>Some heads learn <strong>coreference</strong> (pronoun → noun it refers to)</li>
-                                <li>Some heads learn <strong>positional</strong> patterns (attending to the next or
-                                    previous token)</li>
-                            </ul>
-                            <div class="alert-callout alert-callout-success">
-                                <strong>💡 Key insight:</strong> The total computation cost is roughly equal to a single
-                                head at full d_model — but you get <em>h</em> different "views" of the sequence for the
-                                same cost.
-                            </div>
-                        </div>
-                    </details>
-
-                    <!-- 3. Positional Encoding Math -->
-                    <details id="dd-positional"
-                        style="margin-bottom:16px;border-radius:12px;border:1px solid var(--line);overflow:hidden;">
-                        <summary class="tech-summary"
-                            style="cursor:pointer;padding:16px 20px;font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,#1f4761,#0f766e);color:#fff;display:flex;align-items:center;gap:10px;list-style:none;">
-                            <span style="font-size:0.75rem;color:rgba(255,255,255,0.7);">❯</span>
-                            📍 3. Positional Encoding — Teaching Order Without Recurrence
-                        </summary>
-                        <div style="padding:20px 24px;background:var(--panel);">
-                            <p>Since attention is <em>permutation-invariant</em> (order of input doesn't matter to the
-                                math), position must be injected explicitly. The paper adds a fixed sinusoidal vector to
-                                each token embedding:</p>
-                            <div
-                                style="background:var(--soft);border-radius:10px;padding:16px 20px;margin:16px 0;font-family:monospace;font-size:0.95rem;border-left:4px solid #0f766e;">
-                                PE(pos, 2i) = sin( pos / 10000<sup>2i/d_model</sup> )<br>
-                                PE(pos, 2i+1) = cos( pos / 10000<sup>2i/d_model</sup> )
-                            </div>
-                            <table style="width:100%;border-collapse:collapse;font-size:0.93rem;margin-top:12px;">
-                                <thead>
-                                    <tr style="background:var(--soft);">
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">
-                                            Variable</th>
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">
-                                            Meaning</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);"><code>pos</code></td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Token position in the
-                                            sequence (0, 1, 2, …)</td>
-                                    </tr>
-                                    <tr style="background:var(--soft);">
-                                        <td style="padding:8px 12px;border:1px solid var(--line);"><code>i</code></td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Dimension index (0 →
-                                            d_model/2 − 1)</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);"><code>d_model</code>
-                                        </td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">512 (embedding
-                                            dimension)</td>
-                                    </tr>
-                                    <tr style="background:var(--soft);">
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">10000</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Base for frequency
-                                            scaling — creates a geometric range of wavelengths from 2π to 10000·2π</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <p style="margin-top:14px;"><strong>Why sinusoids?</strong></p>
-                            <ul style="padding-left:20px;line-height:1.9;">
-                                <li><strong>Fixed frequency range:</strong> Lower dimensions encode fast-changing
-                                    fine-grained position; higher dimensions encode slow-changing coarse position — like
-                                    a binary clock.</li>
-                                <li><strong>Relative position:</strong> PE(pos+k) can be expressed as a linear function
-                                    of PE(pos) — so the model can attend by relative offset, not just absolute position.
-                                </li>
-                                <li><strong>Generalises to longer sequences:</strong> Because it's a fixed formula, it
-                                    works for sequences longer than those seen during training.</li>
-                            </ul>
-                        </div>
-                    </details>
-
-                    <!-- 4. Feed-Forward Network -->
-                    <details id="dd-ffn"
-                        style="margin-bottom:16px;border-radius:12px;border:1px solid var(--line);overflow:hidden;">
-                        <summary class="tech-summary"
-                            style="cursor:pointer;padding:16px 20px;font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,#5f4b8b,#3b0764);color:#fff;display:flex;align-items:center;gap:10px;list-style:none;">
-                            <span style="font-size:0.75rem;color:rgba(255,255,255,0.7);">❯</span>
-                            ⚙️ 4. Feed-Forward Sub-Layer — Position-Wise MLP
-                        </summary>
-                        <div style="padding:20px 24px;background:var(--panel);">
-                            <p>After each attention sub-layer, every position independently passes through a 2-layer
-                                fully-connected network:</p>
-                            <div
-                                style="background:var(--soft);border-radius:10px;padding:16px 20px;margin:16px 0;font-family:monospace;font-size:0.95rem;border-left:4px solid #5f4b8b;">
-                                FFN(x) = max(0, x·W₁ + b₁) · W₂ + b₂
-                            </div>
-                            <table style="width:100%;border-collapse:collapse;font-size:0.93rem;margin-top:12px;">
-                                <thead>
-                                    <tr style="background:var(--soft);">
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">
-                                            Component</th>
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">Shape
-                                            (Base)</th>
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">Role
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">W₁</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">[512 → 2048]</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Expands
-                                            representation to 4× d_model</td>
-                                    </tr>
-                                    <tr style="background:var(--soft);">
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">ReLU</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">—</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Non-linearity —
-                                            allows learning complex functions</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">W₂</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">[2048 → 512]</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Projects back to
-                                            d_model</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="alert-callout alert-callout-primary">
-                                <strong>💡 Key point:</strong> Attention mixes <em>between</em> positions (tokens talk
-                                to each other). The FFN transforms <em>within</em> each position independently. Together
-                                they give both cross-token communication AND per-token computation.
-                            </div>
-                        </div>
-                    </details>
-
-                    <!-- 5. Add & Norm / Residual Connections -->
-                    <details id="dd-addnorm"
-                        style="margin-bottom:16px;border-radius:12px;border:1px solid var(--line);overflow:hidden;">
-                        <summary class="tech-summary"
-                            style="cursor:pointer;padding:16px 20px;font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,#4f84c4,#0369a1);color:#fff;display:flex;align-items:center;gap:10px;list-style:none;">
-                            <span style="font-size:0.75rem;color:rgba(255,255,255,0.7);">❯</span>
-                            ➕ 5. Add &amp; Norm — Residual Connections + Layer Normalisation
-                        </summary>
-                        <div style="padding:20px 24px;background:var(--panel);">
-                            <p>Every sub-layer (Attention and FFN) is wrapped with a <strong>residual
-                                    connection</strong> followed by <strong>Layer Normalisation</strong>:</p>
-                            <div
-                                style="background:var(--soft);border-radius:10px;padding:16px 20px;margin:16px 0;font-family:monospace;font-size:0.95rem;border-left:4px solid #0369a1;">
-                                Output = LayerNorm( x + Sublayer(x) )
-                            </div>
-                            <table style="width:100%;border-collapse:collapse;font-size:0.93rem;margin-top:12px;">
-                                <thead>
-                                    <tr style="background:var(--soft);">
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">
-                                            Component</th>
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">Why
-                                            It Matters</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);"><strong>Residual (x +
-                                                …)</strong></td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Gradient highway —
-                                            prevents vanishing gradients in deep (6-layer) stacks. The network only
-                                            needs to learn the <em>residual change</em>, not a complete transformation.
-                                        </td>
-                                    </tr>
-                                    <tr style="background:var(--soft);">
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">
-                                            <strong>LayerNorm</strong>
-                                        </td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Normalises each
-                                            token's d_model-dim vector to zero mean, unit variance, then rescales with
-                                            learned γ and β. Stabilises training without batch statistics.</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Applied</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">After each of the 2
-                                            sub-layers in every encoder layer, and each of the 3 sub-layers in every
-                                            decoder layer.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </details>
-
-                    <!-- 6. Learning Rate Schedule -->
-                    <details id="dd-lrschedule"
-                        style="margin-bottom:16px;border-radius:12px;border:1px solid var(--line);overflow:hidden;">
-                        <summary class="tech-summary"
-                            style="cursor:pointer;padding:16px 20px;font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,#9b1b30,#7f1d1d);color:#fff;display:flex;align-items:center;gap:10px;list-style:none;">
-                            <span style="font-size:0.75rem;color:rgba(255,255,255,0.7);">❯</span>
-                            📈 6. The Learning Rate Schedule — Warmup + Decay
-                        </summary>
-                        <div style="padding:20px 24px;background:var(--panel);">
-                            <p>The paper uses a custom LR schedule with Adam (β₁=0.9, β₂=0.98, ε=10⁻⁹):</p>
-                            <div
-                                style="background:var(--soft);border-radius:10px;padding:16px 20px;margin:16px 0;font-family:monospace;font-size:0.9rem;border-left:4px solid #9b1b30;">
-                                lr = d_model<sup>−0.5</sup> · min(step<sup>−0.5</sup>, step ·
-                                warmup_steps<sup>−1.5</sup>)
-                            </div>
-                            <table style="width:100%;border-collapse:collapse;font-size:0.93rem;margin-top:12px;">
-                                <thead>
-                                    <tr style="background:var(--soft);">
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">Phase
-                                        </th>
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">Steps
-                                        </th>
-                                        <th style="padding:8px 12px;text-align:left;border:1px solid var(--line);">
-                                            Behaviour</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Warmup</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">0 → 4,000</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">LR increases
-                                            linearly. Prevents large early updates from destabilising weights.</td>
-                                    </tr>
-                                    <tr style="background:var(--soft);">
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Decay</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">4,000 → end</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">LR decays as 1/√step
-                                            — slower learning as the model refines its weights.</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">Peak LR</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">At step 4,000</td>
-                                        <td style="padding:8px 12px;border:1px solid var(--line);">≈ 0.000707 for base
-                                            model (d_model=512)</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="alert-callout alert-callout-danger">
-                                <strong>💡 Why warmup?</strong> Early in training, gradients are noisy. A large LR would
-                                cause wild parameter swings. Linear warmup gives the model time to settle before the
-                                main learning phase.
-                            </div>
-                        </div>
-                    </details>
-
-                    <!-- 7. Decoder Masking -->
-                    <details id="dd-masking"
-                        style="margin-bottom:16px;border-radius:12px;border:1px solid var(--line);overflow:hidden;">
-                        <summary class="tech-summary"
-                            style="cursor:pointer;padding:16px 20px;font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,#b1563f,#7c2d12);color:#fff;display:flex;align-items:center;gap:10px;list-style:none;">
-                            <span style="font-size:0.75rem;color:rgba(255,255,255,0.7);">❯</span>
-                            🎭 7. Decoder Masking — Preventing the Model from "Cheating"
-                        </summary>
-                        <div style="padding:20px 24px;background:var(--panel);">
-                            <p>During training the decoder sees the entire target sequence at once (for parallelism).
-                                But when <em>generating</em> position i, it must not see positions i+1 onwards —
-                                otherwise it would just copy the answer.</p>
-                            <p>The solution: add <strong>−∞</strong> to all future positions in the attention score
-                                matrix <em>before</em> softmax. After softmax, e<sup>−∞</sup> = 0, so those positions
-                                receive zero attention weight.</p>
-                            <div
-                                style="background:var(--soft);border-radius:10px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:0.88rem;border-left:4px solid #b1563f;">
-                                Mask matrix (upper-triangular = −∞, rest = 0):<br><br>
-                                [ 0 −∞ −∞ −∞ ]<br>
-                                [ 0 0 −∞ −∞ ]<br>
-                                [ 0 0 0 −∞ ]<br>
-                                [ 0 0 0 0 ]
-                            </div>
-                            <p>Each decoder layer has <strong>3 sub-layers</strong> (vs 2 in encoder):</p>
-                            <ol style="padding-left:20px;line-height:1.9;">
-                                <li><strong>Masked Self-Attention</strong> — decoder tokens attend to previous decoder
-                                    tokens only (causal mask above).</li>
-                                <li><strong>Cross-Attention</strong> — decoder queries attend to all encoder output
-                                    keys/values (no mask — full sequence is available).</li>
-                                <li><strong>Feed-Forward Network</strong> — same position-wise MLP as encoder.</li>
-                            </ol>
-                        </div>
-                    </details>
-
-                </div><!-- /deep-dive -->
             </section>
             <section class="section" id="learning-path">
                 <div class="section-header">
@@ -27592,6 +27251,14 @@ M834 80h400000v40h-400000z"></path>
             },
             svg: {
                 fontCache: 'global'
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                    if (window.triggerMathJax) {
+                        window.triggerMathJax();
+                    }
+                }
             }
         };
     </script>

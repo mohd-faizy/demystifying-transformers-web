@@ -302,36 +302,36 @@ document.addEventListener("DOMContentLoaded", () => {
         // Custom presets translations & words mappings
         const mockTranslationDB = {
             "attention is all you need": {
-                target: "<bos> Aufmerksamkeit ist alles was",
-                nextWord: "du brauchst",
+                target: "<bos> Aufmerksamkeit ist alles, was du",
+                nextWord: "brauchst",
                 candidates: [
-                    { word: "du brauchst", prob: 88.5 },
-                    { word: "brauchst", prob: 6.2 },
-                    { word: "nötig", prob: 3.1 },
-                    { word: "ist", prob: 1.2 },
-                    { word: "tut", prob: 0.5 }
+                    { word: "brauchst", prob: 88.5 },
+                    { word: "nötig", prob: 6.2 },
+                    { word: "nötige", prob: 3.1 },
+                    { word: "wäre", prob: 1.2 },
+                    { word: "ist", prob: 0.5 }
                 ]
             },
             "deep learning is magic": {
-                target: "<bos> Deep Learning ist wie Magie",
-                nextWord: "und Wissenschaft",
+                target: "<bos> Deep Learning ist wie Magie und",
+                nextWord: "Wissenschaft",
                 candidates: [
-                    { word: "und Wissenschaft", prob: 74.2 },
-                    { word: "für uns", prob: 12.8 },
-                    { word: "zu verstehen", prob: 7.1 },
-                    { word: "aber wahr", prob: 4.0 },
-                    { word: "glaube ich", prob: 1.5 }
+                    { word: "Wissenschaft", prob: 74.2 },
+                    { word: "Kunst", prob: 12.8 },
+                    { word: "Technik", prob: 7.1 },
+                    { word: "Mathematik", prob: 4.0 },
+                    { word: "Forschung", prob: 1.5 }
                 ]
             },
             "hello transformer world": {
-                target: "<bos> Hallo Transformer-Welt wie",
-                nextWord: "geht es",
+                target: "<bos> Hallo Transformer-Welt wie geht",
+                nextWord: "es",
                 candidates: [
-                    { word: "geht es", prob: 82.1 },
-                    { word: "schön", prob: 9.3 },
-                    { word: "du", prob: 4.8 },
-                    { word: "läuft", prob: 2.2 },
-                    { word: "war", prob: 0.9 }
+                    { word: "es", prob: 82.1 },
+                    { word: "dir", prob: 9.3 },
+                    { word: "euch", prob: 4.8 },
+                    { word: "ihnen", prob: 2.2 },
+                    { word: "man", prob: 0.9 }
                 ]
             }
         };
@@ -421,9 +421,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const readout = document.getElementById("step1-math-readout");
             if (readout) {
                 readout.innerHTML = `
-                    <strong>Seq2Seq Dimensions:</strong><br>
-                    Source sequence input: $X_{\\text{enc}} \\in \\mathbb{R}^{T_{\\text{enc}} \\times d_{\\text{vocab\_src}}}$ with $T_{\\text{enc}} = ${getTokens(currentInput).length}$ tokens.<br>
-                    Decoder target sequence input: $Y_{\\text{dec}} \\in \\mathbb{R}^{T_{\\text{dec}} \\times d_{\\text{vocab\_trg}}}$ with $T_{\\text{dec}} = ${data.target.split(/\s+/).filter(Boolean).length}$ tokens.
+                    <strong>Seq2Seq Dimensions &amp; Word Sequences:</strong><br>
+                    Source Sequence: $X = \\begin{bmatrix} x_1 & x_2 & \\dots & x_{T_{\\text{enc}}} \\end{bmatrix}^T \\in \\mathbb{R}^{T_{\\text{enc}}}$ ($T_{\\text{enc}} = ${getTokens(currentInput).length}$ tokens)<br>
+                    Target Prefix: $Y = \\begin{bmatrix} y_1 & y_2 & \\dots & y_{T_{\\text{dec}}} \\end{bmatrix}^T \\in \\mathbb{R}^{T_{\\text{dec}}}$ ($T_{\\text{dec}} = ${data.target.split(/\s+/).filter(Boolean).length}$ tokens)
                 `;
             }
         }
@@ -471,10 +471,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const readout = document.getElementById("step2-math-readout");
             if (readout) {
-                const idsString = tokens.map(t => t.id).join(", ");
                 readout.innerHTML = `
-                    <strong>Tokenization Index Matrix:</strong><br>
-                    $t = \\text{Tokenizer}(\\text{"${currentInput}"}) = [${idsString}]$ where $t_i \\in \\mathbb{Z}_{|V|}$ and $|V| = 37,000$.
+                    <strong>Tokenizer Vocabulary Mapping:</strong><br>
+                    $\\vec{t} = \\text{Tokenizer}(X) = \\begin{bmatrix} t_1 \\\\ t_2 \\\\ \\vdots \\\\ t_T \\end{bmatrix} = \\begin{bmatrix} ${tokens.map(t => t.id).join(' \\\\ ')} \\end{bmatrix} \\in \\mathbb{Z}^{T}$ where vocabulary index $t_i \\in \\{0, 1, \\dots, 36999\\}$.
                 `;
             }
         }
@@ -538,12 +537,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 container.appendChild(row);
             });
 
+            const matrixRowsTokens = tokens.map(t => `E_{\\text{"${t.text}"}}`).join(' \\\\ ');
+            const matrixRowsWeights = tokens.map(t => `W_E[${t.id}, :]`).join(' \\\\ ');
+
             const readout = document.getElementById("step3-math-readout");
             if (readout) {
                 readout.innerHTML = `
                     <strong>Embedding Matrix Lookup:</strong><br>
                     $E_i = \\text{EmbeddingLookup}(t_i) = W_E[t_i, :] \\in \\mathbb{R}^{512}$ where $W_E \\in \\mathbb{R}^{37,000 \\times 512}$ is learned during training.<br>
-                    Full sequence representation: $E = [E_1; E_2; \\dots; E_T] \\in \\mathbb{R}^{T \\times 512}$.
+                    Full sequence representation as matrix stack:<br>
+                    $E = \\begin{bmatrix} ${matrixRowsTokens} \\end{bmatrix} = \\begin{bmatrix} ${matrixRowsWeights} \\end{bmatrix} \\in \\mathbb{R}^{${tokens.length} \\times 512}$.
                 `;
             }
         }
@@ -655,17 +658,236 @@ document.addEventListener("DOMContentLoaded", () => {
             svg.appendChild(circle);
             
             const peFormulaVal = trackerValSin.toFixed(4);
+            const tokens = getTokens(currentInput);
+            const zRows = tokens.map((t, idx) => `E_{\\text{"${t.text}"}} + PE_{${idx}}`).join(' \\\\ ');
             if (mathReadout) {
                 mathReadout.innerHTML = `
-                    <strong>Sinusoidal Coordinate Injection:</strong><br>
+                    <strong>Sinusoidal Coordinate Injection &amp; Positional Addition:</strong><br>
                     $\\text{PE}(\\text{pos}=${pePosVal}, \\text{dim}=${peDimVal}) = \\sin\\left(\\frac{${pePosVal}}{10000^{${peDimVal}/512}}\\right) = ${peFormulaVal}$<br>
-                    Combined representation: $Z = E + \\text{PE} \\in \\mathbb{R}^{T \\times 512}$.
+                    Combined representation as matrix sum:<br>
+                    $Z = E + PE = \\begin{bmatrix} E_1 \\\\ \\vdots \\\\ E_T \\end{bmatrix} + \\begin{bmatrix} PE_1 \\\\ \\vdots \\\\ PE_T \\end{bmatrix} = \\begin{bmatrix} ${zRows} \\end{bmatrix} \\in \\mathbb{R}^{${tokens.length} \\times 512}$.
                 `;
             }
+            triggerMathJax();
         }
 
+        let step5ActiveExplorerTab = "q-proj";
         let step5ActiveHead = 1;
         let step5ActiveNode = 0;
+
+        function initStep5Explorer() {
+            const toggleBtn = document.getElementById("step5-explorer-toggle");
+            const content = document.getElementById("step5-explorer-content");
+            if (toggleBtn && content) {
+                toggleBtn.addEventListener("click", () => {
+                    const isExpanded = content.style.display !== "none";
+                    if (isExpanded) {
+                        content.style.display = "none";
+                        toggleBtn.classList.remove("open");
+                    } else {
+                        content.style.display = "flex";
+                        toggleBtn.classList.add("open");
+                        renderStep5Explorer();
+                    }
+                });
+            }
+
+            const tabs = document.querySelectorAll(".mult-tab");
+            tabs.forEach(tab => {
+                tab.addEventListener("click", () => {
+                    tabs.forEach(t => t.classList.remove("active"));
+                    tab.classList.add("active");
+                    step5ActiveExplorerTab = tab.dataset.tab;
+                    renderStep5Explorer();
+                });
+            });
+
+            const flowSteps = document.querySelectorAll(".clickable-flow-step");
+            const flowDetail = document.getElementById("flow-detail-text");
+            flowSteps.forEach(step => {
+                step.addEventListener("mouseenter", () => {
+                    if (flowDetail) {
+                        flowDetail.innerHTML = `ℹ️ <strong>Details:</strong> ${step.dataset.desc}`;
+                    }
+                });
+                step.addEventListener("mouseleave", () => {
+                    if (flowDetail) {
+                        flowDetail.innerHTML = `Hover over any shape above to inspect its details.`;
+                    }
+                });
+            });
+        }
+
+        function renderStep5Explorer() {
+            const content = document.getElementById("step5-explorer-content");
+            if (!content || content.style.display === "none") return;
+
+            const tokens = getTokens(currentInput);
+            const T = tokens.length;
+
+            const dimZ = document.getElementById("flow-dim-z");
+            const dimQkv = document.getElementById("flow-dim-qkv");
+            const dimQkt = document.getElementById("flow-dim-qkt");
+            const dimAttnV = document.getElementById("flow-dim-attn-v");
+
+            if (dimZ) dimZ.textContent = `[${T} × 512]`;
+            if (dimQkv) dimQkv.textContent = `[${T} × 64]`;
+            if (dimQkt) dimQkt.textContent = `[${T} × ${T}]`;
+            if (dimAttnV) dimAttnV.textContent = `[${T} × 64]`;
+
+            const gridA = document.getElementById("mat-grid-a");
+            const gridB = document.getElementById("mat-grid-b");
+            const gridC = document.getElementById("mat-grid-c");
+
+            const labelNameA = document.getElementById("mat-name-a");
+            const labelNameB = document.getElementById("mat-name-b");
+            const labelNameC = document.getElementById("mat-name-c");
+
+            const labelDimA = document.getElementById("mat-dim-a");
+            const labelDimB = document.getElementById("mat-dim-b");
+            const labelDimC = document.getElementById("mat-dim-c");
+
+            const eqDisplay = document.getElementById("sandbox-eq-display");
+            const multExplain = document.getElementById("sandbox-mult-explain");
+
+            if (!gridA || !gridB || !gridC || !eqDisplay || !multExplain) return;
+
+            gridA.innerHTML = "";
+            gridB.innerHTML = "";
+            gridC.innerHTML = "";
+            multExplain.textContent = "Hover over an element in the output matrix to trace its dot product calculation.";
+
+            let rowsA, colsA, rowsB, colsB, rowsC, colsC;
+            let nameA, nameB, nameC;
+            let dimStrA, dimStrB, dimStrC;
+            let eqText;
+
+            if (step5ActiveExplorerTab === "q-proj") {
+                rowsA = T; colsA = 8;
+                rowsB = 8; colsB = 4;
+                rowsC = T; colsC = 4;
+
+                nameA = "Z (Input)"; nameB = "W_Q (Weights)"; nameC = "Q (Queries)";
+                dimStrA = `[${T} × 512]`; dimStrB = `[512 × 64]`; dimStrC = `[${T} × 64]`;
+                eqText = `$Q = Z \\times W_Q \\implies [${T} \\times 512] \\times [512 \\times 64] \\to [${T} \\times 64]$`;
+            } else if (step5ActiveExplorerTab === "q-k") {
+                rowsA = T; colsA = 4;
+                rowsB = 4; colsB = T;
+                rowsC = T; colsC = T;
+
+                nameA = "Q (Queries)"; nameB = "K^T (Keys Transposed)"; nameC = "S (Attention Scores)";
+                dimStrA = `[${T} × 64]`; dimStrB = `[64 × ${T}]`; dimStrC = `[${T} × ${T}]`;
+                eqText = `$S = Q \\times K^T \\implies [${T} \\times 64] \\times [64 \\times ${T}] \\to [${T} \\times ${T}]$`;
+            } else {
+                rowsA = T; colsA = T;
+                rowsB = T; colsB = 4;
+                rowsC = T; colsC = 4;
+
+                nameA = "A (Attention Softmax)"; nameB = "V (Values)"; nameC = "O (Outputs)";
+                dimStrA = `[${T} × ${T}]`; dimStrB = `[${T} × 64]`; dimStrC = `[${T} × 64]`;
+                eqText = `$O = A \\times V \\implies [${T} \\times ${T}] \\times [${T} \\times 64] \\to [${T} \\times 64]$`;
+            }
+
+            labelNameA.textContent = nameA;
+            labelNameB.textContent = nameB;
+            labelNameC.textContent = nameC;
+
+            labelDimA.textContent = dimStrA;
+            labelDimB.textContent = dimStrB;
+            labelDimC.textContent = dimStrC;
+
+            eqDisplay.innerHTML = eqText;
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([eqDisplay]).catch(() => {});
+            }
+
+            gridA.style.gridTemplateRows = `repeat(${rowsA}, auto)`;
+            gridA.style.gridTemplateColumns = `repeat(${colsA}, auto)`;
+
+            gridB.style.gridTemplateRows = `repeat(${rowsB}, auto)`;
+            gridB.style.gridTemplateColumns = `repeat(${colsB}, auto)`;
+
+            gridC.style.gridTemplateRows = `repeat(${rowsC}, auto)`;
+            gridC.style.gridTemplateColumns = `repeat(${colsC}, auto)`;
+
+            const createCells = (gridElement, rows, cols, prefix) => {
+                const cells = [];
+                for (let r = 0; r < rows; r++) {
+                    cells[r] = [];
+                    for (let c = 0; c < cols; c++) {
+                        const cell = document.createElement("div");
+                        cell.className = "mult-cell";
+                        cell.dataset.row = r;
+                        cell.dataset.col = c;
+                        
+                        if (prefix === "A") {
+                            cell.title = `Token: ${tokens[r] ? tokens[r].text : r}`;
+                            cell.textContent = r;
+                        } else if (prefix === "B") {
+                            cell.textContent = c;
+                        } else {
+                            cell.textContent = "?";
+                        }
+
+                        gridElement.appendChild(cell);
+                        cells[r][c] = cell;
+                    }
+                }
+                return cells;
+            };
+
+            const cellsA = createCells(gridA, rowsA, colsA, "A");
+            const cellsB = createCells(gridB, rowsB, colsB, "B");
+            const cellsC = createCells(gridC, rowsC, colsC, "C");
+
+            for (let r = 0; r < rowsC; r++) {
+                for (let c = 0; c < colsC; c++) {
+                    const outputCell = cellsC[r][c];
+                    outputCell.addEventListener("mouseenter", () => {
+                        for (let colIndex = 0; colIndex < colsA; colIndex++) {
+                            if (cellsA[r] && cellsA[r][colIndex]) {
+                                cellsA[r][colIndex].classList.add("row-highlight");
+                            }
+                        }
+                        for (let rowIndex = 0; rowIndex < rowsB; rowIndex++) {
+                            if (cellsB[rowIndex] && cellsB[rowIndex][c]) {
+                                cellsB[rowIndex][c].classList.add("col-highlight");
+                            }
+                        }
+                        outputCell.classList.add("cell-highlight");
+
+                        const tokR = tokens[r] ? tokens[r].text : `token ${r + 1}`;
+                        if (step5ActiveExplorerTab === "q-proj") {
+                            multExplain.innerHTML = `💡 To compute cell <strong>(${r + 1}, ${c + 1})</strong> of Queries matrix $Q$ (for token <strong>"${tokR}"</strong>, query dim ${c + 1}):<br>We compute the dot product of Row <strong>${r + 1}</strong> of Input sequence $Z$ and Column <strong>${c + 1}</strong> of projection matrix $W_Q$.`;
+                        } else if (step5ActiveExplorerTab === "q-k") {
+                            const tokC = tokens[c] ? tokens[c].text : `token ${c + 1}`;
+                            multExplain.innerHTML = `💡 To compute cell <strong>(${r + 1}, ${c + 1})</strong> of similarity grid $S$ (Attention score from <strong>"${tokR}"</strong> to <strong>"${tokC}"</strong>):<br>We compute the dot product of Row <strong>${r + 1}</strong> of $Q$ (Query vector of <strong>"${tokR}"</strong>) and Column <strong>${c + 1}</strong> of $K^T$ (Key vector of <strong>"${tokC}"</strong>).`;
+                        } else {
+                            multExplain.innerHTML = `💡 To compute cell <strong>(${r + 1}, ${c + 1})</strong> of contextual output matrix $O$ (for token <strong>"${tokR}"</strong>, value dim ${c + 1}):<br>We weight all token value vectors by multiplying Row <strong>${r + 1}</strong> of Attention matrix $A$ (softmax scores for <strong>"${tokR}"</strong> attending to all other tokens) with Column <strong>${c + 1}</strong> of Value matrix $V$.`;
+                        }
+                        
+                        if (window.MathJax && window.MathJax.typesetPromise) {
+                            window.MathJax.typesetPromise([multExplain]).catch(() => {});
+                        }
+                    });
+
+                    outputCell.addEventListener("mouseleave", () => {
+                        for (let colIndex = 0; colIndex < colsA; colIndex++) {
+                            if (cellsA[r] && cellsA[r][colIndex]) {
+                                cellsA[r][colIndex].classList.remove("row-highlight");
+                            }
+                        }
+                        for (let rowIndex = 0; rowIndex < rowsB; rowIndex++) {
+                            if (cellsB[rowIndex] && cellsB[rowIndex][c]) {
+                                cellsB[rowIndex][c].classList.remove("col-highlight");
+                            }
+                        }
+                        outputCell.classList.remove("cell-highlight");
+                        multExplain.innerHTML = "Hover over an element in the output matrix to trace its dot product calculation.";
+                    });
+                }
+            }
+        }
 
         function renderStep5() {
             const list = document.getElementById("step5-attention-list");
@@ -839,10 +1061,22 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const readout = document.getElementById("step5-math-readout");
             if (readout) {
+                let matrixRows = [];
+                for (let i = 0; i < N; i++) {
+                    let rowVals = [];
+                    for (let j = 0; j < N; j++) {
+                        rowVals.push(attentionMatrix[i][j].toFixed(2));
+                    }
+                    matrixRows.push(rowVals.join(' & '));
+                }
+                const latexMatrix = `\\begin{bmatrix} ${matrixRows.join(' \\\\ ')} \\end{bmatrix}`;
+
                 readout.innerHTML = `
-                    <strong>Multi-Head Query-Key-Value Self-Attention:</strong><br>
-                    $Q = Z W_Q, \\; K = Z W_K, \\; V = Z W_V$ (where $W_Q, W_K, W_V \\in \\mathbb{R}^{512 \\times 64}$ per head).<br>
-                    $\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{64}}\\right) V \\in \\mathbb{R}^{T \\times 64}$ for Head ${step5ActiveHead}.
+                    <strong>Multi-Head Query-Key-Value Self-Attention Matrix:</strong><br>
+                    $Q = Z W_Q, \\; K = Z W_K, \\; V = Z W_V \\in \\mathbb{R}^{${N} \\times 64}$ for Head ${step5ActiveHead}.<br>
+                    Computed attention weight matrix $A = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{64}}\\right)$:<br>
+                    $A = ${latexMatrix} \\in \\mathbb{R}^{${N} \\times ${N}}$<br>
+                    $\\text{Attention}(Q, K, V) = A \\times V \\in \\mathbb{R}^{${N} \\times 64}$.
                 `;
             }
 
@@ -857,6 +1091,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     };
                 });
             }
+            renderStep5Explorer();
+            triggerMathJax();
         }
 
         function renderStep6() {
@@ -972,10 +1208,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const readout = document.getElementById("step6-math-readout");
             if (readout) {
+                let maskRows = [];
+                for (let i = 0; i < M; i++) {
+                    let rowVals = [];
+                    for (let j = 0; j < M; j++) {
+                        rowVals.push(j > i ? '-\\infty' : '0');
+                    }
+                    maskRows.push(rowVals.join(' & '));
+                }
+                const maskMatrix = `\\begin{bmatrix} ${maskRows.join(' \\\\ ')} \\end{bmatrix}`;
+
                 readout.innerHTML = `
                     <strong>Masked Self-Attention &amp; Encoder-Decoder Cross Attention:</strong><br>
-                    Causal masking formulation: $\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{d_k}} + M\\right) V$ where $M_{ij} = 0 \\text{ if } j \\le i \\text{ else } -\\infty$.<br>
-                    Cross Attention key-value source mapping: $Q_{\\text{dec}} = Y W_Q, \\; K_{\\text{enc}} = H_{\\text{enc}} W_K, \\; V_{\\text{enc}} = H_{\\text{enc}} W_V$.
+                    Causal Mask Matrix $M$ for target sequence ($T_{\\text{dec}} = ${M}$):<br>
+                    $M = ${maskMatrix} \\in \\mathbb{R}^{${M} \\times ${M}}$<br>
+                    $\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{d_k}} + M\\right) V$<br>
+                    Cross Attention query mapping from decoder to encoder: $Q_{\\text{dec}} = Y W_Q \\in \\mathbb{R}^{${M} \\times 64}$.
                 `;
             }
         }
@@ -985,8 +1233,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (readout) {
                 readout.innerHTML = `
                     <strong>Logit Projection Layer:</strong><br>
-                    $\\text{Logits} = Z_{\\text{dec\_final}} W_U + b \\in \\mathbb{R}^{37,000}$ where $W_U \\in \\mathbb{R}^{512 \\times 37,000}$.<br>
-                    This projects the final 512-dim decoder state back to the size of the vocabulary.
+                    $\\text{Logits} = Z_{\\text{dec\\_final}} W_U + b$<br>
+                    Matrix dimensions shape mapping:<br>
+                    $\\underbrace{\\text{Logits}}_{[1 \\times 37000]} = \\underbrace{Z_{\\text{dec\\_final}}}_{[1 \\times 512]} \\times \\underbrace{W_U}_{[512 \\times 37000]} + \\underbrace{b}_{[1 \\times 37000]}$
                 `;
             }
         }
@@ -1051,20 +1300,37 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const mathBox = document.getElementById("softmax-math-explanation");
             if (mathBox) {
+                const probVectorRows = candidates.map(c => `P(\\text{"${c.word}"})`).join(' \\\\ ');
+                const probValueRows = probs.map(p => `${p.toFixed(1)}\\%`).join(' \\\\ ');
+                const vectorEquation = `\\begin{bmatrix} ${probVectorRows} \\end{bmatrix} = \\begin{bmatrix} ${probValueRows} \\end{bmatrix}`;
+
                 if (tempVal <= 0.4) {
-                    mathBox.innerHTML = `🔥 <strong>Greedy Mode (T=${tempVal}):</strong> Highly confident, focuses entirely on the highest logit.<br>
-                        Softmax scaling: $P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})}$`;
+                    mathBox.innerHTML = `
+                        🔥 <strong>Greedy Mode (T=${tempVal}):</strong> Highly confident, focuses entirely on the highest logit.<br>
+                        Softmax: $P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})}$<br>
+                        Probability Vector:<br>
+                        $${vectorEquation}$
+                    `;
                     mathBox.style.borderLeftColor = "var(--accent)";
                 } else if (tempVal >= 1.5) {
-                    mathBox.innerHTML = `🎨 <strong>Creative Mode (T=${tempVal}):</strong> Softmax distribution is flattened; other words have a higher chance of selection.<br>
-                        Softmax scaling: $P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})}$`;
+                    mathBox.innerHTML = `
+                        🎨 <strong>Creative Mode (T=${tempVal}):</strong> Softmax distribution is flattened; other words have a higher chance.<br>
+                        Softmax: $P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})}$<br>
+                        Probability Vector:<br>
+                        $${vectorEquation}$
+                    `;
                     mathBox.style.borderLeftColor = "var(--accent-2)";
                 } else {
-                    mathBox.innerHTML = `⚙️ <strong>Standard Scaling (T=${tempVal}):</strong> Balanced confidence and distribution.<br>
-                        Softmax scaling: $P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})}$`;
+                    mathBox.innerHTML = `
+                        ⚙️ <strong>Standard Scaling (T=${tempVal}):</strong> Balanced confidence and distribution.<br>
+                        Softmax: $P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})}$<br>
+                        Probability Vector:<br>
+                        $${vectorEquation}$
+                    `;
                     mathBox.style.borderLeftColor = "var(--accent-3)";
                 }
             }
+            triggerMathJax();
         }
 
         function renderStep9() {
@@ -1077,13 +1343,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const readout = document.getElementById("step9-math-readout");
             if (readout) {
+                const currentWords = data.target.split(/\s+/).filter(Boolean);
+                const allWords = [...currentWords, data.nextWord];
+                const wordRows = allWords.map(w => {
+                    const escaped = w.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    return `\\text{"${escaped}"}`;
+                }).join(' \\\\ ');
+
                 readout.innerHTML = `
                     <strong>Autoregressive Update &amp; Sequence Concatenation:</strong><br>
                     $t_{\\text{next}} = \\text{argmax}_{w} \\, P(w) = \\text{ID} \\text{ of } \\text{"${data.nextWord}"}$<br>
-                    $Y_{\\text{dec}}^{(t+1)} = \\left[ Y_{\\text{dec}}^{(t)} \\;; \\; t_{\\text{next}} \\right] = \\text{["${data.target} ${data.nextWord}"]}$.
+                    Sequence Matrix Stack $Y^{(t+1)} = \\begin{bmatrix} Y^{(t)} \\\\ t_{\\text{next}} \\end{bmatrix}$:<br>
+                    $Y^{(t+1)} = \\begin{bmatrix} ${wordRows} \\end{bmatrix} \\in \\mathbb{R}^{${allWords.length} \\times 1}$
                 `;
             }
         }
+
+        let typesetTimeout = null;
+        function triggerMathJax() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                if (typesetTimeout) clearTimeout(typesetTimeout);
+                typesetTimeout = setTimeout(() => {
+                    try {
+                        window.MathJax.typesetClear();
+                        window.MathJax.typesetPromise().catch((err) => {
+                            if (err && err.message && err.message.includes("already in progress")) return;
+                            console.log('MathJax typesetting error:', err);
+                        });
+                    } catch (e) {
+                        console.log('MathJax clear error:', e);
+                    }
+                }, 80);
+            }
+        }
+        window.triggerMathJax = triggerMathJax;
 
         function renderActiveStep() {
             // Update stepper active classes
@@ -1118,9 +1411,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Trigger MathJax typesetting if loaded
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise().catch((err) => console.log('MathJax typesetting error:', err));
-            }
+            triggerMathJax();
 
             // Disable/enable prev/next buttons
             prevBtn.disabled = currentStep === 1;
@@ -1269,6 +1560,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 renderStep8();
             });
         }
+
+        // Initialize Step 5 Dimension Explorer
+        initStep5Explorer();
 
         // Trigger initial render
         renderActiveStep();
