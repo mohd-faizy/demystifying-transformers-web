@@ -932,6 +932,10 @@
                                     <div class="concept-tooltip-box">
                                         💡 <strong>Next Step target word:</strong> The model will predict the next word in the German translation (which should be <strong>"du"</strong> or <strong>"brauchst"</strong>).
                                     </div>
+                                    
+                                    <div class="step-math-box" id="step1-math-readout">
+                                        <!-- Dynamically written via JS with MathJax -->
+                                    </div>
                                 </div>
                                 
                                 <!-- Step 2: Tokenization -->
@@ -965,6 +969,10 @@
                                     <div class="concept-tooltip-box">
                                         ⚙️ <strong>BPE Algorithm:</strong> It iteratively merges the most frequent pairs of characters/bytes. This prevents "Out-of-Vocabulary" errors by breaking unknown words down into smaller subwords (like "transformer" &rarr; ["trans", "former"]).
                                     </div>
+                                    
+                                    <div class="step-math-box" id="step2-math-readout">
+                                        <!-- Dynamically written via JS with MathJax -->
+                                    </div>
                                 </div>
                                 
                                 <!-- Step 3: Embeddings -->
@@ -996,6 +1004,10 @@
                                     
                                     <div class="concept-tooltip-box">
                                         📊 <strong>Shape:</strong> `[Sequence Length × 512]`. Each row is a 512-element vector containing floating-point numbers learned during training.
+                                    </div>
+                                    
+                                    <div class="step-math-box" id="step3-math-readout">
+                                        <!-- Dynamically written via JS with MathJax -->
                                     </div>
                                 </div>
                                 
@@ -1115,6 +1127,10 @@
                                             <span class="stack-layer-badge">Stacked</span>
                                         </div>
                                     </div>
+                                    
+                                    <div class="step-math-box" id="step5-math-readout">
+                                        <!-- Dynamically written via JS with MathJax -->
+                                    </div>
                                 </div>
                                 
                                 <!-- Step 6: Decoder Layers -->
@@ -1162,6 +1178,10 @@
                                             <span class="stack-layer-badge">Stacked</span>
                                         </div>
                                     </div>
+                                    
+                                    <div class="step-math-box" id="step6-math-readout">
+                                        <!-- Dynamically written via JS with MathJax -->
+                                    </div>
                                 </div>
                                 
                                 <!-- Step 7: Linear -->
@@ -1207,6 +1227,10 @@
                                     
                                     <div class="concept-tooltip-box">
                                         📝 <strong>Logits:</strong> These are raw, unnormalized scoring values. A higher score means the model thinks that vocabulary index is more likely to be the correct next word.
+                                    </div>
+                                    
+                                    <div class="step-math-box" id="step7-math-readout">
+                                        <!-- Dynamically written via JS with MathJax -->
                                     </div>
                                 </div>
                                 
@@ -1286,6 +1310,10 @@
                                     
                                     <div class="concept-tooltip-box">
                                         🔄 <strong>Auto-Regressive translation:</strong> The model generates translation tokens one-by-one. Generation stops when the model outputs the special end-of-sequence token <code>&lt;eos&gt;</code>.
+                                    </div>
+                                    
+                                    <div class="step-math-box" id="step9-math-readout">
+                                        <!-- Dynamically written via JS with MathJax -->
                                     </div>
                                 </div>
                             </div>

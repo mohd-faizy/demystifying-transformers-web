@@ -417,6 +417,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = getTranslationData(currentInput);
             document.getElementById("step1-source-text").textContent = currentInput;
             document.getElementById("step1-target-text").textContent = data.target;
+            
+            const readout = document.getElementById("step1-math-readout");
+            if (readout) {
+                readout.innerHTML = `
+                    <strong>Seq2Seq Dimensions:</strong><br>
+                    Source sequence input: $X_{\\text{enc}} \\in \\mathbb{R}^{T_{\\text{enc}} \\times d_{\\text{vocab\_src}}}$ with $T_{\\text{enc}} = ${getTokens(currentInput).length}$ tokens.<br>
+                    Decoder target sequence input: $Y_{\\text{dec}} \\in \\mathbb{R}^{T_{\\text{dec}} \\times d_{\\text{vocab\_trg}}}$ with $T_{\\text{dec}} = ${data.target.split(/\s+/).filter(Boolean).length}$ tokens.
+                `;
+            }
         }
 
         function renderStep2() {
@@ -459,6 +468,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 display.appendChild(chip);
             });
+
+            const readout = document.getElementById("step2-math-readout");
+            if (readout) {
+                const idsString = tokens.map(t => t.id).join(", ");
+                readout.innerHTML = `
+                    <strong>Tokenization Index Matrix:</strong><br>
+                    $t = \\text{Tokenizer}(\\text{"${currentInput}"}) = [${idsString}]$ where $t_i \\in \\mathbb{Z}_{|V|}$ and $|V| = 37,000$.
+                `;
+            }
         }
 
         function renderStep3() {
@@ -519,6 +537,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 row.appendChild(cellsWrap);
                 container.appendChild(row);
             });
+
+            const readout = document.getElementById("step3-math-readout");
+            if (readout) {
+                readout.innerHTML = `
+                    <strong>Embedding Matrix Lookup:</strong><br>
+                    $E_i = \\text{EmbeddingLookup}(t_i) = W_E[t_i, :] \\in \\mathbb{R}^{512}$ where $W_E \\in \\mathbb{R}^{37,000 \\times 512}$ is learned during training.<br>
+                    Full sequence representation: $E = [E_1; E_2; \\dots; E_T] \\in \\mathbb{R}^{T \\times 512}$.
+                `;
+            }
         }
 
         let pePosVal = 1;
@@ -630,8 +657,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const peFormulaVal = trackerValSin.toFixed(4);
             if (mathReadout) {
                 mathReadout.innerHTML = `
-                    <strong>Active Coordinate PE calculation:</strong><br>
-                    <code>PE(pos=${pePosVal}, dim=${peDimVal}) = sin(${pePosVal} / 10000^(${peDimVal}/512))</code> = <code style="color:var(--accent); font-weight:700;">${peFormulaVal}</code>
+                    <strong>Sinusoidal Coordinate Injection:</strong><br>
+                    $\\text{PE}(\\text{pos}=${pePosVal}, \\text{dim}=${peDimVal}) = \\sin\\left(\\frac{${pePosVal}}{10000^{${peDimVal}/512}}\\right) = ${peFormulaVal}$<br>
+                    Combined representation: $Z = E + \\text{PE} \\in \\mathbb{R}^{T \\times 512}$.
                 `;
             }
         }
@@ -809,6 +837,15 @@ document.addEventListener("DOMContentLoaded", () => {
             
             selectWordIndex(step5ActiveNode >= N ? 0 : step5ActiveNode);
             
+            const readout = document.getElementById("step5-math-readout");
+            if (readout) {
+                readout.innerHTML = `
+                    <strong>Multi-Head Query-Key-Value Self-Attention:</strong><br>
+                    $Q = Z W_Q, \\; K = Z W_K, \\; V = Z W_V$ (where $W_Q, W_K, W_V \\in \\mathbb{R}^{512 \\times 64}$ per head).<br>
+                    $\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{64}}\\right) V \\in \\mathbb{R}^{T \\times 64}$ for Head ${step5ActiveHead}.
+                `;
+            }
+
             const headButtons = document.getElementById("step5-head-buttons");
             if (headButtons) {
                 headButtons.querySelectorAll(".head-btn").forEach(btn => {
@@ -932,6 +969,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     first.dispatchEvent(event);
                 }
             }
+
+            const readout = document.getElementById("step6-math-readout");
+            if (readout) {
+                readout.innerHTML = `
+                    <strong>Masked Self-Attention &amp; Encoder-Decoder Cross Attention:</strong><br>
+                    Causal masking formulation: $\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{d_k}} + M\\right) V$ where $M_{ij} = 0 \\text{ if } j \\le i \\text{ else } -\\infty$.<br>
+                    Cross Attention key-value source mapping: $Q_{\\text{dec}} = Y W_Q, \\; K_{\\text{enc}} = H_{\\text{enc}} W_K, \\; V_{\\text{enc}} = H_{\\text{enc}} W_V$.
+                `;
+            }
+        }
+
+        function renderStep7() {
+            const readout = document.getElementById("step7-math-readout");
+            if (readout) {
+                readout.innerHTML = `
+                    <strong>Logit Projection Layer:</strong><br>
+                    $\\text{Logits} = Z_{\\text{dec\_final}} W_U + b \\in \\mathbb{R}^{37,000}$ where $W_U \\in \\mathbb{R}^{512 \\times 37,000}$.<br>
+                    This projects the final 512-dim decoder state back to the size of the vocabulary.
+                `;
+            }
         }
 
         function renderStep8() {
@@ -995,13 +1052,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const mathBox = document.getElementById("softmax-math-explanation");
             if (mathBox) {
                 if (tempVal <= 0.4) {
-                    mathBox.innerHTML = `🔥 <strong>Greedy Mode (T=${tempVal}):</strong> Highly confident, focuses entirely on the highest logit. Good for factual translation.`;
+                    mathBox.innerHTML = `🔥 <strong>Greedy Mode (T=${tempVal}):</strong> Highly confident, focuses entirely on the highest logit.<br>
+                        Softmax scaling: $P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})}$`;
                     mathBox.style.borderLeftColor = "var(--accent)";
                 } else if (tempVal >= 1.5) {
-                    mathBox.innerHTML = `🎨 <strong>Creative Mode (T=${tempVal}):</strong> Softmax distribution is flattened; other words have a higher chance of selection. Good for creative tasks.`;
+                    mathBox.innerHTML = `🎨 <strong>Creative Mode (T=${tempVal}):</strong> Softmax distribution is flattened; other words have a higher chance of selection.<br>
+                        Softmax scaling: $P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})}$`;
                     mathBox.style.borderLeftColor = "var(--accent-2)";
                 } else {
-                    mathBox.innerHTML = `⚙️ <strong>Standard Scaling (T=${tempVal}):</strong> Balanced confidence and distribution.`;
+                    mathBox.innerHTML = `⚙️ <strong>Standard Scaling (T=${tempVal}):</strong> Balanced confidence and distribution.<br>
+                        Softmax scaling: $P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})}$`;
                     mathBox.style.borderLeftColor = "var(--accent-3)";
                 }
             }
@@ -1014,6 +1074,15 @@ document.addEventListener("DOMContentLoaded", () => {
             
             selectedWord.textContent = `"${data.nextWord}"`;
             newInput.textContent = `${data.target} ${data.nextWord}`;
+
+            const readout = document.getElementById("step9-math-readout");
+            if (readout) {
+                readout.innerHTML = `
+                    <strong>Autoregressive Update &amp; Sequence Concatenation:</strong><br>
+                    $t_{\\text{next}} = \\text{argmax}_{w} \\, P(w) = \\text{ID} \\text{ of } \\text{"${data.nextWord}"}$<br>
+                    $Y_{\\text{dec}}^{(t+1)} = \\left[ Y_{\\text{dec}}^{(t)} \\;; \\; t_{\\text{next}} \\right] = \\text{["${data.target} ${data.nextWord}"]}$.
+                `;
+            }
         }
 
         function renderActiveStep() {
@@ -1043,12 +1112,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 case 4: renderStep4(); break;
                 case 5: renderStep5(); break;
                 case 6: renderStep6(); break;
-                case 7: /* Static Layout */ break;
+                case 7: renderStep7(); break;
                 case 8: renderStep8(); break;
                 case 9: renderStep9(); break;
             }
 
+            // Trigger MathJax typesetting if loaded
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch((err) => console.log('MathJax typesetting error:', err));
+            }
+
             // Disable/enable prev/next buttons
+            prevBtn.disabled = currentStep === 1;
             prevBtn.disabled = currentStep === 1;
             nextBtn.disabled = currentStep === 9;
         }
