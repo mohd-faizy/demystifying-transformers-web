@@ -302,36 +302,36 @@ document.addEventListener("DOMContentLoaded", () => {
         // Custom presets translations & words mappings
         const mockTranslationDB = {
             "attention is all you need": {
-                target: "<bos> Aufmerksamkeit ist alles, was du",
-                nextWord: "brauchst",
+                target: "<bos> La atención es todo lo que",
+                nextWord: "necesitas",
                 candidates: [
-                    { word: "brauchst", prob: 88.5 },
-                    { word: "nötig", prob: 6.2 },
-                    { word: "nötige", prob: 3.1 },
-                    { word: "wäre", prob: 1.2 },
-                    { word: "ist", prob: 0.5 }
+                    { word: "necesitas", prob: 88.5 },
+                    { word: "requieres", prob: 6.2 },
+                    { word: "importa", prob: 3.1 },
+                    { word: "es", prob: 1.2 },
+                    { word: "para", prob: 0.5 }
                 ]
             },
             "deep learning is magic": {
-                target: "<bos> Deep Learning ist wie Magie und",
-                nextWord: "Wissenschaft",
+                target: "<bos> El aprendizaje profundo es",
+                nextWord: "magia",
                 candidates: [
-                    { word: "Wissenschaft", prob: 74.2 },
-                    { word: "Kunst", prob: 12.8 },
-                    { word: "Technik", prob: 7.1 },
-                    { word: "Mathematik", prob: 4.0 },
-                    { word: "Forschung", prob: 1.5 }
+                    { word: "magia", prob: 74.2 },
+                    { word: "ciencia", prob: 12.8 },
+                    { word: "arte", prob: 7.1 },
+                    { word: "futuro", prob: 4.0 },
+                    { word: "tecnología", prob: 1.5 }
                 ]
             },
-            "hello transformer world": {
-                target: "<bos> Hallo Transformer-Welt wie geht",
-                nextWord: "es",
+            "artificial intelligence is the future": {
+                target: "<bos> La inteligencia artificial es el",
+                nextWord: "futuro",
                 candidates: [
-                    { word: "es", prob: 82.1 },
-                    { word: "dir", prob: 9.3 },
-                    { word: "euch", prob: 4.8 },
-                    { word: "ihnen", prob: 2.2 },
-                    { word: "man", prob: 0.9 }
+                    { word: "futuro", prob: 88.5 },
+                    { word: "presente", prob: 6.2 },
+                    { word: "destino", prob: 3.1 },
+                    { word: "camino", prob: 1.2 },
+                    { word: "fin", prob: 0.5 }
                 ]
             }
         };
@@ -344,19 +344,19 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             // Generate fallback translation values
             const words = clean.split(/\s+/).filter(Boolean);
-            const targetWords = words.map(w => w.substring(0, Math.min(w.length, 5)) + "en");
+            const targetWords = words.map(w => w.substring(0, Math.min(w.length, 5)) + "os");
             const targetText = "<bos> " + targetWords.slice(0, Math.max(1, targetWords.length - 1)).join(" ");
-            const nextWord = targetWords[targetWords.length - 1] || "ende";
+            const nextWord = targetWords[targetWords.length - 1] || "fin";
             
             return {
                 target: targetText,
                 nextWord: nextWord,
                 candidates: [
                     { word: nextWord, prob: 78.4 },
-                    { word: nextWord + "st", prob: 11.2 },
-                    { word: "und", prob: 5.3 },
-                    { word: "nicht", prob: 3.2 },
-                    { word: "der", prob: 1.5 }
+                    { word: nextWord + "as", prob: 11.2 },
+                    { word: "y", prob: 5.3 },
+                    { word: "no", prob: 3.2 },
+                    { word: "de", prob: 1.5 }
                 ]
             };
         }
@@ -1251,10 +1251,10 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const candidates = [
                 { word: data.nextWord, logit: 3.5 },
-                { word: data.nextWord === "du" ? "brauchst" : "du", logit: 2.2 },
-                { word: "Aufmerksamkeit", logit: 1.0 },
-                { word: "ist", logit: 0.2 },
-                { word: "alles", logit: -0.5 }
+                { word: data.nextWord === "te" ? "necesitas" : "te", logit: 2.2 },
+                { word: "atención", logit: 1.0 },
+                { word: "es", logit: 0.2 },
+                { word: "todo", logit: -0.5 }
             ];
             
             let sumExp = 0;
