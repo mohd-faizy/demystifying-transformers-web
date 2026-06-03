@@ -798,6 +798,503 @@
                 </div>
 
                 <!-- ═══════════════════════════════════════════
+                         INTERACTIVE TRANSFORMER PIPELINE
+                     ═══════════════════════════════════════════ -->
+                <div class="reddit-block interactive-pipeline-block" id="interactive-pipeline-section">
+                    <div class="reddit-line" style="background:var(--accent);"></div>
+                    <div class="reddit-content">
+                        <div class="pipeline-header">
+                            <h3>🔬 Interactive End-to-End Transformer Pipeline</h3>
+                            <p>Trace the flow of a sentence through every single layer of the Transformer. Click on steps or use the controls to animate the process.</p>
+                        </div>
+                        
+                        <div class="pipeline-controls">
+                            <div class="pipeline-input-group">
+                                <label for="pipeline-input">Input Sentence:</label>
+                                <input type="text" id="pipeline-input" class="pipeline-text-input" value="Attention is all you need" maxlength="50">
+                            </div>
+                            <div class="pipeline-presets">
+                                <button class="pipeline-preset-btn" data-text="Attention is all you need">Preset 1</button>
+                                <button class="pipeline-preset-btn" data-text="Deep learning is magic">Preset 2</button>
+                                <button class="pipeline-preset-btn" data-text="Hello transformer world">Preset 3</button>
+                            </div>
+                            <div class="pipeline-playback-group">
+                                <button class="pipeline-btn" id="pipeline-prev-btn" title="Previous Step">⏮</button>
+                                <button class="pipeline-btn" id="pipeline-play-btn" title="Play / Pause">▶</button>
+                                <button class="pipeline-btn" id="pipeline-next-btn" title="Next Step">⏭</button>
+                                <button class="pipeline-btn" id="pipeline-reset-btn" title="Reset">↺</button>
+                                <div class="pipeline-speed-wrap">
+                                    <span>Speed:</span>
+                                    <input type="range" id="pipeline-speed" class="pipeline-speed-slider" min="500" max="3000" step="250" value="1500">
+                                    <span id="pipeline-speed-val">1.5s</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="pipeline-layout">
+                            <!-- Left Column: Stepper -->
+                            <div class="pipeline-stepper">
+                                <div class="pipeline-step-item active" data-step="1">
+                                    <div class="pipeline-step-icon">1</div>
+                                    <div class="pipeline-step-info">
+                                        <span class="pipeline-step-title">Input Processing</span>
+                                        <span class="pipeline-step-desc">Enter source & target text</span>
+                                    </div>
+                                </div>
+                                <div class="pipeline-step-item" data-step="2">
+                                    <div class="pipeline-step-icon">2</div>
+                                    <div class="pipeline-step-info">
+                                        <span class="pipeline-step-title">Tokenization (BPE)</span>
+                                        <span class="pipeline-step-desc">Convert words to vocabulary IDs</span>
+                                    </div>
+                                </div>
+                                <div class="pipeline-step-item" data-step="3">
+                                    <div class="pipeline-step-icon">3</div>
+                                    <div class="pipeline-step-info">
+                                        <span class="pipeline-step-title">Embedding Lookup</span>
+                                        <span class="pipeline-step-desc">Lookup 512-dim vectors</span>
+                                    </div>
+                                </div>
+                                <div class="pipeline-step-item" data-step="4">
+                                    <div class="pipeline-step-icon">4</div>
+                                    <div class="pipeline-step-info">
+                                        <span class="pipeline-step-title">Positional Encoding</span>
+                                        <span class="pipeline-step-desc">Inject sequence order waves</span>
+                                    </div>
+                                </div>
+                                <div class="pipeline-step-item" data-step="5">
+                                    <div class="pipeline-step-icon">5</div>
+                                    <div class="pipeline-step-info">
+                                        <span class="pipeline-step-title">Encoder Layers (x6)</span>
+                                        <span class="pipeline-step-desc">Multi-Head Self-Attention + FFN</span>
+                                    </div>
+                                </div>
+                                <div class="pipeline-step-item" data-step="6">
+                                    <div class="pipeline-step-icon">6</div>
+                                    <div class="pipeline-step-info">
+                                        <span class="pipeline-step-title">Decoder Layers (x6)</span>
+                                        <span class="pipeline-step-desc">Masked Self-Attention + Cross-Attention</span>
+                                    </div>
+                                </div>
+                                <div class="pipeline-step-item" data-step="7">
+                                    <div class="pipeline-step-icon">7</div>
+                                    <div class="pipeline-step-info">
+                                        <span class="pipeline-step-title">Linear Projection</span>
+                                        <span class="pipeline-step-desc">Project 512-dim to Vocab Size</span>
+                                    </div>
+                                </div>
+                                <div class="pipeline-step-item" data-step="8">
+                                    <div class="pipeline-step-icon">8</div>
+                                    <div class="pipeline-step-info">
+                                        <span class="pipeline-step-title">Softmax Probabilities</span>
+                                        <span class="pipeline-step-desc">Calculate vocabulary probability</span>
+                                    </div>
+                                </div>
+                                <div class="pipeline-step-item" data-step="9">
+                                    <div class="pipeline-step-icon">9</div>
+                                    <div class="pipeline-step-info">
+                                        <span class="pipeline-step-title">Autoregressive Loop</span>
+                                        <span class="pipeline-step-desc">Select word and feed back</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right Column: Sandbox Visualizer -->
+                            <div class="pipeline-sandbox">
+                                <!-- Step 1: Input -->
+                                <div class="sandbox-pane active" data-step="1">
+                                    <div class="sandbox-pane-header">
+                                        <h4 class="sandbox-pane-title">Step 1 — Input Sentence & Seq2Seq Setup</h4>
+                                        <p class="sandbox-pane-desc">Transformers are encoder-decoder sequence transduction models. The Encoder takes a source sentence (English) and the Decoder generates a target sentence (German) token-by-token.</p>
+                                    </div>
+                                    
+                                    <div class="explainer-card">
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-goal">Goal</span>
+                                            <span>Accept source input and prepare the sequence translation context.</span>
+                                        </div>
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-analogy">Analogy</span>
+                                            <span>Like having a book in English on the left table, and a notebook on the right table where you will write the translation page-by-page.</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="sentence-flow-card">
+                                        <div class="flow-label">Source Sequence (Encoder Input)</div>
+                                        <div class="flow-text" id="step1-source-text">Attention is all you need</div>
+                                    </div>
+                                    
+                                    <div class="sentence-flow-card" style="border-left-color: var(--accent-2);">
+                                        <div class="flow-label" style="color: var(--accent-2);">Target Sequence Prefix (Decoder Input)</div>
+                                        <div class="flow-text" id="step1-target-text" style="color: var(--accent-3); font-weight: 555;">&lt;bos&gt; Aufmerksamkeit ist alles was</div>
+                                    </div>
+                                    
+                                    <div class="concept-tooltip-box">
+                                        💡 <strong>Next Step target word:</strong> The model will predict the next word in the German translation (which should be <strong>"du"</strong> or <strong>"brauchst"</strong>).
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 2: Tokenization -->
+                                <div class="sandbox-pane" data-step="2">
+                                    <div class="sandbox-pane-header">
+                                        <h4 class="sandbox-pane-title">Step 2 — Byte-Pair Encoding (BPE) Tokenization</h4>
+                                        <p class="sandbox-pane-desc">Computers cannot read text directly. A tokenizer splits text into sub-words (tokens) and converts them into indices from a pre-defined Vocabulary list (V = 37,000 words/symbols).</p>
+                                    </div>
+
+                                    <div class="explainer-card">
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-goal">Goal</span>
+                                            <span>Break raw text into standard numerical pieces (vocabulary IDs).</span>
+                                        </div>
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-analogy">Analogy</span>
+                                            <span>Like looking up words in a dictionary index to convert a sentence into a series of page numbers.</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flow-label">Source Tokens &amp; Vocabulary IDs <span style="font-size:0.75rem; font-weight:normal; text-transform:none; color:var(--muted);">(Click any token to inspect details)</span></div>
+                                    <div class="flow-tokens-display" id="step2-tokens-display">
+                                        <!-- Dynamically generated chips -->
+                                    </div>
+
+                                    <div id="step2-token-detail" class="sentence-flow-card" style="margin-top: 12px; display: none;">
+                                        <div class="flow-label" style="color: var(--accent-2);">Token Inspector</div>
+                                        <div class="flow-text" id="step2-token-detail-text" style="font-size:0.9rem;">Click a token above to inspect character indexes and statistics.</div>
+                                    </div>
+                                    
+                                    <div class="concept-tooltip-box">
+                                        ⚙️ <strong>BPE Algorithm:</strong> It iteratively merges the most frequent pairs of characters/bytes. This prevents "Out-of-Vocabulary" errors by breaking unknown words down into smaller subwords (like "transformer" &rarr; ["trans", "former"]).
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 3: Embeddings -->
+                                <div class="sandbox-pane" data-step="3">
+                                    <div class="sandbox-pane-header">
+                                        <h4 class="sandbox-pane-title">Step 3 — Token Embedding Lookup (d_model = 512)</h4>
+                                        <p class="sandbox-pane-desc">Each Token ID is used to lookup a 512-dimensional vector. These vectors represent the semantic meaning of the token in a continuous vector space where similar concepts cluster together.</p>
+                                    </div>
+
+                                    <div class="explainer-card">
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-goal">Goal</span>
+                                            <span>Translate discrete word indexes into semantic vectors representing meaning.</span>
+                                        </div>
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-analogy">Analogy</span>
+                                            <span>Like looking up GPS coordinates on a multi-dimensional map where related words are located close to each other.</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flow-label">Embedding Matrix Grid <span style="font-size:0.75rem; font-weight:normal; text-transform:none; color:var(--muted);">(Hover cells to view specific dimensions)</span></div>
+                                    <div class="embedding-vis-container" id="step3-embeddings-container">
+                                        <!-- Dynamically generated rows -->
+                                    </div>
+
+                                    <div id="step3-hover-detail" style="font-size: 0.8rem; font-weight:700; color:var(--accent); min-height: 20px;">
+                                        Hover over cells to see float values and dimension numbers.
+                                    </div>
+                                    
+                                    <div class="concept-tooltip-box">
+                                        📊 <strong>Shape:</strong> `[Sequence Length × 512]`. Each row is a 512-element vector containing floating-point numbers learned during training.
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 4: Positional Encoding -->
+                                <div class="sandbox-pane" data-step="4">
+                                    <div class="sandbox-pane-header">
+                                        <h4 class="sandbox-pane-title">Step 4 — Sinusoidal Positional Encoding Injection</h4>
+                                        <p class="sandbox-pane-desc">Self-attention processes all words in parallel, losing order information. To fix this, fixed sine/cosine waves of different frequencies are added element-wise to the embeddings.</p>
+                                    </div>
+
+                                    <div class="explainer-card">
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-goal">Goal</span>
+                                            <span>Inject word position information without using sequential recurrences.</span>
+                                        </div>
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-analogy">Analogy</span>
+                                            <span>Like writing a date watermark on letters so that even if they are delivered out of order, you can easily sort them.</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="wave-legend">
+                                        <div class="legend-item">
+                                            <span class="legend-color" style="background:#0f766e;"></span>
+                                            <span>Sinwave (Even Dim)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <span class="legend-color" style="background:#b45309;"></span>
+                                            <span>Coswave (Odd Dim)</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="svg-wave-container">
+                                        <svg id="step4-wave-svg" style="width:100%; height:100%;" viewBox="0 0 400 150">
+                                            <!-- Grid lines and wave paths will be rendered here -->
+                                        </svg>
+                                    </div>
+
+                                    <div class="sandbox-slider-group">
+                                        <div class="sandbox-slider-row">
+                                            <label for="pe-pos-slider">Token Position (pos):</label>
+                                            <input type="range" id="pe-pos-slider" class="sandbox-slider" min="0" max="6" value="1">
+                                            <span id="pe-pos-val" class="sandbox-slider-value">1</span>
+                                        </div>
+                                        <div class="sandbox-slider-row">
+                                            <label for="pe-dim-slider">Dimension Index (i):</label>
+                                            <input type="range" id="pe-dim-slider" class="sandbox-slider" min="0" max="511" step="2" value="0">
+                                            <span id="pe-dim-val" class="sandbox-slider-value">0</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="step-math-box" id="pe-math-readout">
+                                        PE(pos=1, dim=0) = sin(...) = ...
+                                    </div>
+                                    
+                                    <div class="concept-tooltip-box">
+                                        🧮 <strong>Formula:</strong> <code>PE(pos, 2i) = sin(pos/10000^(2i/d))</code> PE(pos, 2i+1) = cos(pos/10000^(2i/d)). This enables the model to extrapolate to longer sequences than seen during training.
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 5: Encoder Layers -->
+                                <div class="sandbox-pane" data-step="5">
+                                    <div class="sandbox-pane-header">
+                                        <h4 class="sandbox-pane-title">Step 5 — Encoder Layer Stack &amp; Self-Attention Graph</h4>
+                                        <p class="sandbox-pane-desc">The Encoder uses a stack of 6 identical layers. In each layer, tokens attend to each other via Self-Attention to gather contextual information, then pass through a Feed-Forward Network.</p>
+                                    </div>
+
+                                    <div class="explainer-card">
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-goal">Goal</span>
+                                            <span>Understand each word in context (e.g. linking "bank" to "river" or "money").</span>
+                                        </div>
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-analogy">Analogy</span>
+                                            <span>Like a group meeting where every person (word) makes eye contact (attention) with all others to establish relationships.</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="stack-visualizer">
+                                        <div class="stack-layer-box active-sub">
+                                            <span>Encoder Layer 1 (Active)</span>
+                                            <span class="stack-layer-badge">Interactive Node Graph</span>
+                                        </div>
+                                        
+                                        <div class="sublayer-details">
+                                            <div class="head-switcher-wrap">
+                                                <span class="head-switcher-label">Attention Head:</span>
+                                                <div class="head-buttons" id="step5-head-buttons">
+                                                    <button class="head-btn active" data-head="1">Head 1 (Syntactic)</button>
+                                                    <button class="head-btn" data-head="2">Head 2 (Position)</button>
+                                                    <button class="head-btn" data-head="3">Head 3 (Verbs)</button>
+                                                    <button class="head-btn" data-head="4">Head 4 (Coreference)</button>
+                                                </div>
+                                            </div>
+
+                                            <div class="flow-label">Self-Attention Link Network <span style="font-size:0.72rem; font-weight:normal; text-transform:none; color:var(--muted);">(Hover/Click nodes to check links)</span></div>
+                                            
+                                            <!-- SVG Graph visualizer -->
+                                            <div class="attention-graph-svg-container">
+                                                <svg id="step5-attention-graph" style="width:100%; height:100%;">
+                                                    <!-- Nodes and curves drawn dynamically -->
+                                                </svg>
+                                            </div>
+                                            
+                                            <div class="attention-interactive-wrap">
+                                                <div class="attention-list" id="step5-attention-list">
+                                                    <!-- Words list -->
+                                                </div>
+                                                <div class="attention-matrix-grid" id="step5-matrix-grid">
+                                                    <!-- Dynamic visual grid -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="stack-layer-box">
+                                            <span>Encoder Layers 2–6</span>
+                                            <span class="stack-layer-badge">Stacked</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 6: Decoder Layers -->
+                                <div class="sandbox-pane" data-step="6">
+                                    <div class="sandbox-pane-header">
+                                        <h4 class="sandbox-pane-title">Step 6 — Decoder Layer Stack &amp; Attention Masking</h4>
+                                        <p class="sandbox-pane-desc">The Decoder stacks 6 layers to generate target tokens. It first applies <strong>Masked Self-Attention</strong> (protecting future tokens), then performs <strong>Cross-Attention</strong> to read Encoder outputs.</p>
+                                    </div>
+
+                                    <div class="explainer-card">
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-goal">Goal</span>
+                                            <span>Generate translation step-by-step while attending to source memory and preventing looking ahead.</span>
+                                        </div>
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-analogy">Analogy</span>
+                                            <span>Like translating a sentence where you are blindfolded to future parts of the sheet but have a clear look at the English original.</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="stack-visualizer">
+                                        <div class="stack-layer-box active-sub">
+                                            <span>Decoder Layer 1 (Active)</span>
+                                            <span class="stack-layer-badge">Interactive Masks</span>
+                                        </div>
+                                        <div class="sublayer-details" style="gap: 8px;">
+                                            <div class="flow-label">Masked Attention matrix (🔒 Padlocks represent masked future tokens)</div>
+                                            
+                                            <div class="masked-padlock-overlay" id="step6-padlock-grid">
+                                                <!-- Dynamic padlock layout grid -->
+                                            </div>
+
+                                            <div class="flow-label" style="margin-top: 10px;">Decoder Cross-Attention (Decoder &rarr; Encoder Context)</div>
+                                            <div class="attention-interactive-wrap">
+                                                <div class="attention-list" id="step6-decoder-list">
+                                                    <!-- Decoder target tokens list -->
+                                                </div>
+                                                <div class="attention-list" id="step6-encoder-mem-list">
+                                                    <!-- Encoder memory weights -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="stack-layer-box">
+                                            <span>Decoder Layers 2–6</span>
+                                            <span class="stack-layer-badge">Stacked</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 7: Linear -->
+                                <div class="sandbox-pane" data-step="7">
+                                    <div class="sandbox-pane-header">
+                                        <h4 class="sandbox-pane-title">Step 7 — Linear Projection Layer</h4>
+                                        <p class="sandbox-pane-desc">The output of the final Decoder layer is a 512-dim vector for the active position. The Linear layer projects this back to the size of our Vocabulary (37,000 logits).</p>
+                                    </div>
+
+                                    <div class="explainer-card">
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-goal">Goal</span>
+                                            <span>Expand low-dimensional representation to match the word options count.</span>
+                                        </div>
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-analogy">Analogy</span>
+                                            <span>Like projecting a slide onto a giant wall of vocabulary tiles to highlight which tile matches the slide.</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin: auto 0; padding: 20px 0;">
+                                        <div style="display: flex; flex-direction: column; align-items: center;">
+                                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--muted); margin-bottom: 4px;">Decoder Output</span>
+                                            <div style="background:var(--soft); border:1px solid var(--line); padding:10px; border-radius:6px; font-family:monospace; font-size:0.8rem;">
+                                                [1 × 512]
+                                            </div>
+                                        </div>
+                                        <span style="font-size: 1.5rem; color: var(--muted); font-weight: 300;">×</span>
+                                        <div style="display: flex; flex-direction: column; align-items: center;">
+                                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--muted); margin-bottom: 4px;">Projection Matrix W</span>
+                                            <div style="background:var(--soft); border:1px solid var(--line); padding:10px; border-radius:6px; font-family:monospace; font-size:0.8rem; border-left: 3px solid var(--accent-2);">
+                                                [512 × 37,000]
+                                            </div>
+                                        </div>
+                                        <span style="font-size: 1.5rem; color: var(--muted); font-weight: 300;">=</span>
+                                        <div style="display: flex; flex-direction: column; align-items: center;">
+                                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--accent); margin-bottom: 4px;">Output Logits</span>
+                                            <div style="background:rgba(15, 118, 110, 0.1); border:1px solid var(--accent); padding:10px; border-radius:6px; font-family:monospace; font-size:0.8rem; font-weight: 700; color: var(--accent);">
+                                                [1 × 37,000]
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="concept-tooltip-box">
+                                        📝 <strong>Logits:</strong> These are raw, unnormalized scoring values. A higher score means the model thinks that vocabulary index is more likely to be the correct next word.
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 8: Softmax -->
+                                <div class="sandbox-pane" data-step="8">
+                                    <div class="sandbox-pane-header">
+                                        <h4 class="sandbox-pane-title">Step 8 — Softmax Probabilities &amp; Temperature Control</h4>
+                                        <p class="sandbox-pane-desc">The Softmax function normalizes raw logits into a probability distribution. The values sum to 1.0 (100%), with each representing the probability of that word being the next token.</p>
+                                    </div>
+
+                                    <div class="explainer-card">
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-goal">Goal</span>
+                                            <span>Convert raw scores into positive percentages summing up to 100%.</span>
+                                        </div>
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-analogy">Analogy</span>
+                                            <span>Like converting raw class votes into actual vote share percentages for every candidate.</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flow-label">Top Vocabulary Candidates (Softmax Probability)</div>
+                                    <div class="logits-chart-container" id="step8-logits-chart">
+                                        <!-- Dynamically generated bars -->
+                                    </div>
+
+                                    <div class="sandbox-slider-group">
+                                        <div class="sandbox-slider-row">
+                                            <label for="softmax-temp-slider">Temperature (T):</label>
+                                            <input type="range" id="softmax-temp-slider" class="sandbox-slider" min="0.1" max="2.0" step="0.1" value="1.0">
+                                            <span id="softmax-temp-val" class="sandbox-slider-value">1.0</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="step-math-box" id="softmax-math-explanation">
+                                        Low Temp (T=0.1) = Highly Focused (Greedy) | High Temp (T=2.0) = Creative (Flat)
+                                    </div>
+                                    
+                                    <div class="concept-tooltip-box">
+                                        📈 <strong>Formula:</strong> <code>P(w_i) = exp(logit_i / T) / &Sigma;_j exp(logit_j / T)</code>. Applying an exponent accentuates the highest scores, suppressing minor candidates to ensure a confident prediction.
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 9: Autoregressive Loop -->
+                                <div class="sandbox-pane" data-step="9">
+                                    <div class="sandbox-pane-header">
+                                        <h4 class="sandbox-pane-title">Step 9 — Output Token Generation &amp; Auto-Regressive Cycle</h4>
+                                        <p class="sandbox-pane-desc">The token with the highest probability is selected (greedy decoding) and printed. To generate the next word, the selected token is appended to the target prefix, and the loop restarts.</p>
+                                    </div>
+
+                                    <div class="explainer-card">
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-goal">Goal</span>
+                                            <span>Emit the final word and feed it back to start generating the next one.</span>
+                                        </div>
+                                        <div class="explainer-row">
+                                            <span class="badge-tag badge-analogy">Analogy</span>
+                                            <span>Like translating a sentence word-by-word, where each word you write down helps you figure out the sentence flow.</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="autoregressive-loop-box">
+                                        <div class="loop-stage">
+                                            <div class="loop-block highlight-accent" id="step9-selected-word">...</div>
+                                            <span style="font-weight: 800; color: var(--muted);">&rarr;</span>
+                                            <span style="font-size: 0.82rem; font-weight: 700; color: var(--muted);">Appended to Target Sequence</span>
+                                        </div>
+                                        
+                                        <div class="loop-connector-line"></div>
+                                        
+                                        <div class="loop-stage">
+                                            <div class="loop-block highlight-accent-2" style="font-size: 0.8rem;">New Decoder Input</div>
+                                            <span style="font-weight: 800; color: var(--muted);">&rarr;</span>
+                                            <div class="loop-block" id="step9-new-input" style="font-size: 0.8rem; font-family: monospace;">&lt;bos&gt;...</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="concept-tooltip-box">
+                                        🔄 <strong>Auto-Regressive translation:</strong> The model generates translation tokens one-by-one. Generation stops when the model outputs the special end-of-sequence token <code>&lt;eos&gt;</code>.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ═══════════════════════════════════════════
                          DEEP DIVE — Collapsible technical sections
                          ══════════════════════════════════════════ -->
                 <div style="margin-top:40px;">
