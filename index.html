@@ -13337,6 +13337,9 @@ M834 80h400000v40h-400000z"></path>
                                         <li>🔴 <strong>Output Sharing:</strong> Passes its final representation to the decoder's cross-attention blocks to guide target word predictions.</li>
                                     </ul>
                                 </div>
+                                <div dir="auto">
+                                    <hr>
+                                </div>
 
                                 <h3 class="pro-heading style-h3">1. Complete Transformer Architecture (Encoder &amp; Decoder Overview)</h3>
                                 <div dir="auto" style="margin-bottom: 16px;">
@@ -13369,6 +13372,9 @@ M834 80h400000v40h-400000z"></path>
                                         </li>
                                         <li>4️⃣ <strong>Element-wise Addition:</strong> Add the vectors together: <code>X1 = E1 + P1</code>. This merges word meaning and word order into a single vector. The resulting matrix (labeled <strong>X</strong>, shape: <code>[3 x 512]</code>) enters Layer 1.</li>
                                     </ul>
+                                </div>
+                                <div dir="auto">
+                                    <hr>
                                 </div>
 
                                 <h3 class="pro-heading style-h3">2. Single Encoder Layer: Step-by-Step Tensor Data Flow</h3>
@@ -13419,12 +13425,16 @@ M834 80h400000v40h-400000z"></path>
                                         Output Y_norm (512-dim)  =&gt;  Next Encoder Layer
                                     </code>
                                 </div>
+                                <div dir="auto">
+                                    <hr>
+                                </div>
 
                                 <h3 class="pro-heading style-h3">3. Practice Questions &amp; Concept Intuitions</h3>
                                 <div style="margin: 20px 0; display: flex; flex-direction: column; gap: 16px;">
                                     
+                                    <!-- Q1 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Why do we use Residual Connections (skip connections) in the Encoder?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q1: Why do we use Residual Connections (skip connections) in the Encoder?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
                                                 <li><strong>Prevents Vanishing Gradients:</strong> Creates a direct pathway for training gradients to flow backward through deep layers without fading to zero.</li>
@@ -13434,8 +13444,9 @@ M834 80h400000v40h-400000z"></path>
                                         </div>
                                     </details>
 
+                                    <!-- Q2 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Why do we need the Feed-Forward Neural Network (FFN) in each layer?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q2: Why do we need the Feed-Forward Neural Network (FFN) in each layer?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
                                                 <li><strong>Adds Non-Linearity:</strong> Self-attention is mostly linear calculations (weighted averages). FFN introduces non-linearity (via ReLU/GELU activations) to model complex concepts.</li>
@@ -13472,8 +13483,9 @@ M834 80h400000v40h-400000z"></path>
                                         </div>
                                     </details>
 
+                                    <!-- Q3 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Why stack exactly 6 Encoder Blocks?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q3: Why stack exactly 6 Encoder Blocks?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
                                                 <li><strong>Pragmatic Sweet Spot:</strong> 6 was chosen empirically by the original authors to balance learning power (capacity) against training speed and memory cost.</li>
@@ -13488,8 +13500,9 @@ M834 80h400000v40h-400000z"></path>
                                         </div>
                                     </details>
 
+                                    <!-- Q4 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Why is Layer Normalization preferred over Batch Normalization in Transformers?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q4: Why is Layer Normalization preferred over Batch Normalization in Transformers?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
                                                 <li><strong>Sequence Length Independence:</strong> LayerNorm normalizes across the feature dimensions for each token individually, whereas BatchNorm normalizes across the batch. If sentence lengths vary, BatchNorm statistics become unstable.</li>
@@ -13499,8 +13512,9 @@ M834 80h400000v40h-400000z"></path>
                                         </div>
                                     </details>
 
+                                    <!-- Q5 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Why is Self-Attention in the Encoder unmasked, while the Decoder requires masking?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q5: Why is Self-Attention in the Encoder unmasked, while the Decoder requires masking?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
                                                 <li><strong>Bidirectional Context:</strong> The Encoder's job is to fully understand the source sequence. There is no risk of "cheating" by looking ahead, so each token is allowed to attend to all other tokens.</li>
@@ -13509,13 +13523,254 @@ M834 80h400000v40h-400000z"></path>
                                         </div>
                                     </details>
 
+                                    <!-- Q6 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">What is the maximum path length between any two tokens in the Encoder, and why does this matter?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q6: What is the maximum path length between any two tokens in the Encoder, and why does this matter?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
                                                 <li><strong>O(1) Path Length:</strong> In self-attention, every token directly connects to every other token in a single operation. The maximum path length is constant at <code>O(1)</code>.</li>
                                                 <li><strong>Comparison to RNNs:</strong> Older recurrent models (RNNs/LSTMs) pass information step-by-step, resulting in an <code>O(T)</code> path length. Information from the beginning of the sentence must travel through T steps to reach the end, causing vanishing gradients and forgetting.</li>
                                                 <li><strong>Better Long-Range Dependency:</strong> The <code>O(1)</code> path makes it extremely easy for the model to capture connections between words that are far apart in a sentence.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q7 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q7: What is the computational complexity of Encoder self-attention, and how does it scale?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Computational Complexity:</strong> The self-attention mechanism requires $O(T^2 \cdot d)$ operations, where $T$ is the sequence length and $d$ is the model representation dimension (e.g., $d_{\text{model}} = 512$).</li>
+                                                <li><strong>Quadratic Scaling with Sequence Length:</strong> Because every token must compute a dot-product attention score with every other token, the cost grows quadratically ($O(T^2)$) as sequence length increases.</li>
+                                                <li><strong>Linear Scaling with Model Dimension:</strong> The matrix multiplications for the linear projections scale linearly ($O(d)$) with respect to the embedding dimension.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q8 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q8: Why do we project input embeddings into Query (Q), Key (K), and Value (V) vectors instead of using raw embeddings?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Subspace Separation:</strong> Projection maps the same input embedding into different learned subspaces optimized for different roles: Query (searching for info), Key (relevance matching), and Value (information content).</li>
+                                                <li><strong>Expressive Power:</strong> Without projection matrices $W_Q, W_K, W_V$, the attention calculation would be restricted to raw static embeddings, severely limiting the model's ability to learn dynamic, context-aware relationships.</li>
+                                                <li><strong>Multi-Head Capability:</strong> Weight projections allow the model to split the 512-dim embedding into smaller head spaces (e.g. 8 heads of 64 dimensions) where each head learns independent attention patterns.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q9 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q9: Why is the dot product of Query and Key scaled by dividing by $\sqrt{d_k}$?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Variance Control:</strong> Assuming $Q$ and $K$ have mean 0 and variance 1, their dot product has a variance of $d_k$. For large dimensions (e.g., $d_k = 64$), the dot products can grow very large in magnitude.</li>
+                                                <li><strong>Preventing Vanishing Gradients:</strong> Very large dot products push the softmax function into regions where its output probabilities are extremely close to 0 or 1. In these regions, the gradients become tiny (vanish), halting model training.</li>
+                                                <li><strong>Softmax Scaling:</strong> Dividing by $\sqrt{d_k}$ reduces the variance back to 1, ensuring the softmax distribution remains stable and gradients flow smoothly during backpropagation.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q10 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q10: Why do we use Multi-Head Attention instead of a single large attention head?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Multiple Subspaces:</strong> A single attention head forces all tokens to attend to each other along a single projection angle. Multi-head attention allows the model to project embeddings into multiple different subspaces.</li>
+                                                <li><strong>Diverse Focus:</strong> Different heads can simultaneously focus on different semantic or syntactic relations (e.g., one head handles subject-verb agreements, another tracks pronouns, another resolves spatial relationships).</li>
+                                                <li><strong>Ensembled Learning:</strong> Concatenating the outputs of multiple attention heads performs a joint representation lookup, which is more robust than a single averaged lookup.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q11 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q11: How is the dimension of each individual attention head ($d_k$) calculated?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Formula:</strong> $d_k = d_{\text{model}} / h$, where $d_{\text{model}}$ is the total model dimension and $h$ is the number of parallel attention heads.</li>
+                                                <li><strong>Example (Base Transformer):</strong> In the original Transformer, $d_{\text{model}} = 512$ and $h = 8$. Thus, $d_k = 512 / 8 = 64$.</li>
+                                                <li><strong>Computational Control:</strong> Keeping head dimensions small ensures that the computational cost of multi-head attention remains similar to that of single-head attention with a full $d_{\text{model}}$-dimensional projection.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q12 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q12: What is the purpose of the final linear projection layer ($W^O$) in Multi-Head Attention?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Aggregation:</strong> Each attention head outputs a $T \times d_k$ representation. Concatenating all $h$ heads yields a $T \times (h \cdot d_k)$ matrix, which is $T \times d_{\text{model}}$.</li>
+                                                <li><strong>Mathematically Mixing Channels:</strong> The final linear layer $W^O$ (shape $[d_{\text{model}} \times d_{\text{model}}]$) projects the concatenated head representations back to a unified coordinate space, mixing the information extracted by different heads.</li>
+                                                <li><strong>Subsequent Compatibility:</strong> Restores the tensor to $d_{\text{model}}$ dimensions, making it compatible with the subsequent residual add and LayerNorm layers.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q13 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q13: Why are positional encodings added to word embeddings instead of concatenated?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Dimension Preservation:</strong> Adding the vectors keeps the tensor shape at $T \times d_{\text{model}}$. Concatenating would increase the dimension, enlarging subsequent projection layers and parameter size.</li>
+                                                <li><strong>High-Dimensional Capacity:</strong> In high dimensions (like $d_{\text{model}} = 512$), vectors can reside in nearly orthogonal directions. The model easily learns to extract semantic features and positional indexes from different dimensions of the same sum.</li>
+                                                <li><strong>Projection Linear Mixing:</strong> The first projection matrices ($W_Q, W_K, W_V$) linearly project the sum, immediately allowing the model to weigh position and semantic features as needed.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q14 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q14: Why did the original Transformer use fixed sinusoidal positional encodings instead of learned positional embeddings?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Length Extrapolation:</strong> Fixed sinusoidal functions map positions to smooth, continuous waves. This allows the model to extrapolate and interpret positions longer than any sequence seen during training.</li>
+                                                <li><strong>Mathematical Offsets:</strong> The sine/cosine formula ensures that for any fixed offset $k$, the positional encoding at position $\text{pos} + k$ can be represented as a linear function of position $\text{pos}$, making relative distance learning easier.</li>
+                                                <li><strong>Zero Trainable Parameters:</strong> Avoids adding millions of parameters, reducing memory requirements and minimizing overfitting risks.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q15 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q15: How does the Encoder handle variable-length sequences in a single batch?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Padding Tokens:</strong> Shorter sequences are extended to match the maximum sequence length in the batch using placeholder `<PAD>` tokens.</li>
+                                                <li><strong>Padding Mask:</strong> An attention mask matrix is created where positions corresponding to `<PAD>` tokens are assigned a value of $-\infty$.</li>
+                                                <li><strong>Softmax Nullification:</strong> When computing attention, adding $-\infty$ to the logits causes the softmax function to evaluate to $0$ probability for padding tokens, ensuring they are ignored during feature aggregation.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q16 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q16: What happens if you completely remove the Positional Encoding block from the Encoder?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Permutation Invariance:</strong> Self-attention computes dot-product similarities regardless of token order. Without positional cues, the attention matrix for a shuffled sentence is identical to the original, just re-indexed.</li>
+                                                <li><strong>Bag-of-Words Behavior:</strong> The model loses all sequence layout understanding and treats sentences purely as an unordered collection of words.</li>
+                                                <li><strong>Syntax Failure:</strong> Vital grammatical structures like word ordering, clauses, and subject-object relations are ignored, rendering the model ineffective for language modeling.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q17 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q17: What is the difference between Pre-LN and Post-LN architectures, and which is preferred today?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Post-LN (Original):</strong> Normalization is applied *after* the residual addition: $X_{\text{out}} = \text{LayerNorm}(X + \text{SubLayer}(X))$. Gradients pass through LayerNorm derivatives, which can scale down activations in deep networks.</li>
+                                                <li><strong>Pre-LN (Modern Standard):</strong> Normalization is applied *before* entering the sub-layer: $X_{\text{out}} = X + \text{SubLayer}(\text{LayerNorm}(X))$. Gradients can pass directly through the residual addition path without scaling.</li>
+                                                <li><strong>Why Pre-LN is Preferred:</strong> Pre-LN allows much stabler training in deep architectures, enabling models to converge reliably without requiring highly sensitive learning rate warmup phases.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q18 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q18: What is the output shape of the final Encoder layer, and what does it represent?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Mathematical Shape:</strong> $[T \times d_{\text{model}}]$ (e.g. $[T \times 512]$), matching the exact shape of the input token embeddings sequence.</li>
+                                                <li><strong>Contextual Embeddings:</strong> Each row $t$ in this matrix is a vector representing the $t$-th input word, but enriched with context, grammar, and relationship details extracted from all other words in the sentence.</li>
+                                                <li><strong>Decoder Bridge:</strong> This representation remains static after the encoder completes, and is sent to the cross-attention blocks of all decoder layers to guide generation.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q19 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q19: How does the Encoder handle Out-of-Vocabulary (OOV) words?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Subword Tokenization:</strong> Modern Transformers utilize subword tokenizers (like WordPiece, BPE, or SentencePiece) which break down unknown or rare words into sub-components (e.g., "demystifying" $\to$ `["de", "##mys", "##tify", "##ing"]`).</li>
+                                                <li><strong>No OOV Characters:</strong> By decomposing rare words into common root subwords and single-character fallback tokens, the vocabulary can represent any sequence, completely eliminating OOV issues.</li>
+                                                <li><strong>Morphological Clues:</strong> Subword tokenization allows the model to infer the meaning of new words by recognizing their root parts (e.g., matching "unhelpful" to "helpful" via prefix patterns).</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q20 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q20: What is the mathematical shape of the self-attention weight matrix for a sequence of length $T$ with $h$ heads?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Per-Head Shape:</strong> A square matrix of shape $[T \times T]$, representing the pairwise attention probability weights between every token in the sequence.</li>
+                                                <li><strong>Multi-Head Combined Shape:</strong> Per-layer, the attention weight tensor has shape $[h \times T \times T]$ (or $[batch\_size, h, T, T]$ in batched form).</li>
+                                                <li><strong>Quadratic Growth:</strong> The total elements in this attention matrix grow quadratically with sequence length $T$, making memory storage of these weights a key bottleneck for long documents.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q21 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q21: Where exactly is Dropout applied inside an Encoder layer?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Sub-layer Residual Junctions:</strong> Applied to the outputs of both the Multi-Head Attention block and the FFN block *before* adding them to the residual pathway (e.g., $X + \text{Dropout}(\text{SubLayer}(X))$).</li>
+                                                <li><strong>Attention Distributions:</strong> Applied to the attention weight probabilities immediately after the softmax operation and before multiplying by the Value vector matrix.</li>
+                                                <li><strong>Embedding Dropout:</strong> Applied directly to the combined word embeddings and positional encoding vectors before entering the first Encoder layer.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q22 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q22: Can different Encoder layers share their weights, and what are the trade-offs?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Weight Sharing (Cross-Layer Parameter Sharing):</strong> Yes, models like ALBERT share all parameters (attention projections, FFN layers) across all $N$ blocks. Each layer applies identical weights to refine representations.</li>
+                                                <li><strong>Parameters vs. Memory:</strong> Sharing weights reduces the storage footprint (disk/RAM size) of the model significantly, acting as a strong regularization method that prevents overfitting.</li>
+                                                <li><strong>Computational Speed:</strong> This does not reduce the number of floating-point operations (FLOPs) or step execution time, since the tensors still pass through the same number of layers sequentially. It also slightly reduces capacity and final accuracy.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q23 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q23: Why is self-attention $O(T^2)$ in memory complexity?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Pairwise Storing:</strong> Storing the $T \times T$ attention scores matrix during the forward pass requires $T^2$ memory allocations per head, per layer.</li>
+                                                <li><strong>Activation Memory:</strong> While parameter memory is constant, activation memory scales quadratically. This makes long sequences (e.g. $T = 8192$ or greater) extremely memory-intensive.</li>
+                                                <li><strong>Backpropagation Requirements:</strong> During training, the $T \times T$ softmax matrices must be cached in GPU memory to calculate gradients during the backward pass, causing the "memory wall" bottleneck.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q24 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q24: What is the role of the projection matrices $W_Q, W_K, W_V$ in self-attention?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Dimensional Mapping:</strong> They project the input matrix $X$ of shape $[T \times d_{\text{model}}]$ down to Query, Key, and Value matrices of shape $[T \times d_k]$ for each attention head.</li>
+                                                <li><strong>Information Extraction:</strong> They act as linear filters that extract head-specific features from the shared inputs. For instance, one head's $W_K$ filter might focus on verbs, while another head's $W_K$ filter focuses on nouns.</li>
+                                                <li><strong>Independent Attention Spaces:</strong> Projections decouple the representation dimensions, allowing different attention heads to measure similarity in independent, low-dimensional coordinate spaces.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q25 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q25: How does the FFN dimension expansion (512 to 2048 to 512) help in feature extraction?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Over-Parameterization:</strong> Expanding the vector to $d_{\text{ff}} = 2048$ dimensions gives the model a much larger space to isolate and separate features.</li>
+                                                <li><strong>Non-linear Partitioning:</strong> The activation function (like ReLU or GELU) is applied in this expanded, higher-dimensional space. This allows the model to partition and capture complex non-linear combinations of features that are not linearly separable in the 512-dim space.</li>
+                                                <li><strong>Database Analogy:</strong> The expansion layer acts as a high-capacity key lookup (matching patterns), and the contraction layer projects the matched details back into $d_{\text{model}}$ dimensions, updating the token's features.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q26 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q26: Does the order of the Multi-Head Attention and FFN sub-layers in the Encoder matter?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Separation of Concerns:</strong> Multi-Head Attention acts as a spatial/temporal mixer, communicating and weighting information *across* tokens. FFN acts as an independent channel processor, analyzing features *within* each token.</li>
+                                                <li><strong>Deep Alternating Refinement:</strong> The alternating order ensures that token features are first updated based on context, then processed and mapped individually. Reversing the order or running them in parallel changes how features abstract.</li>
+                                                <li><strong>Empirical Superiority:</strong> Stacking mixer-then-processor blocks is standard because it mimics a retrieval-then-reason pipeline, which has been shown empirically to achieve the best performance.</li>
                                             </ul>
                                         </div>
                                     </details>
@@ -13531,16 +13786,19 @@ M834 80h400000v40h-400000z"></path>
                                 <div dir="auto" style="margin-bottom: 24px;">
                                     <h3 class="pro-heading style-h3" style="margin-top: 0;">⭐ Overview</h3>
                                     <ul class="bulleted-list" style="line-height: 1.8;">
-                                        <li>🎯 <strong>Primary Goal:</strong> Generate output tokens (e.g. translated words) one by one autoregressively, using previously generated tokens and the encoder's input memory.</li>
-                                        <li>⚡ <strong>Triple Sub-Layers:</strong> Unlike the encoder's 2 sub-layers, each decoder layer contains 3 sub-layers:
+                                        <li>🔴 <strong>Primary Goal:</strong> Generate output tokens (e.g. translated words) one by one autoregressively, using previously generated tokens and the encoder's input memory.</li>
+                                        <li>🔴 <strong>Triple Sub-Layers:</strong> Unlike the encoder's 2 sub-layers, each decoder layer contains 3 sub-layers:
                                             <ul style="margin-top: 6px; padding-left: 20px;">
                                                 <li><strong>Masked Self-Attention:</strong> Restricts tokens to attending only to preceding target positions.</li>
                                                 <li><strong>Cross-Attention:</strong> Allows tokens to query all representations in the encoder memory.</li>
                                                 <li><strong>Position-wise FFN:</strong> Applies independent non-linear refinements.</li>
                                             </ul>
                                         </li>
-                                        <li>🧱 <strong>Stack Structure:</strong> Composed of <code>N = 6</code> identical stacked layers wrapping every sub-layer in residual skip paths and LayerNorm (Add &amp; Norm).</li>
+                                        <li>🔴 <strong>Stack Structure:</strong> Composed of <code>N = 6</code> identical stacked layers wrapping every sub-layer in residual skip paths and LayerNorm (Add &amp; Norm).</li>
                                     </ul>
+                                </div>
+                                <div dir="auto">
+                                    <hr>
                                 </div>
 
                                 <h3 class="pro-heading style-h3">1. Masked Self-Attention: Preventing Future Token Leakage</h3>
@@ -13555,6 +13813,9 @@ M834 80h400000v40h-400000z"></path>
                                         <a href="assets/images/part-2/04.png"><img src="assets/images/part-2/04.png"></a>
                                         <figcaption><strong>Causal Masking in Decoder Self-Attention</strong></figcaption>
                                     </figure>
+                                </div>
+                                <div dir="auto">
+                                    <hr>
                                 </div>
 
                                 <h3 class="pro-heading style-h3">2. Cross-Attention: Connecting Encoder and Decoder</h3>
@@ -13631,17 +13892,23 @@ M834 80h400000v40h-400000z"></path>
                                         </figure>
                                     </div>
                                 </div>
+                                <div dir="auto">
+                                    <hr>
+                                </div>
 
                                 <h3 class="pro-heading style-h3">3. Decoder During Training vs. Inference</h3>
                                 <div style="margin: 24px 0;">
                                     <h4 class="pro-heading style-h4">Training Phase: Teacher Forcing &amp; Parallelism</h4>
                                     <ul class="bulleted-list" style="line-height: 1.8;">
                                         <li><strong>Teacher Forcing:</strong> The decoder is fed the actual ground-truth target sequence shifted right. This parallelizes training and speeds up gradient steps.</li>
+                                        <li><strong>Right-Shift Operation:</strong> The target sentence "Hum dost hai" becomes decoder input <code>[&lt;START&gt;, Hum, dost, hai]</code>. Each position predicts the <em>next</em> token, so position 0 predicts "Hum", position 1 predicts "dost", etc.</li>
                                         <li><strong>Causal Enforcer:</strong> The mask prevents position $i$ from looking at target answers in position $i+1$, preserving learning integrity.</li>
+                                        <li><strong>Non-Autoregressive at Training:</strong> Thanks to the mask + teacher forcing, all target positions are computed in a single forward pass — no sequential loop is needed.</li>
+                                        <li><strong>LSTM Comparison:</strong> Traditional LSTM encoder-decoder is autoregressive at both training and inference. The Transformer decoder is autoregressive only at inference time, making training significantly faster.</li>
                                     </ul>
                                     <figure class="image" id="19e8a6d6-2b53-8063-9fb5-f02d7677bcf1">
                                         <a href="assets/images/part-2/14.png"><img src="assets/images/part-2/14.png"></a>
-                                        <figcaption><strong>Decoder Training Pipeline Layout</strong></figcaption>
+                                        <figcaption><strong>Decoder Training Pipeline Layout:</strong> Compares LSTM-based encoder-decoder (sequential) with the Transformer approach (parallel via masked self-attention). Shows how Teacher Forcing feeds ground-truth tokens as input while the model learns to predict the next token at each position.</figcaption>
                                     </figure>
                                 </div>
 
@@ -13650,12 +13917,41 @@ M834 80h400000v40h-400000z"></path>
                                     <ul class="bulleted-list" style="line-height: 1.8;">
                                         <li><strong>Step-by-step Execution:</strong> At inference, no future target sequence is available. The model must predict output words step-by-step.</li>
                                         <li><strong>Recurrent Loop:</strong> The predicted token at time step $t$ is appended back into the input sequence to predict the token at step $t+1$.</li>
+                                        <li><strong>Encoder Runs Once:</strong> The encoder processes the source sentence a single time. Its output (Keys and Values) is cached and reused at every decoder step.</li>
+                                        <li><strong>Stopping Condition:</strong> Generation continues until the model emits a special <code>&lt;EOS&gt;</code> (end-of-sequence) token or hits a maximum length limit.</li>
                                     </ul>
                                     <div style="display: grid; gap: 16px;">
-                                        <figure class="image" id="1a08a6d6-2b53-8020-9075-d593c1494639"><a href="assets/images/part-2/15.png"><img src="assets/images/part-2/15.png"></a></figure>
-                                        <figure class="image" id="1a08a6d6-2b53-8084-960a-dadc0942a7b5"><a href="assets/images/part-2/16.png"><img src="assets/images/part-2/16.png"></a></figure>
-                                        <figure class="image" id="1a08a6d6-2b53-80a9-9b08-ea22523cd0e1"><a href="assets/images/part-2/17.png"><img src="assets/images/part-2/17.png"></a></figure>
+                                        <figure class="image" id="1a08a6d6-2b53-8020-9075-d593c1494639">
+                                            <a href="assets/images/part-2/15.png"><img src="assets/images/part-2/15.png"></a>
+                                            <figcaption><strong>Autoregressive Inference — Step-by-Step Unrolling:</strong> Shows 4 decoder passes. Step 1: input is <code>&lt;SOS&gt;</code>, output is "Hum". Step 2: input is <code>&lt;SOS&gt; Hum</code>, output is "dost". Step 3: input is <code>&lt;SOS&gt; Hum dost</code>, output is "hai". Step 4: input is <code>&lt;SOS&gt; Hum dost hai</code>, output is <code>&lt;EOS&gt;</code>. The encoder (left) runs once and feeds all decoder layers via cross-attention.</figcaption>
+                                        </figure>
+                                        <figure class="image" id="1a08a6d6-2b53-8084-960a-dadc0942a7b5">
+                                            <a href="assets/images/part-2/16.png"><img src="assets/images/part-2/16.png"></a>
+                                            <figcaption><strong>Single Decoder Layer — Full Data Flow (Step 1):</strong> Traces the <code>&lt;SOS&gt;</code> token from embedding + positional encoding, through masked self-attention (only self since it is the first token), Add &amp; Norm, then cross-attention (queries the encoder's K/V from "We are friends"), another Add &amp; Norm, FFN (expand 512 → 2048 → contract back to 512), final Add &amp; Norm, Linear layer, and Softmax to predict "Hum".</figcaption>
+                                        </figure>
+                                        <figure class="image" id="1a08a6d6-2b53-80a9-9b08-ea22523cd0e1">
+                                            <a href="assets/images/part-2/17.png"><img src="assets/images/part-2/17.png"></a>
+                                            <figcaption><strong>Single Decoder Layer — Full Data Flow (Step 2):</strong> Now two tokens enter: <code>&lt;SOS&gt;</code> and "Hum". The masked self-attention computes a 2×2 causal matrix ("Hum" can see <code>&lt;SOS&gt;</code> but not future tokens). Cross-attention queries all 3 encoder positions. Note: only the last position's output ("Hum" → "dost") is used for the final prediction at this step.</figcaption>
+                                        </figure>
                                     </div>
+                                </div>
+
+                                <div style="margin: 24px 0; background: var(--soft); border-radius: 8px; border-left: 4px solid var(--accent); padding: 16px 20px;">
+                                    <h4 class="pro-heading style-h4" style="margin-top: 0;">Complete Decoder Layer Pipeline:</h4>
+                                    <code style="display:block; margin: 12px 0; padding: 12px 14px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line); font-size: 0.9rem; line-height: 1.8; font-family: monospace;">
+                                        Target Tokens + Positional Encoding (512-dim) <br>
+                                        &nbsp;&nbsp; ⬇️ Masked Multi-Head Self-Attention  =&gt;  Z (past-only context)<br>
+                                        &nbsp;&nbsp; ⬇️ Residual Add(Z + X) + LayerNorm  =&gt;  Z_norm<br>
+                                        &nbsp;&nbsp; ⬇️ Multi-Head Cross-Attention (Q=Z_norm, K=Enc, V=Enc)  =&gt;  C<br>
+                                        &nbsp;&nbsp; ⬇️ Residual Add(C + Z_norm) + LayerNorm  =&gt;  C_norm<br>
+                                        &nbsp;&nbsp; ⬇️ FFN Expand: ReLU(C_norm . W1 + b1)  =&gt;  2048-dim<br>
+                                        &nbsp;&nbsp; ⬇️ FFN Contract: 2048-dim . W2 + b2  =&gt;  Y (512-dim)<br>
+                                        &nbsp;&nbsp; ⬇️ Residual Add(Y + C_norm) + LayerNorm  =&gt;  Y_norm<br>
+                                        Output Y_norm (512-dim)  =&gt;  Next Decoder Layer (or Linear + Softmax)
+                                    </code>
+                                </div>
+                                <div dir="auto">
+                                    <hr>
                                 </div>
 
                                 <h3 class="pro-heading style-h3">4. Decoder Final Takeaways</h3>
@@ -13691,12 +13987,16 @@ M834 80h400000v40h-400000z"></path>
                                         </tbody>
                                     </table>
                                 </div>
+                                <div dir="auto">
+                                    <hr>
+                                </div>
 
                                 <h3 class="pro-heading style-h3">5. Practice Questions &amp; Concept Intuitions</h3>
                                 <div style="margin: 20px 0; display: flex; flex-direction: column; gap: 16px;">
-                                    
+
+                                    <!-- Q1 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Why does the Decoder need a causal mask, while the Encoder does not?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q1: Why does the Decoder need a causal mask, while the Encoder does not?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
                                                 <li><strong>Bidirectional Encoder:</strong> The encoder parses the source text (e.g. "The cat sits"). Since the entire source sentence is available, tokens can look at the past, present, and future safely.</li>
@@ -13705,53 +14005,269 @@ M834 80h400000v40h-400000z"></path>
                                         </div>
                                     </details>
 
+                                    <!-- Q2 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Where do the Queries (Q), Keys (K), and Values (V) come from in Cross-Attention?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q2: Where do the Q, K, V come from in Cross-Attention?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
-                                                <li><strong>Queries (Q):</strong> Come from the decoder target sequence (representing "What word am I currently trying to translate/predict?").</li>
-                                                <li><strong>Keys (K):</strong> Come from the encoder memory (representing "What is the context of each word in the source sentence?").</li>
-                                                <li><strong>Values (V):</strong> Come from the encoder memory (representing "What semantic meaning should I retrieve if a key matches?").</li>
+                                                <li><strong>Queries (Q):</strong> Come from the decoder target sequence — "What word am I currently trying to predict?"</li>
+                                                <li><strong>Keys (K):</strong> Come from the encoder memory — "What context does each source word carry?"</li>
+                                                <li><strong>Values (V):</strong> Come from the encoder memory — "What semantic content should I retrieve when a key matches?"</li>
                                             </ul>
                                         </div>
                                     </details>
 
+                                    <!-- Q3 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">What is Teacher Forcing during training, and why can't we use it at inference?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q3: What is Teacher Forcing and why can't we use it at inference?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
-                                                <li><strong>Training:</strong> We feed the actual ground-truth target sequence shifted right as the input. If the model makes a mistake at step 2, it still gets the correct target word for step 3. This speeds up training and enables parallel calculations.</li>
-                                                <li><strong>Inference:</strong> There is no ground-truth sequence available. The model must rely on its own previous predictions. If it makes a mistake at step 2, it must generate the rest of the sentence based on that faulty output.</li>
+                                                <li><strong>Training:</strong> We feed the ground-truth target sequence shifted right. If the model makes a mistake at step 2, it still gets the correct word for step 3. This speeds up training and enables parallel computation.</li>
+                                                <li><strong>Inference:</strong> No ground-truth is available. The model relies on its own previous predictions. A mistake at step 2 cascades into all subsequent steps.</li>
                                             </ul>
                                         </div>
                                     </details>
 
+                                    <!-- Q4 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Why does inference take O(T) steps while training takes only 1 step?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q4: Why does inference take O(T) steps while training takes only 1 forward pass?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
-                                                <li><strong>Training:</strong> Due to Teacher Forcing and causal masking, we pass the entire target sentence at once. The loss for all $T$ positions is calculated in a single forward pass ($O(1)$ steps).</li>
-                                                <li><strong>Inference:</strong> The decoder runs autoregressively. It must generate token 1, append it to the input, feed it back into the decoder, generate token 2, and repeat. This sequential loop requires $T$ consecutive steps ($O(T)$ complexity).</li>
+                                                <li><strong>Training:</strong> Due to Teacher Forcing and causal masking, we pass the entire target sentence at once. Loss for all $T$ positions is calculated in a single forward pass.</li>
+                                                <li><strong>Inference:</strong> The decoder runs autoregressively — generate token 1, append it, feed it back, generate token 2, repeat. This sequential loop requires $T$ consecutive steps.</li>
                                             </ul>
                                         </div>
                                     </details>
 
+                                    <!-- Q5 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">What is the purpose of the final Linear and Softmax layers after the Decoder?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q5: What is the purpose of the final Linear + Softmax layers after the Decoder?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
-                                                <li><strong>Linear Layer:</strong> Projects the final 512-dimensional output vector of the decoder up to a huge size matching the vocabulary (e.g. 37,000 dimensions). These represent logit scores for every word in the dictionary.</li>
-                                                <li><strong>Softmax Layer:</strong> Converts these raw logit scores into clean probability percentages summing to 1.0. The word with the highest percentage is chosen as the next predicted token.</li>
+                                                <li><strong>Linear Layer:</strong> Projects the 512-dim decoder output up to vocabulary size (e.g. 37,000 dims). Each dimension is a logit score for one word in the dictionary.</li>
+                                                <li><strong>Softmax Layer:</strong> Converts logits into probabilities summing to 1.0. The word with the highest probability is chosen as the next predicted token.</li>
                                             </ul>
                                         </div>
                                     </details>
 
+                                    <!-- Q6 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">What is Exposure Bias in Transformer Decoder training?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q6: What is Exposure Bias in Transformer Decoder training?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
-                                                <li><strong>Mismatch of Environments:</strong> During training, the model is exposed only to ground-truth inputs (Teacher Forcing). During inference, it is exposed to its own generated outputs, which may contain errors.</li>
-                                                <li><strong>Error Propagation:</strong> Because the model never encountered its own mistakes during training, it doesn't know how to recover from an early prediction error. A single mistake at the beginning of generation can propagate and derail the rest of the sentence.</li>
+                                                <li><strong>Mismatch:</strong> During training, the model sees only perfect ground-truth inputs (Teacher Forcing). At inference, it sees its own potentially wrong predictions.</li>
+                                                <li><strong>Error Propagation:</strong> The model never encountered its own mistakes during training, so it doesn't know how to recover. One early error can derail the entire output sentence.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q7 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q7: What does the causal mask matrix look like for a 4-token sequence?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Lower-Triangular Matrix:</strong> It is a 4×4 matrix where entry (i, j) is 0 (allowed) if j ≤ i, and −∞ (blocked) if j &gt; i.</li>
+                                                <li><strong>Effect:</strong> Row 1 can only see column 1. Row 2 sees columns 1-2. Row 3 sees columns 1-3. Row 4 sees all 4 columns. This prevents any token from peeking at future positions.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q8 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q8: How does the "right-shift" operation work in decoder input preparation?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Shift Right by One:</strong> Insert a <code>&lt;START&gt;</code> token at the beginning of the target sequence and drop the last token. E.g., target "Hum dost hai" becomes input <code>[&lt;START&gt;, Hum, dost, hai]</code>.</li>
+                                                <li><strong>Purpose:</strong> Each input position now predicts the <em>next</em> word. Position 0 (<code>&lt;START&gt;</code>) predicts "Hum", position 1 ("Hum") predicts "dost", and so on. This ensures the model learns to predict, not just copy.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q9 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q9: Why does the decoder have 3 sub-layers while the encoder only has 2?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Extra Sub-Layer = Cross-Attention:</strong> The encoder only needs self-attention + FFN to build source representations. The decoder additionally needs cross-attention to read and query the encoder's output memory.</li>
+                                                <li><strong>Order Matters:</strong> The decoder runs Masked Self-Attention first (contextualize already-generated tokens), then Cross-Attention (fetch relevant source info), then FFN (non-linear refinement).</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q10 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q10: What would happen if you removed the causal mask during decoder training?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Cheating:</strong> The model would see the correct answer at future positions and simply copy it, achieving near-zero training loss without actually learning to generate.</li>
+                                                <li><strong>Useless at Inference:</strong> At inference, future tokens don't exist, so the model would have no idea what to predict — it never learned the causal generation skill.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q11 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q11: How does the decoder know when to stop generating tokens?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>&lt;EOS&gt; Token:</strong> The vocabulary includes a special end-of-sequence token. When the Softmax output's highest probability is <code>&lt;EOS&gt;</code>, generation stops.</li>
+                                                <li><strong>Max Length Guard:</strong> A hard maximum length limit is also enforced to prevent infinite loops in case the model never produces <code>&lt;EOS&gt;</code>.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q12 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q12: In cross-attention, does the decoder query every encoder position or just a few?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>All Positions:</strong> Each decoder query computes dot-product scores against all encoder key positions. Softmax then distributes attention weights across all source tokens.</li>
+                                                <li><strong>Soft Selection:</strong> While it technically sees all positions, the learned attention weights typically concentrate on the most relevant 1-3 source words, effectively performing a soft lookup.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q13 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q13: Why is the encoder output shared with every decoder layer (not just the last)?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Multi-Level Querying:</strong> Each decoder layer refines its representations. By accessing the encoder memory at every layer, lower layers can focus on word-level alignment while higher layers handle phrase-level or semantic alignment.</li>
+                                                <li><strong>Richer Gradient Flow:</strong> Multiple cross-attention connections create more paths for gradients to flow back to the encoder, improving joint training.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q14 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q14: What is Greedy Decoding vs. Beam Search?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Greedy Decoding:</strong> Always pick the single highest-probability token at each step. Fast but may miss globally better sequences.</li>
+                                                <li><strong>Beam Search:</strong> Keep the top-B candidates ("beams") at each step and expand all of them. At the end, pick the sequence with the highest total probability. Slower but usually produces higher-quality output.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q15 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q15: What is KV Caching and why is it crucial for fast inference?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Redundant Computation:</strong> At step $t$, the decoder recomputes Q, K, V for all previous positions even though they haven't changed. This wastes time.</li>
+                                                <li><strong>KV Cache:</strong> Store the Key and Value matrices from previous steps. At step $t+1$, only compute Q, K, V for the new token and append K, V to the cache. This reduces per-step cost from $O(t)$ to roughly $O(1)$.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q16 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q16: Why does the cross-attention mask differ from the self-attention mask?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Self-Attention Mask (Causal):</strong> A lower-triangular matrix that blocks future target positions. Shape: <code>[T_target × T_target]</code>.</li>
+                                                <li><strong>Cross-Attention Mask:</strong> Typically no causal mask is needed because the entire source sentence is already available. The only mask applied is a padding mask to ignore <code>&lt;PAD&gt;</code> tokens in the source. Shape: <code>[T_target × T_source]</code>.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q17 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q17: What loss function is used to train the Transformer decoder?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Cross-Entropy Loss:</strong> At each position, the Softmax output is compared to the ground-truth next token using cross-entropy. The total loss is the average (or sum) across all $T$ positions.</li>
+                                                <li><strong>Label Smoothing:</strong> The original Transformer uses label smoothing (ε = 0.1), spreading a small probability mass across all vocabulary words to prevent the model from becoming overconfident.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q18 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q18: Why is the decoder's self-attention called "masked" multi-head attention?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>"Masked" = Future Blocked:</strong> Before softmax, the attention logits for future positions are set to −∞. After softmax, these positions get 0 weight. This is the only difference from standard (encoder) multi-head attention.</li>
+                                                <li><strong>Same Mechanism Otherwise:</strong> The Q, K, V projection, multi-head split, scaled dot-product, and concatenation are identical to encoder self-attention.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q19 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q19: Do the encoder and decoder share the same word embedding matrix?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Weight Tying (Optional):</strong> In some implementations (including the original paper), the encoder embedding, decoder embedding, and the final linear projection before softmax all share the same weight matrix. This reduces total parameters and improves generalization.</li>
+                                                <li><strong>Separate Vocabularies:</strong> In multilingual settings where source and target languages differ significantly, separate embedding matrices may be used.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q20 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q20: How many times does the encoder run during inference for a sentence of length T?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Exactly Once:</strong> The encoder processes the full source sentence in a single forward pass and produces a Key-Value memory.</li>
+                                                <li><strong>Reused T Times:</strong> This memory is then fed into every decoder step's cross-attention layer. The decoder runs T times, but the encoder computation is never repeated.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q21 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q21: What is the temperature parameter in Softmax and how does it affect generation?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Temperature τ:</strong> Divides logits by τ before softmax: <code>softmax(logits / τ)</code>.</li>
+                                                <li><strong>Low τ (e.g. 0.1):</strong> Sharpens the distribution, making the model more confident and deterministic (less creative).</li>
+                                                <li><strong>High τ (e.g. 2.0):</strong> Flattens the distribution, increasing randomness and diversity in generation (more creative but riskier).</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q22 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q22: Can the decoder attend to padding tokens in the source sentence? How is this prevented?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Padding Mask:</strong> Source sequences in a batch are padded to equal length. A binary padding mask sets positions corresponding to <code>&lt;PAD&gt;</code> tokens to −∞ before softmax, ensuring zero attention weight on padding.</li>
+                                                <li><strong>Applied Everywhere:</strong> This padding mask is used in encoder self-attention, decoder cross-attention, and (for target padding) in decoder self-attention.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q23 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q23: What is the difference between "decoder-only" models (like GPT) and the encoder-decoder Transformer?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Encoder-Decoder (e.g. original Transformer, T5):</strong> Separate encoder for comprehension and decoder for generation. The decoder uses cross-attention to read the encoder output. Best for tasks with distinct input/output (translation, summarization).</li>
+                                                <li><strong>Decoder-Only (e.g. GPT):</strong> No encoder, no cross-attention. The input prompt and the generated output are concatenated into one sequence. Only masked self-attention is used. Best for open-ended generation and conversational tasks.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q24 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q24: Why do residual connections wrap every sub-layer in the decoder?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Gradient Highway:</strong> With 6 layers × 3 sub-layers = 18 sequential transformations, gradients would vanish without skip connections. Residual paths let gradients flow directly.</li>
+                                                <li><strong>Preserve Original Signal:</strong> Each sub-layer only needs to learn the <em>delta</em> (change), not reconstruct the full representation from scratch.</li>
+                                                <li><strong>Dimensional Requirement:</strong> This is why every sub-layer must output the same dimensionality (512) as its input — otherwise the addition <code>Output = SubLayer(X) + X</code> would be impossible.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <!-- Q25 -->
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q25: If the decoder generates the wrong word at step 3, can it go back and fix it?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>No Backtracking:</strong> Standard autoregressive decoding is strictly left-to-right. Once a token is generated, it becomes part of the input for all future steps and cannot be undone.</li>
+                                                <li><strong>Mitigation Strategies:</strong> Beam search explores multiple candidates in parallel, reducing the chance of committing to a bad early token. Re-ranking and iterative refinement approaches (used in some modern systems) can also help.</li>
                                             </ul>
                                         </div>
                                     </details>

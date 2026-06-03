@@ -357,8 +357,19 @@ body.dark-mode .hero h1 {
 }
 
 .note-content h3 {
-  margin: 22px 0 8px;
-  font-size: 1.12rem;
+  margin: 32px 0 14px;
+  font-size: 1.35rem;
+}
+
+.note-content h4 {
+  margin: 24px 0 10px;
+  font-size: 1.18rem;
+  color: var(--h1-color);
+}
+
+.note-content h5 {
+  margin: 18px 0 6px;
+  font-size: 1.05rem;
 }
 
 .note-content p,
