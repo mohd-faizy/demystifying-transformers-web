@@ -13328,1309 +13328,160 @@ M834 80h400000v40h-400000z"></path>
                         <details id="encoder">
                             <summary class="pro-heading style-h2">Encoder: Source-Side Understanding Stack</summary>
                             <div class="indented">
-                                <div dir="auto">
-                                    <ul class="bulleted-list">
-                                        <strong>Purpose &amp; Mechanism:</strong> The encoder reads the entire input sequence simultaneously (bidirectionally / in parallel) to build rich, context-aware representations for every token.
-                                        <strong>Stack Structure:</strong> Composed of a stack of <code>N = 6</code> identical layers, where each layer sequentially refines the token representations.
-                                        <strong>Input Pipeline:</strong> Receives token embeddings (512-dimensional vectors representing word meaning) combined element-wise with sinusoidal positional encodings to inject sequence order.
-                                        <strong>Dual Sub-Layers per Block:</strong> Each of the 6 layers contains two core components:
-                                            <ul style="margin-top: 6px;">
-                                                <strong>Multi-Head Self-Attention:</strong> Allows tokens to dynamically calculate relevance scores and aggregate context from all other tokens in the sequence.
-                                                <strong>Position-wise Feed-Forward Network (FFN):</strong> Applies a non-linear transformation (expand to 2048 dims with ReLU, contract back to 512 dims) to each position independently.
-                                            </ul>
-                                        
-                                        <strong>Residual Pathways &amp; Normalization:</strong> Every sub-layer is wrapped in a residual (skip) connection followed by Layer Normalization (Add &amp; Norm) to prevent vanishing gradients and stabilize deep stack training.
-                                        <strong>Output:</strong> Produces a final sequence of memory vectors consumed by the decoder's cross-attention layer, enabling the decoder to reference any part of the input sequence.
-                                        <strong>Bidirectional Contextualization:</strong> Unlike sequential models (RNNs/LSTMs), self-attention allows all tokens to interact in a single operation, resulting in an <code>O(1)</code> maximum path length between any two tokens.
+                                <div dir="auto" style="margin-bottom: 24px;">
+                                    <h3 class="pro-heading style-h3" style="margin-top: 0;">🚀 Chapter Overview</h3>
+                                    <ul class="bulleted-list" style="line-height: 1.8;">
+                                        <li>🎯 <strong>Primary Goal:</strong> Read the input text and build a deep, mathematical understanding (context-aware embeddings) of every word. The encoder does <em>not</em> generate any text.</li>
+                                        <li>⚡ <strong>Parallel Processing:</strong> Processes the entire sentence simultaneously (in parallel), making it exponentially faster than older models like RNNs.</li>
+                                        <li>🧱 <strong>Stack Structure:</strong> Composed of <code>N = 6</code> identical layers stacked on top of each other. Each layer refines the understanding.</li>
+                                        <li>📤 <strong>Output Sharing:</strong> Passes its final representation to the decoder's cross-attention blocks to guide target word predictions.</li>
                                     </ul>
                                 </div>
+
                                 <h3 class="pro-heading style-h3">1. Complete Transformer Architecture (Encoder &amp; Decoder Overview)</h3>
-                                        <div dir="auto">
-                                            <ul class="bulleted-list">
-                                                <strong>Read the diagram left to
-                                                        right:</strong> encoder processes source tokens; decoder
-                                                    consumes target tokens and encoder memory; final linear + softmax
-                                                    predicts the next token.
-                                                <strong>Encoder stack:</strong>
-                                                    repeated <code>N = 6</code> times in the original paper, with each
-                                                    layer refining token context.
-                                                <strong>Decoder stack:</strong> also
-                                                    repeated <code>N = 6</code> times, but each layer has an extra
-                                                    cross-attention block that attends to encoder output.
-                                                <strong>Residual pathways:</strong>
-                                                    each major sublayer is wrapped with skip connection plus
-                                                    normalization to preserve gradient flow and stabilize training.
+                                <div dir="auto" style="margin-bottom: 16px;">
+                                    <ul class="bulleted-list">
+                                        <li><strong>Bidirectional Reading:</strong> The encoder (yellow block, left) reads the full input sequence at once, while the decoder (red block, right) generates the output step-by-step.</li>
+                                        <li><strong>Cross-Attention Bridge:</strong> The output of the final encoder layer is sent to all decoder layers, allowing the decoder to reference any part of the input sentence.</li>
+                                        <li><strong>Skip Connections:</strong> Every major sub-layer is wrapped in skip connections and Layer Normalization (Add &amp; Norm) to keep gradient flow stable during backpropagation.</li>
+                                    </ul>
+                                </div>
+                                <div dir="ltr">
+                                    <figure class="image" id="19b8a6d6-2b53-8091-93ef-ff567f72d297">
+                                        <a href="assets/images/part-2/02.png"><img src="assets/images/part-2/02.png"></a>
+                                        <figcaption><strong>Full Encoder-Decoder Architecture Stack</strong></figcaption>
+                                    </figure>
+                                </div>
+
+                                <div style="margin: 24px 0;">
+                                    <h4 class="pro-heading style-h4">From Raw Text to Encoder Input: The 4-Step Preprocessing Pipeline</h4>
+                                    <p style="color: var(--muted); font-size: 0.93rem; margin: 8px 0 16px 0;">
+                                        Before text enters the first encoder layer, it goes through a quick 4-step transformation at the bottom of the diagram:
+                                    </p>
+                                    <ul class="bulleted-list" style="line-height: 1.8;">
+                                        <li>1️⃣ <strong>Tokenization:</strong> Split the sentence into smaller units. <em>"How are you"</em> =&gt; <code>["How", "are", "you"]</code>.</li>
+                                        <li>2️⃣ <strong>Word Embedding (512 dims):</strong> Look up a 512-dimensional vector for each word. Labeled <strong>E1, E2, E3</strong>. This encodes the semantic meaning of the words.</li>
+                                        <li>3️⃣ <strong>Positional Encoding (512 dims):</strong> Generate a sinusoidal position vector for each slot (labeled <strong>P1, P2, P3</strong>) to teach the model word order:
+                                            <ul style="margin-top: 6px; padding-left: 20px;">
+                                                <li>Even dimensions: <code>PE(pos, 2i) = sin(pos / 10000^(2i/512))</code></li>
+                                                <li>Odd dimensions: <code>PE(pos, 2i+1) = cos(pos / 10000^(2i/512))</code></li>
                                             </ul>
-                                        </div>
-                                        <div dir="ltr">
-                                            <figure class="image" id="19b8a6d6-2b53-8091-93ef-ff567f72d297"><a href="assets/images/part-2/02.png"><img src="assets/images/part-2/02.png"></a></figure>
-                                        </div>
+                                        </li>
+                                        <li>4️⃣ <strong>Element-wise Addition:</strong> Add the vectors together: <code>X1 = E1 + P1</code>. This merges word meaning and word order into a single vector. The resulting matrix (labeled <strong>X</strong>, shape: <code>[3 x 512]</code>) enters Layer 1.</li>
+                                    </ul>
+                                </div>
 
-                                        <!-- NOTES: Image 1 (02.png) - Full Transformer Architecture -->
-                                        <div style="margin: 20px 0 12px 0; display: flex; flex-direction: column; gap: 16px;">
-                                            <h4 class="pro-heading style-h4">High-Level Transformer
-                                                    Architecture Details</h4>
-                                                    <p style="color: var(--muted); font-size: 0.93rem; margin: 8px 0 10px 0;">
-                                                        This image shows the complete Transformer model from the paper
-                                                        <em>"Attention is All You Need"</em> — from raw input tokens all
-                                                        the way to the final output prediction.
-                                                    </p>
-                                                    <ul class="bulleted-list">
-                                                        The model has two main blocks:
-                                                            a <strong>yellow Encoder</strong> on the left and a
-                                                            <strong>red Decoder</strong> on the right.
-                                                        
-                                                        Both blocks are stacked
-                                                            <strong>N = 6 times</strong> — 6 identical layers, each
-                                                            building a deeper understanding of the data.
-                                                        
-                                                        The Encoder reads the full
-                                                            input sentence in parallel and converts it into a rich
-                                                            contextual representation. It does <em>not</em> generate
-                                                            output.
-                                                        The Decoder uses that
-                                                            representation to generate the output one token at a time
-                                                            (e.g., a translated sentence).
-                                                        The final Encoder output is
-                                                            shared with <em>every</em> Decoder layer via Cross-Attention
-                                                            — all 6 Decoder layers can reference the full input meaning.
-                                                        
-                                                        At the very end, a
-                                                            <strong>Linear</strong> layer + <strong>Softmax</strong>
-                                                            converts the Decoder's vector into probability scores over
-                                                            the vocabulary. The highest-probability word is selected as
-                                                            the next predicted token.
-                                                        
-                                                    </ul>
-
-                                                    <h4 class="pro-heading style-h4">Inside Each Encoder Layer</h4>
-                                                            <ul class="bulleted-list">
-                                                                Every Encoder layer
-                                                                    contains exactly <strong>two sub-layers</strong>:
-                                                                
-                                                                <strong>Multi-Head
-                                                                        Self-Attention</strong> — each word attends to
-                                                                    every other word to understand its contextual
-                                                                    meaning. Example: the word "bank" checks its
-                                                                    neighbors to decide if it means "river bank" or
-                                                                    "money bank".
-                                                                <strong>Position-wise
-                                                                        Feed-Forward Network (FFN)</strong> — each
-                                                                    word's 512-dim vector is independently passed
-                                                                    through a small 2-layer network that adds expressive
-                                                                    non-linear power.
-                                                                After <em>each</em>
-                                                                    sub-layer: the original input is added back
-                                                                    (residual connection) and then <strong>Layer
-                                                                        Normalization</strong> is applied — called
-                                                                    <strong>Add &amp; Norm</strong>.
-                                                                
-                                                            </ul>
-                                                        
-
-                                                    <h4 class="pro-heading style-h4">The Add &amp; Norm Formula</h4>
-                                                            <ul class="bulleted-list">
-                                                                After Self-Attention:
-                                                                    <code>Z_norm = LayerNorm( SelfAttention(X) + X )</code>
-                                                                
-                                                                After Feed-Forward:
-                                                                    <code>Y_norm = LayerNorm( FFN(Z_norm) + Z_norm )</code>
-                                                                
-                                                                The <code>+ X</code>
-                                                                    part is the <strong>residual (skip)
-                                                                        connection</strong> — it passes original
-                                                                    information unchanged so the layer only learns what
-                                                                    to <em>add on top</em>, not relearn from scratch.
-                                                                
-                                                                Layer Normalization
-                                                                    keeps activations stable — without it, deep 6-layer
-                                                                    stacks would suffer from vanishing or exploding
-                                                                    gradients.
-                                                            </ul>
-                                                        
-                                                
-
-                                            <h4 class="pro-heading style-h4">From Raw Text to Encoder Input:
-                                                    4-Step Preprocessing Pipeline</h4>
-                                                    <p style="color: var(--muted); font-size: 0.93rem; margin: 8px 0 10px 0;">
-                                                        Before any word enters the Encoder stack, it goes through a
-                                                        4-step transformation visible at the bottom of this image.</p>
-                                                    <ul class="bulleted-list">
-                                                        <strong>Step 1 —
-                                                                Tokenization:</strong> The sentence is split into
-                                                            individual tokens. <em>"How are you"</em> becomes
-                                                            <code>["How", "are", "you"]</code>. Each token is one
-                                                            word-unit the model can process.
-                                                        
-                                                        <strong>Step 2 — Word Embedding
-                                                                (512 dims):</strong> Each token is converted to a
-                                                            512-dimensional vector via a learned Embedding table. This
-                                                            vector encodes the semantic <em>meaning</em> of the word.
-                                                            Labeled <strong>E1, E2, E3</strong> in the image.
-                                                        <strong>Step 3 — Positional
-                                                                Encoding:</strong> Since all words are processed in
-                                                            parallel, the model has no built-in word order. Positional
-                                                            encoding adds a sinusoidal signal for each position:
-                                                            <ul style="margin-top: 6px;">
-                                                                Even dims:
-                                                                    <code>PE(pos, 2i) = sin(pos / 10000^(2i/512))</code>
-                                                                
-                                                                Odd dims:
-                                                                    <code>PE(pos, 2i+1) = cos(pos / 10000^(2i/512))</code>
-                                                                
-                                                                Result: positional
-                                                                    vectors <strong>P1, P2, P3</strong> — each 512-dim.
-                                                                
-                                                            </ul>
-                                                        
-                                                        <strong>Step 4 — Element-wise
-                                                                Addition:</strong> Word embedding + positional encoding
-                                                            are added: <code>X1 = E1 + P1</code>. Each result is a
-                                                            single 512-dim vector encoding both <em>meaning</em> and
-                                                            <em>position</em>.
-                                                        
-                                                        The final input matrix
-                                                            <code>X = [X1, X2, X3]</code> with shape
-                                                            <code>[3 x 512]</code> enters Encoder Layer 1.
-                                                        
-                                                    </ul>
-                                                
-                                        </div>
-                                    
                                 <h3 class="pro-heading style-h3">2. Single Encoder Layer: Step-by-Step Tensor Data Flow</h3>
-                                        <div dir="auto">
-                                            <ul class="bulleted-list">
-                                                <strong>Input shape intuition:</strong>
-                                                    an encoder layer receives one vector per token, usually shaped like
-                                                    <code>(sequence_length, d_model)</code> per example.
-                                                
-                                                <strong>Self-attention phase:</strong>
-                                                    each token attends to every other input token to gather context.
-                                                
-                                                <strong>Feed-forward phase:</strong>
-                                                    each contextual token vector is transformed independently by the
-                                                    same position-wise network.
-                                                <strong>Output preservation:</strong>
-                                                    the layer returns the same sequence length and hidden width,
-                                                    allowing layers to be stacked cleanly.
+                                <div dir="auto" style="margin-bottom: 16px;">
+                                    <ul class="bulleted-list">
+                                        <li><strong>Dimensional Match:</strong> The layer returns a tensor of the exact same shape (e.g., <code>[seq_len x 512]</code>) that it receives, allowing layers to be stacked easily.</li>
+                                        <li><strong>Sublayer 1 (Self-Attention):</strong> Mixes context across positions. Every word checks all other words to refine its meaning.</li>
+                                        <li><strong>Sublayer 2 (Feed-Forward):</strong> Refines the representation of each word independently using a position-wise multi-layer perceptron.</li>
+                                    </ul>
+                                </div>
+                                <div dir="ltr">
+                                    <figure class="image" id="19b8a6d6-2b53-8028-a026-e365379485ca">
+                                        <a href="assets/images/part-2/03.png"><img src="assets/images/part-2/03.png"></a>
+                                        <figcaption><strong>Inside One Encoder Layer: Tensor Dimensions and Operations</strong></figcaption>
+                                    </figure>
+                                </div>
+
+                                <div style="margin: 24px 0;">
+                                    <h4 class="pro-heading style-h4">Tracing Data Through the 5 Phases of an Encoder Layer</h4>
+                                    <ul class="bulleted-list" style="line-height: 1.8;">
+                                        <li><strong>Phase 1 — Input Matrix (X):</strong> Receives vectors <strong>X1, X2, X3</strong> of shape <code>[3 x 512]</code> carrying both semantic and order context.</li>
+                                        <li><strong>Phase 2 — Multi-Head Self-Attention:</strong> The vectors enter parallel attention heads. Words query each other (e.g. "you" links to "How" and "are"). Output is <strong>Z1, Z2, Z3</strong> (shape: <code>[3 x 512]</code>).</li>
+                                        <li><strong>Phase 3 — First Add &amp; Norm:</strong>
+                                            <ul style="margin-top: 6px; padding-left: 20px;">
+                                                <li><strong>Residual Add:</strong> <code>Z_skip = Z + X</code>. Adds the input back to preserve original details and keep gradients healthy.</li>
+                                                <li><strong>LayerNorm:</strong> Stabilizes features to a mean of 0 and variance of 1. Output is <strong>Z_norm</strong>.</li>
                                             </ul>
-                                        </div>
-                                        <div dir="ltr">
-                                            <figure class="image" id="19b8a6d6-2b53-8028-a026-e365379485ca"><a href="assets/images/part-2/03.png"><img src="assets/images/part-2/03.png"></a></figure>
-                                        </div>
-
-                                        <!-- NOTES: Image 2 (03.png) - Single Encoder Layer Tensor Flow -->
-                                        <div style="margin: 20px 0 12px 0; display: flex; flex-direction: column; gap: 16px;">
-                                            <h4 class="pro-heading style-h4">Tensor Data Flow Through One
-                                                    Encoder Layer — Phase by Phase</h4>
-                                                    <p style="color: var(--muted); font-size: 0.93rem; margin: 8px 0 10px 0;">
-                                                        This image zooms into a single Encoder layer and traces exactly
-                                                        how 512-dim vectors are transformed at each stage.</p>
-
-                                                    <h4 class="pro-heading style-h4">Phase 1 — Input: Embedding
-                                                            + Positional Encoding</h4>
-                                                            <ul class="bulleted-list">
-                                                                Tokens "How", "are",
-                                                                    "you" are embedded and combined with positional
-                                                                    vectors to form <strong>X1, X2, X3</strong> — shape:
-                                                                    <code>[3 x 512]</code>.
-                                                                
-                                                                These vectors carry
-                                                                    both <em>meaning</em> and <em>position</em> into the
-                                                                    Encoder layer at the bottom of the diagram.
-                                                            </ul>
-                                                        
-
-                                                    <h4 class="pro-heading style-h4">Phase 2 — Multi-Head
-                                                            Self-Attention</h4>
-                                                            <ul class="bulleted-list">
-                                                                All three vectors X1,
-                                                                    X2, X3 enter the <strong>Multi-Head
-                                                                        Attention</strong> block at the same time.
-                                                                Each word computes
-                                                                    attention scores with every other word — capturing
-                                                                    relationships like: "you" is strongly linked to
-                                                                    "How" and "are".
-                                                                Output: <strong>Z1, Z2,
-                                                                        Z3</strong> — three new 512-dim context-enriched
-                                                                    vectors.
-                                                                Positional encoding is
-                                                                    fixed and added only once at the input.
-                                                                    Self-Attention is <em>learned and dynamic</em> — it
-                                                                    changes based on the actual words present in the
-                                                                    sentence.
-                                                            </ul>
-                                                        
-
-                                                    <h4 class="pro-heading style-h4">Phase 3 — First Add &amp;
-                                                            LayerNorm (after Self-Attention)</h4>
-                                                            <ul class="bulleted-list">
-                                                                <strong>Residual
-                                                                        skip:</strong> <code>Z1' = Z1 + X1</code>
-                                                                    &nbsp;|&nbsp; <code>Z2' = Z2 + X2</code>
-                                                                    &nbsp;|&nbsp; <code>Z3' = Z3 + X3</code>
-                                                                Adding the original
-                                                                    input back preserves the raw word information even
-                                                                    after the Attention block has modified it.
-                                                                <strong>Layer
-                                                                        Normalization</strong>: scales each vector to
-                                                                    mean ≈ 0 and std ≈ 1 — keeps training
-                                                                    stable in deep 6-layer stacks.
-                                                                Output:
-                                                                    <strong>Z1_norm, Z2_norm, Z3_norm</strong> —
-                                                                    normalized, context-enriched 512-dim vectors.
-                                                                
-                                                            </ul>
-                                                        
-
-                                                    <h4 class="pro-heading style-h4">Phase 4 — Feed-Forward
-                                                            Network (FFN): Expand to 2048, then Contract to 512</h4>
-                                                            <ul class="bulleted-list">
-                                                                The FFN processes each
-                                                                    token's vector independently (same weights for all
-                                                                    tokens, different input values per token).
-                                                                <strong>Layer 1 —
-                                                                        Expand (512 to 2048):</strong>
-                                                                    <ul style="margin-top: 6px;">
-                                                                        Weight matrix
-                                                                            <strong>W1</strong>: shape
-                                                                            <code>[512 x 2048]</code>, bias
-                                                                            <strong>b1</strong>.
-                                                                        
-                                                                        Formula:
-                                                                            <code>Intermediate = ReLU(Z_norm . W1 + b1)</code>
-                                                                        
-                                                                        
-                                                                            <strong>ReLU</strong>:
-                                                                            <code>f(x) = max(0, x)</code> — keeps
-                                                                            positive values, zeros out negatives. Adds
-                                                                            non-linearity so the model learns complex
-                                                                            patterns beyond simple linear
-                                                                            transformations.
-                                                                        
-                                                                        Expanding to
-                                                                            2048 gives the model more "neurons" to
-                                                                            detect subtle patterns — like zooming into
-                                                                            the data for finer detail.
-                                                                    </ul>
-                                                                
-                                                                <strong>Layer 2 —
-                                                                        Contract (2048 to 512):</strong>
-                                                                    <ul style="margin-top: 6px;">
-                                                                        Weight matrix
-                                                                            <strong>W2</strong>: shape
-                                                                            <code>[2048 x 512]</code>, bias
-                                                                            <strong>b2</strong>.
-                                                                        
-                                                                        Formula:
-                                                                            <code>FFN Output = Intermediate . W2 + b2</code>
-                                                                            (linear, no activation).
-                                                                        
-                                                                        Compresses
-                                                                            back to 512 dims so dimensions match the
-                                                                            residual connection coming next.
-                                                                    </ul>
-                                                                
-                                                                Output: <strong>Y1, Y2,
-                                                                        Y3</strong> — three refined 512-dim vectors, one
-                                                                    per token.
-                                                            </ul>
-                                                        
-
-                                                    <h4 class="pro-heading style-h4">Phase 5 — Second Add &amp;
-                                                            LayerNorm (after FFN) + Layer Output</h4>
-                                                            <ul class="bulleted-list">
-                                                                <strong>Second residual
-                                                                        skip:</strong> <code>Y1' = Y1 + Z1_norm</code>
-                                                                    &nbsp;|&nbsp; <code>Y2' = Y2 + Z2_norm</code>
-                                                                    &nbsp;|&nbsp; <code>Y3' = Y3 + Z3_norm</code>
-                                                                Layer Normalization is
-                                                                    applied again to stabilize the final output.
-                                                                Final output of this
-                                                                    layer: <strong>Y1_norm, Y2_norm, Y3_norm</strong> —
-                                                                    shape <code>[3 x 512]</code>, identical to the input
-                                                                    shape, enabling clean stacking.
-                                                                These vectors feed
-                                                                    directly into <strong>Encoder Layer 2</strong>.
-                                                                    Layers 2 through 6 repeat the exact same process,
-                                                                    each with their own independently learned weights.
-                                                                
-                                                                After all 6 layers: the
-                                                                    final output matrix (<code>[seq_len x 512]</code>)
-                                                                    is sent to the Decoder as <strong>Key (K)</strong>
-                                                                    and <strong>Value (V)</strong> vectors for
-                                                                    Cross-Attention.
-                                                            </ul>
-                                                        
-                                                
-
-                                            <h4 class="pro-heading style-h4">Complete Encoder Layer Pipeline at
-                                                    a Glance</h4>
-                                                    <ul class="bulleted-list">
-                                                        The Encoder's job: <strong>read
-                                                                and deeply understand</strong> the input — it builds
-                                                            representations, it never generates text output.
-                                                        It processes all tokens
-                                                            <strong>simultaneously in parallel</strong> — far faster
-                                                            than older sequential RNNs or LSTMs.
-                                                        
-                                                        Full pipeline for each token
-                                                            through one Encoder layer:
-                                                    </ul>
-                                                    <code style="display:block; margin: 12px 0; padding: 14px 16px; border-radius: 8px; background: rgba(0,0,0,0.05); font-size: 0.87rem; line-height: 2.1; border-left: 4px solid #d97706;">
-                                                        Input X  (512-dim per token)<br>
-                                                        &nbsp;&nbsp; down  Multi-Head Self-Attention  =&gt;  Z  (context-enriched)<br>
-                                                        &nbsp;&nbsp; down  Add(Z + X) + LayerNorm  =&gt;  Z_norm<br>
-                                                        &nbsp;&nbsp; down  FFN Layer 1: ReLU(Z_norm . W1 + b1)  =&gt;  2048-dim<br>
-                                                        &nbsp;&nbsp; down  FFN Layer 2: 2048-dim . W2 + b2  =&gt;  Y  (512-dim)<br>
-                                                        &nbsp;&nbsp; down  Add(Y + Z_norm) + LayerNorm  =&gt;  Y_norm<br>
-                                                        Output Y_norm  (512-dim)  =&gt;  Next Encoder Layer
-                                                    </code>
-                                                    <ul class="bulleted-list">
-                                                        This repeats for all 6 Encoder
-                                                            layers, each with different learned weights but the same
-                                                            structure.
-                                                        Final Encoder output after
-                                                            Layer 6: matrix of shape <code>[seq_len x 512]</code> — the
-                                                            complete contextual memory of the input, handed to the
-                                                            Decoder.
-                                                    </ul>
-                                                
-                                        </div>
-                                    
-
-                                <h3 class="pro-heading style-h3">3. Encoder Final Takeaways</h3>
-                                        <div dir="auto">
-                                            <ul class="bulleted-list">
-                                                <strong>The encoder is not a
-                                                        generator:</strong> it does not predict output words
-                                                    directly; it produces memory representations for the decoder.
-                                                
-                                                <strong>Every token becomes
-                                                        contextual:</strong> after self-attention, each token vector
-                                                    contains information from the surrounding input tokens.
-                                                <strong>FFN adds per-token
-                                                        transformation:</strong> after attention mixes information
-                                                    across positions, the feed-forward network deepens each token
-                                                    representation independently.
-                                                <strong>Add &amp; Norm keeps the
-                                                        stack trainable:</strong> residual connections preserve
-                                                    information flow, while LayerNorm stabilizes the representation
-                                                    after each sublayer.
+                                        </li>
+                                        <li><strong>Phase 4 — Feed-Forward Network (FFN):</strong>
+                                            <ul style="margin-top: 6px; padding-left: 20px;">
+                                                <li><strong>Expand (512 =&gt; 2048):</strong> Compute <code>Intermediate = ReLU(Z_norm . W1 + b1)</code>. The <strong>ReLU</strong> activation (<code>max(0, x)</code>) introduces non-linearity to learn complex rules.</li>
+                                                <li><strong>Contract (2048 =&gt; 512):</strong> Compute <code>Y = Intermediate . W2 + b2</code> to shrink shape back to 512 dimensions for the residual connection.</li>
                                             </ul>
+                                        </li>
+                                        <li><strong>Phase 5 — Second Add &amp; Norm:</strong> Adds <strong>Z_norm</strong> back to FFN output (<code>Y + Z_norm</code>) and runs LayerNorm. Output is <strong>Y_norm</strong> (shape: <code>[3 x 512]</code>). This is passed to Encoder Layer 2.</li>
+                                    </ul>
+                                </div>
+
+                                <div style="margin: 24px 0; background: var(--soft); border-radius: 8px; border-left: 4px solid var(--accent); padding: 16px 20px;">
+                                    <h4 class="pro-heading style-h4" style="margin-top: 0;">Complete Encoder Layer Pipeline:</h4>
+                                    <code style="display:block; margin: 12px 0; padding: 12px 14px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line); font-size: 0.9rem; line-height: 1.8; font-family: monospace;">
+                                        Input X (512-dim) <br>
+                                        &nbsp;&nbsp; ⬇️ Multi-Head Self-Attention  =&gt;  Z (context-enriched)<br>
+                                        &nbsp;&nbsp; ⬇️ Residual Add(Z + X) + LayerNorm  =&gt;  Z_norm<br>
+                                        &nbsp;&nbsp; ⬇️ FFN Expand Layer: ReLU(Z_norm . W1 + b1)  =&gt;  2048-dim<br>
+                                        &nbsp;&nbsp; ⬇️ FFN Contract Layer: 2048-dim . W2 + b2  =&gt;  Y (512-dim)<br>
+                                        &nbsp;&nbsp; ⬇️ Residual Add(Y + Z_norm) + LayerNorm  =&gt;  Y_norm<br>
+                                        Output Y_norm (512-dim)  =&gt;  Next Encoder Layer
+                                    </code>
+                                </div>
+
+                                <h3 class="pro-heading style-h3">3. Practice Questions &amp; Concept Intuitions</h3>
+                                <div style="margin: 20px 0; display: flex; flex-direction: column; gap: 24px;">
+                                    <div>
+                                        <h4 class="pro-heading style-h4" style="color: var(--accent);">❓ Why do we use Residual Connections (skip connections)?</h4>
+                                        <ul class="bulleted-list" style="line-height: 1.8;">
+                                            <li>🛡️ <strong>Prevents Vanishing Gradients:</strong> Creates a direct highway for training gradients to flow backward through deep layers without fading to zero.</li>
+                                            <li>💾 <strong>Preserves Essential Context:</strong> Ensures positional order and raw input text features are not forgotten as the representation goes deeper.</li>
+                                            <li>🛠️ <strong>Encourages Incremental Learning:</strong> Lets each layer learn minor adjustments (residual offsets) rather than forcing it to reconstruct the output from scratch.</li>
+                                        </ul>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="pro-heading style-h4" style="color: var(--accent);">❓ Why do we need the Feed-Forward Neural Network (FFN)?</h4>
+                                        <ul class="bulleted-list" style="line-height: 1.8;">
+                                            <li>🧠 <strong>Adds Non-Linearity:</strong> Self-attention is mostly linear calculations (weighted averages). FFN introduces non-linearity (via ReLU/GELU activations) to model complex concepts.</li>
+                                            <li>⚙️ <strong>Per-Position Processing:</strong> Refines each token vector independently (position-wise) after self-attention has mixed context across tokens.</li>
+                                            <li>💡 <strong>Acts as Key-Value Memories:</strong> Research shows the FFN acts as a retrieval database (see paper below):
+                                                <ul style="margin-top: 6px; padding-left: 20px;">
+                                                    <li><strong>Keys</strong> (first linear projection) detect specific patterns in input (e.g. subject-verb match).</li>
+                                                    <li><strong>Values</strong> (second linear projection) retrieve and write appropriate word adjustments to the output distribution.</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+
+                                        <div class="resource-card-container" style="margin-top: 16px;">
+                                            <a class="resource-card arxiv-card" href="https://arxiv.org/pdf/2012.14913" target="_blank" rel="noopener noreferrer">
+                                                <div class="resource-icon-wrapper">
+                                                    <svg class="resource-svg-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+                                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                                        <line x1="16" x2="8" y1="13" y2="13"></line>
+                                                        <line x1="16" x2="8" y1="17" y2="17"></line>
+                                                        <polyline points="10 9 9 9 8 9"></polyline>
+                                                    </svg>
+                                                </div>
+                                                <div class="resource-details">
+                                                    <span class="resource-tag tag-arxiv">Research Paper</span>
+                                                    <h4 class="resource-title">Feed-Forward Layers Are Key-Value Memories</h4>
+                                                    <p class="resource-desc">Foundational research revealing how FFN layers store and retrieve conceptual patterns in Transformers.</p>
+                                                </div>
+                                                <div class="resource-action">
+                                                    <span>Read PDF</span>
+                                                    <span class="arrow">➔</span>
+                                                </div>
+                                            </a>
                                         </div>
-                                    
-                                <h3 class="pro-heading style-h3">4. Encoder Practice Questions</h3>
-                                        <div dir="auto">
-                                            
-                                                    
-                                                        <h4 class="pro-heading style-h4">🔴 Why we use
-                                                                    Residual connections (or skip connections) in
-                                                                    transformers?</h4>
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80dc-9301-e4eaccc44707">
-                                                                    Residual
-                                                                        connections (or skip connections) in
-                                                                        transformers are like shortcuts that help the
-                                                                        network learn better and faster. Here’s why
-                                                                        they’re important, explained simply:<div dir="ltr">
-                                                                            <figure class="block-color-gray_background callout" id="19a8a6d6-2b53-80b2-b422-ccc46dc29a95">
-                                                                                <div style="font-size:1.5em"><span class="icon">💡</span></div>
-                                                                                <div>
-                                                                                    <div dir="auto">
-                                                                                        <ol class="numbered-list" id="19a8a6d6-2b53-8063-afea-dc5cf26de81a" start="1" type="1">
-                                                                                            <strong>Stop Gradient
-                                                                                                    Vanishing</strong>:
-                                                                                                <div dir="auto">
-                                                                                                    <p class="" id="19a8a6d6-2b53-808f-bba3-cea3df7051c5">
-                                                                                                        In deep
-                                                                                                        networks,
-                                                                                                        gradients (used
-                                                                                                        to update the
-                                                                                                        model during
-                                                                                                        training) can
-                                                                                                        get tiny and
-                                                                                                        disappear as
-                                                                                                        they pass
-                                                                                                        through many
-                                                                                                        layers. Residual
-                                                                                                        connections
-                                                                                                        create a "direct
-                                                                                                        path" for
-                                                                                                        gradients to
-                                                                                                        flow back,
-                                                                                                        making training
-                                                                                                        stable even in
-                                                                                                        very deep models
-                                                                                                        like
-                                                                                                        transformers.
-                                                                                                    </p>
-                                                                                                </div>
-                                                                                            
-                                                                                        </ol>
-                                                                                    </div>
-                                                                                    <div dir="auto">
-                                                                                        <ol class="numbered-list" id="19a8a6d6-2b53-806c-ab8b-c4b548473907" start="2" type="1">
-                                                                                            <strong>Preserve
-                                                                                                    Important
-                                                                                                    Information</strong>:
-                                                                                                <div dir="auto">
-                                                                                                    <p class="" id="19a8a6d6-2b53-80ba-9699-db53ccd1504f">
-                                                                                                        Transformers use
-                                                                                                        <strong>positional
-                                                                                                            encodings</strong>
-                                                                                                        to understand
-                                                                                                        word order
-                                                                                                        (e.g., "dog
-                                                                                                        bites man" vs.
-                                                                                                        "man bites
-                                                                                                        dog"). Skip
-                                                                                                        connections
-                                                                                                        ensure this
-                                                                                                        positional info
-                                                                                                        (and other input
-                                                                                                        details) isn’t
-                                                                                                        lost as data
-                                                                                                        moves through
-                                                                                                        layers. Each
-                                                                                                        layer only needs
-                                                                                                        to
-                                                                                                        <em>adjust</em>
-                                                                                                        the input
-                                                                                                        slightly, not
-                                                                                                        relearn it from
-                                                                                                        scratch.
-                                                                                                    </p>
-                                                                                                </div>
-                                                                                            
-                                                                                        </ol>
-                                                                                    </div>
-                                                                                    <div dir="auto">
-                                                                                        <ol class="numbered-list" id="19a8a6d6-2b53-8065-a529-c2331814cce5" start="3" type="1">
-                                                                                            <strong>Learn
-                                                                                                    Incremental
-                                                                                                    Changes</strong>:
-                                                                                                <div dir="auto">
-                                                                                                    <p class="" id="19a8a6d6-2b53-802f-aaeb-f2fff2ef64ab">
-                                                                                                        Instead of
-                                                                                                        forcing each
-                                                                                                        layer to
-                                                                                                        completely
-                                                                                                        transform the
-                                                                                                        input, residual
-                                                                                                        connections let
-                                                                                                        the layer focus
-                                                                                                        on learning the
-                                                                                                        <em>difference</em>
-                                                                                                        (residual)
-                                                                                                        between the
-                                                                                                        input and the
-                                                                                                        desired output.
-                                                                                                        This makes
-                                                                                                        training easier
-                                                                                                        and faster.
-                                                                                                    </p>
-                                                                                                </div>
-                                                                                            
-                                                                                        </ol>
-                                                                                    </div>
-                                                                                    <div dir="auto">
-                                                                                        <ol class="numbered-list" id="19a8a6d6-2b53-80d1-8c4f-c6825f2f590c" start="4" type="1">
-                                                                                            <strong>Work with Layer
-                                                                                                    Normalization</strong>:
-                                                                                                <div dir="auto">
-                                                                                                    <p class="" id="19a8a6d6-2b53-8000-a826-d81716b52628">
-                                                                                                        After adding the
-                                                                                                        skip connection
-                                                                                                        (input + layer
-                                                                                                        output),
-                                                                                                        transformers use
-                                                                                                        <strong>LayerNorm</strong>
-                                                                                                        to stabilize
-                                                                                                        values. This
-                                                                                                        combo ensures
-                                                                                                        data stays
-                                                                                                        well-scaled,
-                                                                                                        preventing
-                                                                                                        extreme values
-                                                                                                        that could break
-                                                                                                        the model.
-                                                                                                    </p>
-                                                                                                </div>
-                                                                                            
-                                                                                        </ol>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </figure>
-                                                                        </div>
-                                                                    
-                                                                </ul>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-8017-ac94-ebb4d663eb9d">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-801a-a24f-c969ed08aee3">
-                                                                    Example in Transformers:</h3>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80cb-a48b-dcd5d684b7b0">
-                                                                    <strong>Positional
-                                                                            Encoding → Add &amp; Norm</strong>:<div dir="auto">
-                                                                            <p class="" id="19a8a6d6-2b53-8028-9afb-cf7435e87ed1">
-                                                                                The positional encoding (which adds
-                                                                                order info to words) is combined with
-                                                                                the input via a residual connection.
-                                                                                This ensures the model never "forgets"
-                                                                                the original word positions, even after
-                                                                                many layers.</p>
-                                                                        </div>
-                                                                    
-                                                                </ul>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-800c-a859-dfcd2019e5f4">
-                                                                    <strong>Between
-                                                                            Layers</strong>:<div dir="auto">
-                                                                            <p class="" id="19a8a6d6-2b53-8078-9a42-f1617096ce3b">
-                                                                                Each sub-layer (e.g., self-attention or
-                                                                                feed-forward) has a skip connection.
-                                                                                This lets the model refine features
-                                                                                step-by-step without losing track of the
-                                                                                original data.</p>
-                                                                        </div>
-                                                                    
-                                                                </ul>
-                                                            
-                                                                <figure class="block-color-gray_background callout" id="19a8a6d6-2b53-809c-8e52-c4714e6cedc1">
-                                                                    <div style="font-size:1.5em"><span class="icon">💡</span></div>
-                                                                    <div>
-                                                                        <div dir="auto">
-                                                                            <p class="" id="19a8a6d6-2b53-806b-b74c-e0753e66ca67">
-                                                                                <strong>Residual connections act as a
-                                                                                    safety net</strong>, ensuring
-                                                                                critical info isn’t lost, gradients flow
-                                                                                smoothly, and the model learns
-                                                                                efficiently. Without them, transformers
-                                                                                would struggle with deep architectures
-                                                                                and tasks like translation or text
-                                                                                generation.
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                </figure>
-                                                            
-                                                    
-                                                
-                                            </div>
-                                            <div dir="auto">
-                                                
-                                                    
-                                                        <h4 class="pro-heading style-h4">🔴
-                                                                Why we use a FFNN(feed forward Neural
-                                                                    network)?</h4>
-                                                                
-                                                                    
-                                                                        <h4 class="pro-heading style-h4">Transformer Feed-Forward Layers
-                                                                                    Are Key-Value
-                                                                                    Memories[Paper]</h4>
-                                                                                <div class="resource-card-container">
-                                                                                    <a class="resource-card arxiv-card" href="https://arxiv.org/pdf/2012.14913" target="_blank" rel="noopener noreferrer">
-                                                                                        <div class="resource-icon-wrapper">
-                                                                                            <svg class="resource-svg-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
-                                                                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
-                                                                                                </path>
-                                                                                                <polyline points="14 2 14 8 20 8">
-                                                                                                </polyline>
-                                                                                                <line x1="16" x2="8" y1="13" y2="13">
-                                                                                                </line>
-                                                                                                <line x1="16" x2="8" y1="17" y2="17">
-                                                                                                </line>
-                                                                                                <polyline points="10 9 9 9 8 9">
-                                                                                                </polyline>
-                                                                                            </svg>
-                                                                                        </div>
-                                                                                        <div class="resource-details">
-                                                                                            <span class="resource-tag tag-arxiv">Research
-                                                                                                Paper</span>
-                                                                                            <h4 class="resource-title">
-                                                                                                Feed-Forward Layers Are
-                                                                                                Key-Value Memories</h4>
-                                                                                            <p class="resource-desc">
-                                                                                                Read the foundational
-                                                                                                research uncovering how
-                                                                                                FFN layers store and
-                                                                                                retrieve key-value
-                                                                                                concepts in
-                                                                                                Transformers.</p>
-                                                                                        </div>
-                                                                                        <div class="resource-action">
-                                                                                            <span>Read PDF</span>
-                                                                                            <span class="arrow">➔</span>
-                                                                                        </div>
-                                                                                    </a>
-                                                                                </div>
-                                                                            
-                                                                                <p class="" id="19a8a6d6-2b53-80dc-a091-fc11593ad8c1">
-                                                                                    Here’s a concise breakdown of the
-                                                                                    paper <em>"Transformer Feed-Forward
-                                                                                        Layers Are Key-Value
-                                                                                        Memories"</em> in bullet points,
-                                                                                    with key insights and supporting
-                                                                                    evidence from the search results:
-                                                                                </p>
-                                                                            
-                                                                                <hr id="19a8a6d6-2b53-80dc-b6d9-db38d341adaf">
-                                                                            
-                                                                                <h3 class="" id="19a8a6d6-2b53-808e-b8da-d5cae57efc1a">
-                                                                                    <strong>1. Core Hypothesis</strong>
-                                                                                </h3>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80ad-9d34-ed84dfff3a32">
-                                                                                    
-                                                                                        <strong>FFN layers act as
-                                                                                            key-value
-                                                                                            memories</strong>:<br>Each
-                                                                                        feed-forward layer (FFN) in a
-                                                                                        transformer behaves like a
-                                                                                        neural memory bank.<div dir="auto">
-                                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-808d-9b72-ed7d3dcd5f67">
-                                                                                                
-                                                                                                    <strong>Keys</strong>
-                                                                                                    detect specific
-                                                                                                    textual patterns in
-                                                                                                    input sequences
-                                                                                                    (e.g., phrases or
-                                                                                                    n-grams) .
-                                                                                                
-                                                                                            </ul>
-                                                                                        </div>
-                                                                                        <div dir="auto">
-                                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-80b0-9223-fff040f1a204">
-                                                                                                
-                                                                                                    <strong>Values</strong>
-                                                                                                    predict output token
-                                                                                                    distributions likely
-                                                                                                    to follow those
-                                                                                                    patterns (e.g.,
-                                                                                                    "bank" → "river" or
-                                                                                                    "money") .
-                                                                                                
-                                                                                            </ul>
-                                                                                        </div>
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <hr id="19a8a6d6-2b53-8082-ba30-c94ac55da5fa">
-                                                                            
-                                                                                <h3 class="" id="19a8a6d6-2b53-8045-8305-cd5b4e9060e1">
-                                                                                    <strong>2. Layer-Specific
-                                                                                        Behavior</strong>
-                                                                                </h3>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80d6-beef-f61d0c3efcac">
-                                                                                    
-                                                                                        <strong>Lower layers
-                                                                                            (1–9)</strong>: Capture
-                                                                                        <strong>shallow
-                                                                                            patterns</strong> (e.g.,
-                                                                                        n-grams, syntactic structures)
-                                                                                        .<br>Example: Triggers like
-                                                                                        "the dog" activate keys
-                                                                                        predicting verbs like "barked" .
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80a2-8734-c9c28477a14c">
-                                                                                    
-                                                                                        <strong>Upper layers
-                                                                                            (10+)</strong>: Learn
-                                                                                        <strong>semantic
-                                                                                            patterns</strong> (e.g.,
-                                                                                        abstract concepts like
-                                                                                        "ownership" or "cause-effect")
-                                                                                        .<br>Example: Keys detect
-                                                                                        varied phrases (e.g., "bought a
-                                                                                        car," "inherited land") linked
-                                                                                        to the same semantic concept .
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <hr id="19a8a6d6-2b53-80db-9b2a-f05806c74d06">
-                                                                            
-                                                                                <h3 class="" id="19a8a6d6-2b53-809c-acd0-fcca8256b497">
-                                                                                    <strong>3. Methodology &amp;
-                                                                                        Findings</strong>
-                                                                                </h3>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-8092-8e6d-d7bedc2127f7">
-                                                                                    
-                                                                                        <strong>Trigger
-                                                                                            examples</strong>:
-                                                                                        Identified input sequences that
-                                                                                        maximally activate specific
-                                                                                        keys. Human annotators confirmed
-                                                                                        these patterns are interpretable
-                                                                                        .
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-8080-9ed2-c63fdfc2cb56">
-                                                                                    
-                                                                                        <strong>Key-value
-                                                                                            agreement</strong>:<div dir="auto">
-                                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-8055-b0f7-d52d927375c9">
-                                                                                                
-                                                                                                    In upper layers,
-                                                                                                    values’ top
-                                                                                                    predictions align
-                                                                                                    with next tokens in
-                                                                                                    trigger examples
-                                                                                                    (agreement rate
-                                                                                                    ~3.5%, higher than
-                                                                                                    random) .
-                                                                                            </ul>
-                                                                                        </div>
-                                                                                        <div dir="auto">
-                                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-804d-9dc3-f424ad31064d">
-                                                                                                
-                                                                                                    Lower layers show
-                                                                                                    near-zero agreement,
-                                                                                                    suggesting their
-                                                                                                    role is pattern
-                                                                                                    detection, not
-                                                                                                    direct prediction .
-                                                                                                
-                                                                                            </ul>
-                                                                                        </div>
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-809e-aa9e-d89df44a8817">
-                                                                                    
-                                                                                        <strong>Memory
-                                                                                            composition</strong>: FFN
-                                                                                        outputs combine multiple
-                                                                                        activated memories (~100s per
-                                                                                        layer), with residual
-                                                                                        connections refining predictions
-                                                                                        across layers .
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <hr id="19a8a6d6-2b53-80b4-b800-d5d76a6eba52">
-                                                                            
-                                                                                <h3 class="" id="19a8a6d6-2b53-80c9-8ccf-ea887b33765e">
-                                                                                    <strong>4. Role in Model
-                                                                                        Architecture</strong>
-                                                                                </h3>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-8066-8555-c711c305c504">
-                                                                                    
-                                                                                        <strong>Residual
-                                                                                            connections</strong>: Enable
-                                                                                        gradual refinement of
-                                                                                        predictions. For example, upper
-                                                                                        FFN layers "override" residual
-                                                                                        inputs to adjust probabilities
-                                                                                        (e.g., shifting "bank" → "river"
-                                                                                        instead of "money") .
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-8071-8c0d-e5c52728ee01">
-                                                                                    
-                                                                                        <strong>Parameter
-                                                                                            dominance</strong>: FFNs
-                                                                                        account for
-                                                                                        <strong>two-thirds</strong> of
-                                                                                        transformer parameters,
-                                                                                        emphasizing their critical role
-                                                                                        .
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <hr id="19a8a6d6-2b53-8000-9adf-c4f8b01b098b">
-                                                                            
-                                                                                <h3 class="" id="19a8a6d6-2b53-806f-9143-cd925bb277f5">
-                                                                                    <strong>5. Implications &amp; Future
-                                                                                        Work</strong>
-                                                                                </h3>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-8007-a5be-c2faf1a7f66f">
-                                                                                    
-                                                                                        <strong>Interpretability</strong>:
-                                                                                        FFN layers can be analyzed to
-                                                                                        understand how transformers
-                                                                                        store and retrieve knowledge .
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80ba-afd9-dcf5064ae59d">
-                                                                                    
-                                                                                        <strong>Efficiency</strong>:
-                                                                                        Optimizing FFNs (e.g., pruning
-                                                                                        non-critical keys/values) could
-                                                                                        reduce model size without
-                                                                                        performance loss .
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-805a-ba2d-f5b18ab7c4ab">
-                                                                                    
-                                                                                        <strong>Generalization</strong>:
-                                                                                        Findings apply to other
-                                                                                        transformer variants (e.g.,
-                                                                                        BERT, GPT), suggesting universal
-                                                                                        FFN mechanisms .
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <hr id="19a8a6d6-2b53-80e4-98c6-c33eb6fd9f45">
-                                                                            
-                                                                                <h3 class="" id="19a8a6d6-2b53-808f-9422-fce1b0fe2458">
-                                                                                    <strong>Critique &amp;
-                                                                                        Limitations</strong>
-                                                                                </h3>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-807a-abf8-e78a11b9b210">
-                                                                                    
-                                                                                        <strong>Human bias</strong>:
-                                                                                        Trigger examples rely on manual
-                                                                                        annotation, which may introduce
-                                                                                        subjectivity .
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-8097-8786-d530c7ee18a0">
-                                                                                    
-                                                                                        <strong>Static
-                                                                                            analysis</strong>:
-                                                                                        Experiments focus on fixed
-                                                                                        pretrained models; dynamic
-                                                                                        behaviors during
-                                                                                        training/fine-tuning are
-                                                                                        unexplored .
-                                                                                    
-                                                                                </ul>
-                                                                            
-                                                                                <hr id="19a8a6d6-2b53-809f-885b-f53d9f3e6e0a">
-                                                                            
-                                                                                <p class="" id="19a8a6d6-2b53-804f-a162-e006e1482955">
-                                                                                    For deeper exploration, refer to the
-                                                                                    full paper <a href="https://aclanthology.org/2021.emnlp-main.446/">here</a>
-                                                                                    or the <a href="https://github.com/mega002/ff-layers">code
-                                                                                        repository</a> .</p>
-                                                                            
-                                                                    
-                                                                
-                                                            
-                                                                <p class="" id="19a8a6d6-2b53-805a-a049-f935a068329e">In
-                                                                    the Transformer architecture, the
-                                                                    <strong>Feed-Forward Neural Network (FFNN)</strong>
-                                                                    plays a critical role alongside self-attention.
-                                                                    Here’s why it’s used, explained simply:
-                                                                </p>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-80b6-89a7-c7657ca9c161">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-808d-ba42-ed2ef5b9ca05">
-                                                                    1. <strong>Adds Non-Linearity</strong>:</h3>
-                                                            
-                                                                <p class="" id="19a8a6d6-2b53-8003-bb1f-dcc4eb329156">
-                                                                    Self-attention layers are great at mixing
-                                                                    information across tokens (e.g., connecting "it" to
-                                                                    "dog" in a sentence). However, self-attention alone
-                                                                    performs mostly <em>linear operations</em> (like
-                                                                    weighted sums). The FFNN adds <strong>non-linear
-                                                                        transformations</strong> (via activation
-                                                                    functions like ReLU or GELU), allowing the model to
-                                                                    learn complex patterns (e.g., "if X, then Y"
-                                                                    relationships) that pure attention can’t capture.
-                                                                </p>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-8054-983b-dde5b29d90d2">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-80ea-a953-d5c2c0cee437">
-                                                                    2. <strong>Processes Each Token
-                                                                        Individually</strong>:</h3>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-808c-bf42-fd4f5aaf0647">
-                                                                    Self-attention
-                                                                        focuses on <em>relationships between
-                                                                            tokens</em>.
-                                                                </ul>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80f0-a504-ebd760eacde6">
-                                                                    The FFNN acts on
-                                                                        <strong>each token independently</strong>
-                                                                        (position-wise). Think of it as taking the
-                                                                        refined representation of a single word (after
-                                                                        attention) and further "upgrading" it into a
-                                                                        richer, more useful form.
-                                                                    
-                                                                </ul>
-                                                            
-                                                                <p class="" id="19a8a6d6-2b53-806c-8496-efbbb4003d90">
-                                                                    For example:</p>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80d4-8853-e9d8c1a30ee4">
-                                                                    After
-                                                                        self-attention figures out that "bank" refers to
-                                                                        a river (not a financial bank), the FFNN might
-                                                                        encode properties like "water," "flowing," or
-                                                                        "nature."
-                                                                </ul>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-80cd-97db-e8af171782e9">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-80fb-87b3-d5a5307a29e9">
-                                                                    3. <strong>Increases Model Capacity</strong>:</h3>
-                                                            
-                                                                <p class="" id="19a8a6d6-2b53-80b5-af62-d628f9e984ec">
-                                                                    The FFNN adds more trainable parameters (weights) to
-                                                                    the model, giving it the ability to <strong>learn
-                                                                        more complex functions</strong>. Without it, the
-                                                                    Transformer would rely only on attention, which
-                                                                    might not capture all the nuances of language.</p>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-802e-9058-cd4bbf276bc2">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-8026-859b-e97e6dccb4e8">
-                                                                    4. <strong>Standardizes Feature Dimensions</strong>:
-                                                                </h3>
-                                                            
-                                                                <p class="" id="19a8a6d6-2b53-8074-ab9e-c1272c807fec">
-                                                                    The FFNN often expands the dimension of the input
-                                                                    (e.g., from 512 to 2048) and then shrinks it back.
-                                                                    This "bottleneck" design helps:</p>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80a0-9aab-c5e52b43564f">
-                                                                    Compress useful
-                                                                        information.
-                                                                </ul>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80b5-848e-ed7b27d4393a">
-                                                                    Remove noise from
-                                                                        the attention output.
-                                                                </ul>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-80cb-b51a-e31f23ae0a74">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-809b-99fd-c614dfb337a4">
-                                                                    Analogy:</h3>
-                                                            
-                                                                <p class="" id="19a8a6d6-2b53-80d4-a168-da1eabfd225a">
-                                                                    Imagine a team working on a project:</p>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-803d-9cc5-fe35b7c4f3fa">
-                                                                    
-                                                                        <strong>Self-attention</strong> = Team members
-                                                                        discussing ideas and sharing context.
-                                                                    
-                                                                </ul>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-8089-8a62-cd1eba9595a1">
-                                                                    
-                                                                        <strong>FFNN</strong> = Each member individually
-                                                                        refining their part of the work based on the
-                                                                        group discussion.
-                                                                    
-                                                                </ul>
-                                                            
-                                                                <p class="" id="19a8a6d6-2b53-8020-a43a-f6c2a4ba7941">
-                                                                    Both steps are needed to produce a polished final
-                                                                    result!</p>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-8048-811b-c7e838c69e7a">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-80bb-bbd0-db155339a30b">
-                                                                    Why Not Just Use More Attention Layers?</h3>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-801e-b4c3-fbdde712f9ab">
-                                                                    
-                                                                        <strong>Computational Cost</strong>:
-                                                                        Self-attention scales poorly with sequence
-                                                                        length (it’s \(O(n^2)\) for \(n\) tokens). FFNNs
-                                                                        are much cheaper (\(O(n)\)).
-                                                                    
-                                                                </ul>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-8003-afe9-e89c569ea7d7">
-                                                                    
-                                                                        <strong>Specialization</strong>: Self-attention
-                                                                        and FFNNs handle different tasks (mixing vs.
-                                                                        transforming tokens), making the model more
-                                                                        versatile.
-                                                                    
-                                                                </ul>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-8069-9fd8-de7ea882c770">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-80e1-8f49-c9cf9116dedb">
-                                                                    Connection to Residual Connections:</h3>
-                                                            
-                                                                <p class="" id="19a8a6d6-2b53-807b-be14-d6cb35b6461a">
-                                                                    The FFNN is wrapped with <strong>skip
-                                                                        connections</strong> (like the ones in your
-                                                                    first question). This ensures:</p>
-                                                            
-                                                                <ol class="numbered-list" id="19a8a6d6-2b53-8078-83f8-f90296e15339" start="1" type="1">
-                                                                    Gradients flow smoothly during training.
-                                                                </ol>
-                                                            
-                                                                <ol class="numbered-list" id="19a8a6d6-2b53-8019-ac92-df62957669ac" start="2" type="1">
-                                                                    The original information from self-attention
-                                                                        isn’t lost when passing through the FFNN.
-                                                                </ol>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-8025-8ac6-e1232100d4f4">
-                                                            
-                                                                <figure class="block-color-gray_background callout" id="19a8a6d6-2b53-8056-9ced-d6c847736446">
-                                                                    <div style="font-size:1.5em"><span class="icon">💡</span></div>
-                                                                    <div>
-                                                                        <div dir="auto">
-                                                                            <p class="" id="19a8a6d6-2b53-8022-88a9-f015a0d45637">
-                                                                                <strong>The FFNN acts as a "power-up"
-                                                                                    step</strong>, transforming token
-                                                                                representations into richer, non-linear
-                                                                                features after self-attention. Without
-                                                                                it, Transformers would struggle to model
-                                                                                complex language tasks like translation
-                                                                                or summarization!
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                </figure>
-                                                            
-                                                    
-                                                
-                                            </div>
-                                            <div dir="auto">
-                                                
-                                                    
-                                                        <h4 class="pro-heading style-h4">🔴 Why we use
-                                                                    6 Encoder Block?</h4>
-                                                                <p class="" id="19a8a6d6-2b53-80ef-b758-d95adff65373">
-                                                                    Uses <strong>6 encoder blocks</strong>, along with
-                                                                    the broader rationale for stacking encoder layers:
-                                                                </p>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-80a6-8071-c8dc7aaafbc1">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-8029-8d52-da7fd1cdc58b">
-                                                                    <strong>1. Why 6? It’s a Balance!</strong>
-                                                                </h3>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-8047-bbc4-d4a6172c8069">
-                                                                    <strong>Empirical
-                                                                            Choice</strong>: The authors of the original
-                                                                        Transformer paper experimented and found that
-                                                                        <strong>6 encoder blocks</strong> struck a good
-                                                                        balance between:<div dir="auto">
-                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-8058-ad5e-f18d03a44531">
-                                                                                
-                                                                                    <strong>Model capacity</strong>
-                                                                                    (ability to learn complex patterns).
-                                                                                
-                                                                            </ul>
-                                                                        </div>
-                                                                        <div dir="auto">
-                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-8051-978a-e8ee03364bc3">
-                                                                                
-                                                                                    <strong>Computational
-                                                                                        efficiency</strong> (training
-                                                                                    time/memory).
-                                                                                
-                                                                            </ul>
-                                                                        </div>
-                                                                        <div dir="auto">
-                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-8003-815d-c81e57ca8078">
-                                                                                
-                                                                                    <strong>Performance</strong>
-                                                                                    (accuracy on translation tasks).
-                                                                                
-                                                                            </ul>
-                                                                        </div>
-                                                                        <div dir="auto">
-                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-8036-85d7-e9e43495abf3">
-                                                                                
-                                                                                    <em><mark class="highlight-yellow_background">Deeper
-                                                                                            models</mark></em><mark class="highlight-yellow_background">
-                                                                                        (e.g., 12+ layers) might overfit
-                                                                                        or become computationally heavy,
-                                                                                        while </mark><em><mark class="highlight-yellow_background">shallower
-                                                                                            models</mark></em><mark class="highlight-yellow_background">
-                                                                                        (e.g., 3 layers)
-                                                                                        underperform.</mark>
-                                                                                
-                                                                            </ul>
-                                                                        </div>
-                                                                    
-                                                                </ul>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-809e-979a-cd92c3a909c3">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-80ec-9e61-f42e2d1fe6eb">
-                                                                    <strong>2. What Do Multiple Encoder Blocks
-                                                                        Achieve?</strong>
-                                                                </h3>
-                                                            
-                                                                <p class="" id="19a8a6d6-2b53-80b6-b309-eb2a9164b180">
-                                                                    Each encoder block refines the input representation
-                                                                    step-by-step:</p>
-                                                            
-                                                                <ol class="numbered-list" id="19a8a6d6-2b53-8023-bf61-e1e4b703439d" start="1" type="1">
-                                                                    <strong>Lower Blocks</strong>: Focus on
-                                                                        <strong>local/syntactic patterns</strong> (e.g.,
-                                                                        grammar, word relationships).<div dir="auto">
-                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-8015-a277-d954946dd6f3">
-                                                                                
-                                                                                    Example: Identifying subject-verb
-                                                                                    agreement ("<em>she walks</em>" vs.
-                                                                                    "<em>they walk</em>").
-                                                                            </ul>
-                                                                        </div>
-                                                                    
-                                                                </ol>
-                                                            
-                                                                <ol class="numbered-list" id="19a8a6d6-2b53-8059-8819-f76bbfedc0df" start="2" type="1">
-                                                                    <strong>Middle Blocks</strong>: Capture
-                                                                        <strong>semantic relationships</strong> (e.g.,
-                                                                        context-aware meanings).<div dir="auto">
-                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-806f-9ded-f9c2fd3ffd43">
-                                                                                
-                                                                                    Example: Resolving ambiguous words
-                                                                                    like "<em>bank</em>" (river vs.
-                                                                                    financial).
-                                                                            </ul>
-                                                                        </div>
-                                                                    
-                                                                </ol>
-                                                            
-                                                                <ol class="numbered-list" id="19a8a6d6-2b53-807f-8fb8-fb9b9d8aeaa2" start="3" type="1">
-                                                                    <strong>Upper Blocks</strong>: Learn
-                                                                        <strong>high-level abstractions</strong> (e.g.,
-                                                                        discourse structure).<div dir="auto">
-                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-80b8-bd83-e14d4597a843">
-                                                                                
-                                                                                    Example: Understanding the overall
-                                                                                    intent of a paragraph.
-                                                                            </ul>
-                                                                        </div>
-                                                                    
-                                                                </ol>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-80f1-af13-eceeb01efeb3">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-801c-8d5c-ddce00fe6a9d">
-                                                                    <strong>3. Residual Connections Enable
-                                                                        Depth</strong>
-                                                                </h3>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-8035-a6ef-e92510287922">
-                                                                    <strong>Skip
-                                                                            connections</strong> (from your first
-                                                                        question) allow gradients to flow through all 6
-                                                                        layers without vanishing. Without them, training
-                                                                        deeper networks would fail.
-                                                                </ul>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-800e-b0eb-c887f02f1a38">
-                                                                    Each block only
-                                                                        needs to learn a small "delta" (change) to the
-                                                                        input, making stacking feasible.
-                                                                </ul>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-80d5-89d9-f498908e6a1c">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-80b3-862f-e864d2ce6d95">
-                                                                    <strong>4. Parallelization vs. Sequential
-                                                                        Processing</strong>
-                                                                </h3>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-8055-9f41-ce0ffe0609c4">
-                                                                    Unlike RNNs (which
-                                                                        process tokens sequentially), Transformer
-                                                                        encoders process all tokens in parallel.<div dir="auto">
-                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-8050-9324-f8af7912a866">
-                                                                                Even
-                                                                                    with 6 blocks, the model remains
-                                                                                    <strong>faster to train</strong>
-                                                                                    than recurrent models.
-                                                                                
-                                                                            </ul>
-                                                                        </div>
-                                                                    
-                                                                </ul>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-806a-82c6-cb9392cc84fd">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-8075-8906-ed55494e968a">
-                                                                    <strong>5. Variations in Modern Models</strong>
-                                                                </h3>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80e5-b656-db93c4ffaed0">
-                                                                    The number "6" is
-                                                                        <strong>not a rule</strong>:<div dir="auto">
-                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-80e9-8e15-e01aace03ea7">
-                                                                                
-                                                                                    Smaller models (e.g., TinyBERT) use
-                                                                                    fewer layers (2–4).
-                                                                            </ul>
-                                                                        </div>
-                                                                        <div dir="auto">
-                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-80e2-b024-cabe1c2f5772">
-                                                                                
-                                                                                    Larger models (e.g., BERT-base: 12
-                                                                                    layers, GPT-3: 96 layers) use more.
-                                                                                
-                                                                            </ul>
-                                                                        </div>
-                                                                        <div dir="auto">
-                                                                            <ul class="bulleted-list" id="19a8a6d6-2b53-8005-83d8-cdd385e9a7c0">
-                                                                                The
-                                                                                    choice depends on the task, dataset
-                                                                                    size, and compute budget.
-                                                                            </ul>
-                                                                        </div>
-                                                                    
-                                                                </ul>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-807d-b594-ec211a665ae1">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-80d7-920c-fe101986690e">
-                                                                    <strong>6. Ablation Studies</strong>
-                                                                </h3>
-                                                            
-                                                                <p class="" id="19a8a6d6-2b53-80d3-93e1-e81360511327">
-                                                                    Experiments in the original paper showed that:</p>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80ce-a44f-f7ddf596e68a">
-                                                                    Performance
-                                                                        improved up to 6 layers for translation tasks.
-                                                                    
-                                                                </ul>
-                                                            
-                                                                <ul class="bulleted-list" id="19a8a6d6-2b53-80a4-bf75-e7497f266572">
-                                                                    Beyond 6, gains
-                                                                        diminished (diminishing returns).
-                                                                </ul>
-                                                            
-                                                                <hr id="19a8a6d6-2b53-8073-b3af-f2cbc3061f2b">
-                                                            
-                                                                <h3 class="" id="19a8a6d6-2b53-80a2-b788-c788f9755351">
-                                                                    <strong>Key Takeaway</strong>:
-                                                                </h3>
-                                                            
-                                                                <p class="" id="19a8a6d6-2b53-8060-92c3-f303908e8896">
-                                                                    <strong>6 encoder blocks</strong> were a pragmatic
-                                                                    choice for the original Transformer, balancing depth
-                                                                    and efficiency. Modern architectures adjust this
-                                                                    number based on specific needs, but the core
-                                                                    idea—<strong>stacked layers for hierarchical
-                                                                        learning</strong>—remains fundamental.
-                                                                </p>
-                                                            
-                                                    
-                                                
-                                            </div>
-                                        
+                                    </div>
+
+                                    <div>
+                                        <h4 class="pro-heading style-h4" style="color: var(--accent);">❓ Why stack exactly 6 Encoder Blocks?</h4>
+                                        <ul class="bulleted-list" style="line-height: 1.8;">
+                                            <li>⚖️ <strong>Pragmatic Sweet Spot:</strong> 6 was chosen empirically by the original authors to balance learning power (capacity) against training speed and memory cost.</li>
+                                            <li>⛰️ <strong>Hierarchical Feature Learning:</strong> 
+                                                <ul style="margin-top: 6px; padding-left: 20px;">
+                                                    <li><strong>Lower Layers (1-2):</strong> Capture basic syntax, word matches, and spelling properties.</li>
+                                                    <li><strong>Middle Layers (3-4):</strong> Connect context-aware semantic meanings (e.g. river bank vs financial bank).</li>
+                                                    <li><strong>Upper Layers (5-6):</strong> Formulate high-level paragraph concepts, topics, and long-range intent.</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </details>
                     </div>
