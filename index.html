@@ -13329,7 +13329,7 @@ M834 80h400000v40h-400000z"></path>
                             <summary class="pro-heading style-h2">Encoder: Source-Side Understanding Stack</summary>
                             <div class="indented">
                                 <div dir="auto" style="margin-bottom: 24px;">
-                                    <h3 class="pro-heading style-h3" style="margin-top: 0;">🚀Overview</h3>
+                                    <h3 class="pro-heading style-h3" style="margin-top: 0;">⭐Overview</h3>
                                     <ul class="bulleted-list" style="line-height: 1.8;">
                                         <li>🔴 <strong>Primary Goal:</strong> Read the input text and build a deep, mathematical understanding (context-aware embeddings) of every word. The encoder does <em>not</em> generate any text.</li>
                                         <li>🔴 <strong>Parallel Processing:</strong> Processes the entire sentence simultaneously (in parallel), making it exponentially faster than older models like RNNs.</li>
@@ -13529,7 +13529,7 @@ M834 80h400000v40h-400000z"></path>
                             <summary class="pro-heading style-h2">Decoder: Target-Side Generation Stack</summary>
                             <div class="indented">
                                 <div dir="auto" style="margin-bottom: 24px;">
-                                    <h3 class="pro-heading style-h3" style="margin-top: 0;">🚀 Chapter Overview</h3>
+                                    <h3 class="pro-heading style-h3" style="margin-top: 0;">⭐ Overview</h3>
                                     <ul class="bulleted-list" style="line-height: 1.8;">
                                         <li>🎯 <strong>Primary Goal:</strong> Generate output tokens (e.g. translated words) one by one autoregressively, using previously generated tokens and the encoder's input memory.</li>
                                         <li>⚡ <strong>Triple Sub-Layers:</strong> Unlike the encoder's 2 sub-layers, each decoder layer contains 3 sub-layers:
@@ -13581,14 +13581,54 @@ M834 80h400000v40h-400000z"></path>
 
                                 <div style="margin: 24px 0;">
                                     <h4 class="pro-heading style-h4">Visual Walkthrough: Self-Attention vs. Cross-Attention Detail</h4>
-                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
-                                        <figure class="image"><a href="assets/images/part-2/07.png"><img src="assets/images/part-2/07.png"></a></figure>
-                                        <figure class="image"><a href="assets/images/part-2/08.png"><img src="assets/images/part-2/08.png"></a></figure>
-                                        <figure class="image"><a href="assets/images/part-2/09.png"><img src="assets/images/part-2/09.png"></a></figure>
-                                        <figure class="image"><a href="assets/images/part-2/10.png"><img src="assets/images/part-2/10.png"></a></figure>
-                                        <figure class="image"><a href="assets/images/part-2/11.png"><img src="assets/images/part-2/11.png"></a></figure>
-                                        <figure class="image"><a href="assets/images/part-2/12.png"><img src="assets/images/part-2/12.png"></a></figure>
-                                        <figure class="image"><a href="assets/images/part-2/13.png"><img src="assets/images/part-2/13.png"></a></figure>
+                                    <div dir="auto" style="margin-bottom: 16px;">
+                                        <ul class="bulleted-list" style="line-height: 1.8;">
+                                            <li><strong>Core Difference:</strong> Self-Attention lets tokens within the <em>same</em> sequence talk to each other. Cross-Attention lets tokens in one sequence (decoder / target) query tokens from a <em>different</em> sequence (encoder / source).</li>
+                                            <li><strong>Translation Example:</strong> The walkthrough uses English ("We are friends") as the source and Hindi ("हम दोस्त हैं") as the target to illustrate how attention bridges two languages.</li>
+                                            <li><strong>Reading the Attention Matrix:</strong> In the heatmaps below, larger dots = higher attention weight. Each row is a query token; each column is a key token. The pattern reveals which source words each target word focuses on.</li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Step 1: Side-by-side overview -->
+                                    <figure class="image" style="margin: 16px 0;">
+                                        <a href="assets/images/part-2/07.png"><img src="assets/images/part-2/07.png"></a>
+                                        <figcaption><strong>Self-Attention vs. Cross-Attention — High-Level Comparison:</strong> (Left) In self-attention all Q, K, V come from the same sentence. (Right) In cross-attention, Q comes from the decoder target (Hindi) while K and V come from the encoder source (English).</figcaption>
+                                    </figure>
+
+                                    <!-- Step 2 & 3: Detailed mechanics -->
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 16px 0;">
+                                        <figure class="image" style="margin: 0;">
+                                            <a href="assets/images/part-2/08.png"><img src="assets/images/part-2/08.png"></a>
+                                            <figcaption><strong>Self-Attention Full Pipeline:</strong> Each source word ("We", "are", "friends") is projected into Q, K, V vectors. Dot-product scores are computed, softmaxed into weights, then used to create a weighted sum of V vectors. The resulting attention matrix (bottom) shows every word attending to every other word in the same sentence.</figcaption>
+                                        </figure>
+                                        <figure class="image" style="margin: 0;">
+                                            <a href="assets/images/part-2/09.png"><img src="assets/images/part-2/09.png"></a>
+                                            <figcaption><strong>Cross-Attention Full Pipeline:</strong> Q vectors come from decoder tokens (हम, दोस्त, हैं) while K and V vectors come from encoder tokens (We, are, friends). Each Hindi word queries the English sequence, producing a cross-lingual attention matrix that maps target words to their most relevant source words.</figcaption>
+                                        </figure>
+                                    </div>
+
+                                    <!-- Step 3: Simplified self-attention flow -->
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 16px 0;">
+                                        <figure class="image" style="margin: 0;">
+                                            <a href="assets/images/part-2/10.png"><img src="assets/images/part-2/10.png"></a>
+                                            <figcaption><strong>Simplified Self-Attention Flow:</strong> Input embeddings (blue) pass through the self-attention layer and produce context-enriched output embeddings (green). All inputs and outputs belong to the same language / sequence.</figcaption>
+                                        </figure>
+                                        <figure class="image" style="margin: 0;">
+                                            <a href="assets/images/part-2/11.png"><img src="assets/images/part-2/11.png"></a>
+                                            <figcaption><strong>Self-Attention Weighted Sum Example:</strong> Numerical attention weights show how each output is a weighted combination of all input embeddings. For example, <code>ce_we = 0.8 × e_we + 0.1 × e_are + 0.1 × e_friends</code> — "We" mostly attends to itself.</figcaption>
+                                        </figure>
+                                    </div>
+
+                                    <!-- Step 4: Cross-attention flow -->
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 16px 0;">
+                                        <figure class="image" style="margin: 0;">
+                                            <a href="assets/images/part-2/12.png"><img src="assets/images/part-2/12.png"></a>
+                                            <figcaption><strong>Simplified Cross-Attention Flow:</strong> Source embeddings (blue, English) provide Keys and Values. Target embeddings (green, Hindi) provide Queries. The cross-attention layer produces fused output embeddings (pink) that combine both languages' information.</figcaption>
+                                        </figure>
+                                        <figure class="image" style="margin: 0;">
+                                            <a href="assets/images/part-2/13.png"><img src="assets/images/part-2/13.png"></a>
+                                            <figcaption><strong>Cross-Attention Weighted Sum Example:</strong> Target word "दोस्त" (friends) strongly attends to "friends" with weight 0.6, while "हम" (we) focuses on "We" with weight 0.5. This alignment lets the decoder know which source word to translate at each step.</figcaption>
+                                        </figure>
                                     </div>
                                 </div>
 
