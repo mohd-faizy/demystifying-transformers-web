@@ -13329,7 +13329,7 @@ M834 80h400000v40h-400000z"></path>
                             <summary class="pro-heading style-h2">Encoder: Source-Side Understanding Stack</summary>
                             <div class="indented">
                                 <div dir="auto" style="margin-bottom: 24px;">
-                                    <h3 class="pro-heading style-h3" style="margin-top: 0;">🚀 Chapter Overview</h3>
+                                    <h3 class="pro-heading style-h3" style="margin-top: 0;">🚀Overview</h3>
                                     <ul class="bulleted-list" style="line-height: 1.8;">
                                         <li>🎯 <strong>Primary Goal:</strong> Read the input text and build a deep, mathematical understanding (context-aware embeddings) of every word. The encoder does <em>not</em> generate any text.</li>
                                         <li>⚡ <strong>Parallel Processing:</strong> Processes the entire sentence simultaneously (in parallel), making it exponentially faster than older models like RNNs.</li>
@@ -13421,66 +13421,106 @@ M834 80h400000v40h-400000z"></path>
                                 </div>
 
                                 <h3 class="pro-heading style-h3">3. Practice Questions &amp; Concept Intuitions</h3>
-                                <div style="margin: 20px 0; display: flex; flex-direction: column; gap: 24px;">
-                                    <div>
-                                        <h4 class="pro-heading style-h4" style="color: var(--accent);">❓ Why do we use Residual Connections (skip connections)?</h4>
-                                        <ul class="bulleted-list" style="line-height: 1.8;">
-                                            <li>🛡️ <strong>Prevents Vanishing Gradients:</strong> Creates a direct highway for training gradients to flow backward through deep layers without fading to zero.</li>
-                                            <li>💾 <strong>Preserves Essential Context:</strong> Ensures positional order and raw input text features are not forgotten as the representation goes deeper.</li>
-                                            <li>🛠️ <strong>Encourages Incremental Learning:</strong> Lets each layer learn minor adjustments (residual offsets) rather than forcing it to reconstruct the output from scratch.</li>
-                                        </ul>
-                                    </div>
-
-                                    <div>
-                                        <h4 class="pro-heading style-h4" style="color: var(--accent);">❓ Why do we need the Feed-Forward Neural Network (FFN)?</h4>
-                                        <ul class="bulleted-list" style="line-height: 1.8;">
-                                            <li>🧠 <strong>Adds Non-Linearity:</strong> Self-attention is mostly linear calculations (weighted averages). FFN introduces non-linearity (via ReLU/GELU activations) to model complex concepts.</li>
-                                            <li>⚙️ <strong>Per-Position Processing:</strong> Refines each token vector independently (position-wise) after self-attention has mixed context across tokens.</li>
-                                            <li>💡 <strong>Acts as Key-Value Memories:</strong> Research shows the FFN acts as a retrieval database (see paper below):
-                                                <ul style="margin-top: 6px; padding-left: 20px;">
-                                                    <li><strong>Keys</strong> (first linear projection) detect specific patterns in input (e.g. subject-verb match).</li>
-                                                    <li><strong>Values</strong> (second linear projection) retrieve and write appropriate word adjustments to the output distribution.</li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-
-                                        <div class="resource-card-container" style="margin-top: 16px;">
-                                            <a class="resource-card arxiv-card" href="https://arxiv.org/pdf/2012.14913" target="_blank" rel="noopener noreferrer">
-                                                <div class="resource-icon-wrapper">
-                                                    <svg class="resource-svg-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
-                                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                                        <polyline points="14 2 14 8 20 8"></polyline>
-                                                        <line x1="16" x2="8" y1="13" y2="13"></line>
-                                                        <line x1="16" x2="8" y1="17" y2="17"></line>
-                                                        <polyline points="10 9 9 9 8 9"></polyline>
-                                                    </svg>
-                                                </div>
-                                                <div class="resource-details">
-                                                    <span class="resource-tag tag-arxiv">Research Paper</span>
-                                                    <h4 class="resource-title">Feed-Forward Layers Are Key-Value Memories</h4>
-                                                    <p class="resource-desc">Foundational research revealing how FFN layers store and retrieve conceptual patterns in Transformers.</p>
-                                                </div>
-                                                <div class="resource-action">
-                                                    <span>Read PDF</span>
-                                                    <span class="arrow">➔</span>
-                                                </div>
-                                            </a>
+                                <div style="margin: 20px 0; display: flex; flex-direction: column; gap: 16px;">
+                                    
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Why do we use Residual Connections (skip connections) in the Encoder?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Prevents Vanishing Gradients:</strong> Creates a direct pathway for training gradients to flow backward through deep layers without fading to zero.</li>
+                                                <li><strong>Preserves Essential Context:</strong> Ensures positional order and raw input text features are not forgotten as the representation goes deeper.</li>
+                                                <li><strong>Encourages Incremental Learning:</strong> Lets each layer learn minor adjustments (residual offsets) rather than forcing it to reconstruct the output from scratch.</li>
+                                            </ul>
                                         </div>
-                                    </div>
+                                    </details>
 
-                                    <div>
-                                        <h4 class="pro-heading style-h4" style="color: var(--accent);">❓ Why stack exactly 6 Encoder Blocks?</h4>
-                                        <ul class="bulleted-list" style="line-height: 1.8;">
-                                            <li>⚖️ <strong>Pragmatic Sweet Spot:</strong> 6 was chosen empirically by the original authors to balance learning power (capacity) against training speed and memory cost.</li>
-                                            <li>⛰️ <strong>Hierarchical Feature Learning:</strong> 
-                                                <ul style="margin-top: 6px; padding-left: 20px;">
-                                                    <li><strong>Lower Layers (1-2):</strong> Capture basic syntax, word matches, and spelling properties.</li>
-                                                    <li><strong>Middle Layers (3-4):</strong> Connect context-aware semantic meanings (e.g. river bank vs financial bank).</li>
-                                                    <li><strong>Upper Layers (5-6):</strong> Formulate high-level paragraph concepts, topics, and long-range intent.</li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Why do we need the Feed-Forward Neural Network (FFN) in each layer?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Adds Non-Linearity:</strong> Self-attention is mostly linear calculations (weighted averages). FFN introduces non-linearity (via ReLU/GELU activations) to model complex concepts.</li>
+                                                <li><strong>Per-Position Processing:</strong> Refines each token vector independently (position-wise) after self-attention has mixed context across tokens.</li>
+                                                <li><strong>Acts as Key-Value Memories:</strong> The FFN acts as a retrieval database:
+                                                    <ul style="margin-top: 6px; padding-left: 20px;">
+                                                        <li>Keys (first linear projection) detect specific patterns in input (e.g. subject-verb match).</li>
+                                                        <li>Values (second linear projection) retrieve and write appropriate word adjustments to the output distribution.</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                            <div class="resource-card-container" style="margin-top: 16px;">
+                                                <a class="resource-card arxiv-card" href="https://arxiv.org/pdf/2012.14913" target="_blank" rel="noopener noreferrer">
+                                                    <div class="resource-icon-wrapper">
+                                                        <svg class="resource-svg-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+                                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                                            <line x1="16" x2="8" y1="13" y2="13"></line>
+                                                            <line x1="16" x2="8" y1="17" y2="17"></line>
+                                                            <polyline points="10 9 9 9 8 9"></polyline>
+                                                        </svg>
+                                                    </div>
+                                                    <div class="resource-details">
+                                                        <span class="resource-tag tag-arxiv">Research Paper</span>
+                                                        <h4 class="resource-title">Feed-Forward Layers Are Key-Value Memories</h4>
+                                                        <p class="resource-desc">Foundational research revealing how FFN layers store and retrieve conceptual patterns in Transformers.</p>
+                                                    </div>
+                                                    <div class="resource-action">
+                                                        <span>Read PDF</span>
+                                                        <span class="arrow">➔</span>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </details>
+
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Why stack exactly 6 Encoder Blocks?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Pragmatic Sweet Spot:</strong> 6 was chosen empirically by the original authors to balance learning power (capacity) against training speed and memory cost.</li>
+                                                <li><strong>Hierarchical Feature Learning:</strong> 
+                                                    <ul style="margin-top: 6px; padding-left: 20px;">
+                                                        <li>Lower Layers (1-2): Capture basic syntax, word matches, and spelling properties.</li>
+                                                        <li>Middle Layers (3-4): Connect context-aware semantic meanings (e.g. river bank vs financial bank).</li>
+                                                        <li>Upper Layers (5-6): Formulate high-level paragraph concepts, topics, and long-range intent.</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Why is Layer Normalization preferred over Batch Normalization in Transformers?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Sequence Length Independence:</strong> LayerNorm normalizes across the feature dimensions for each token individually, whereas BatchNorm normalizes across the batch. If sentence lengths vary, BatchNorm statistics become unstable.</li>
+                                                <li><strong>No Batch Size Constraints:</strong> LayerNorm performs the same mathematical operations regardless of batch size, making it highly effective for training large models with small batch sizes.</li>
+                                                <li><strong>Better for Autoregressive Generation:</strong> At inference time, the model generates one token at a time (batch size = 1). BatchNorm cannot compute meaningful statistics in this scenario, while LayerNorm functions perfectly.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Why is Self-Attention in the Encoder unmasked, while the Decoder requires masking?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Bidirectional Context:</strong> The Encoder's job is to fully understand the source sequence. There is no risk of "cheating" by looking ahead, so each token is allowed to attend to all other tokens.</li>
+                                                <li><strong>Causal Masking in Decoder:</strong> The Decoder generates the output sequence autoregressively. During training, we pass the entire target sequence in parallel, but must prevent tokens from looking at future words to ensure the model learns to predict, not copy.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                    <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">What is the maximum path length between any two tokens in the Encoder, and why does this matter?</summary>
+                                        <div class="indented" style="padding: 0 16px 16px;">
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>O(1) Path Length:</strong> In self-attention, every token directly connects to every other token in a single operation. The maximum path length is constant at <code>O(1)</code>.</li>
+                                                <li><strong>Comparison to RNNs:</strong> Older recurrent models (RNNs/LSTMs) pass information step-by-step, resulting in an <code>O(T)</code> path length. Information from the beginning of the sentence must travel through T steps to reach the end, causing vanishing gradients and forgetting.</li>
+                                                <li><strong>Better Long-Range Dependency:</strong> The <code>O(1)</code> path makes it extremely easy for the model to capture connections between words that are far apart in a sentence.</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+
+                                </div>
                                 </div>
                             </div>
                         </details>
