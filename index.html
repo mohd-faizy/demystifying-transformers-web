@@ -6208,8 +6208,9 @@ M1001 80h400000v40h-400000z"></path>
                                         <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q1: What exactly do you normalize in deep learning, and how does it prevent gradient issues?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
-                                                <li><strong>The Targets:</strong> Normalization is applied either to raw input features or to intermediate layer activations (outputs of hidden layers before or after activation functions).</li>
-                                                <li><strong>Gradient Control:</strong> By keeping activations bounded within a predictable scale (e.g., mean 0, variance 1), it prevents downstream values from blowing up or shrinking to zero, stabilizing gradient flow.</li>
+                                                <li><strong>Normalization Targets:</strong> Normalization targets the intermediate activations (hidden states) within the network, transforming their distributions. This can be done immediately before an activation function (pre-activation) or immediately after it (post-activation).</li>
+                                                <li><strong>Preventing Gradient Explosion/Vanishing:</strong> When signals pass through dozens of layers, their variance can grow exponentially (causing activations to blow up) or shrink exponentially (causing them to vanish). By standardizing the activations to a consistent scale (typically mean 0, variance 1), we ensure that the inputs to downstream layers remain within a stable range, preventing gradients from exploding or collapsing during backpropagation.</li>
+                                                <li><strong>Smoothing the Loss Landscape:</strong> Normalizing intermediate activations reduces the sensitivity of the output to weight modifications in earlier layers. This mathematically results in a smoother, more isotropic loss landscape (fewer sharp ravines and plateaus), which allows optimization algorithms (like Adam or SGD) to converge much faster with higher learning rates.</li>
                                             </ul>
                                             <div dir="ltr" style="margin-top: 12px;">
                                                 <figure class="image" id="1998a6d6-2b53-80be-960f-cd000ef6e7a9">
@@ -6224,8 +6225,9 @@ M1001 80h400000v40h-400000z"></path>
                                         <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q2: What is Internal Covariate Shift (ICS), and how does normalization mitigate it?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
-                                                <li><strong>Internal Shift:</strong> During training, updates to weights in earlier layers shift the distribution of inputs to later layers. Later layers must constantly adapt to these moving targets.</li>
-                                                <li><strong>Distribution Anchoring:</strong> Normalization anchors hidden layer distributions to a fixed mean and variance, allowing subsequent layers to focus on learning features instead of adjusting to shifting inputs.</li>
+                                                <li><strong>Defining the Moving Target Problem:</strong> In a deep neural network, the parameters of earlier layers change after every gradient update. Consequently, the distribution of inputs to later layers shifts continuously throughout training. This phenomenon is known as Internal Covariate Shift (ICS).</li>
+                                                <li><strong>The Chase and Adaptation Delay:</strong> Because the inputs are constantly changing, later layers must continuously adapt to these new distributions. This creates a lag in learning efficiency, as downstream layers have to "chase" a moving target rather than focusing on extracting higher-level features.</li>
+                                                <li><strong>Anchoring the Activation Distribution:</strong> Normalization acts as a stabilizing anchor. By forcing the activations at each layer to maintain a consistent mean and variance, it decouples the layers. Even as the weights of previous layers change, the downstream layers receive inputs with a stable distribution, permitting faster, more independent, and more stable parameter optimization.</li>
                                             </ul>
                                         </div>
                                     </details>
@@ -6608,12 +6610,13 @@ M834 80h400000v40h-400000z"></path>
                                         <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q4: Why does Batch Normalization use learnable scale (\(\gamma\)) and shift (\(\beta\)) parameters?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
                                             <ul class="bulleted-list" style="line-height: 1.8;">
-                                                <li><strong>Restoring Expressiveness:</strong> Forcing activations to always have mean 0 and variance 1 can limit the representational power of the layer. For example, if activations are passed to a Sigmoid, they would be constrained to the linear region around 0.</li>
-                                                <li><strong>Learnable Adjustments:</strong> Trainable parameters \(\gamma\) and \(\beta\) allow the model to scale and shift the normalized values, letting the network learn to bypass or adjust the normalization if needed:
+                                                <li><strong>Preventing Representational Bottleneck:</strong> If activations are strictly restricted to a zero-mean, unit-variance distribution, the network's capacity to represent complex non-linear functions is severely limited. For instance, if normalized activations are fed into a Sigmoid or Tanh activation function, they are constrained to the linear region near zero, essentially turning the non-linear layer into a linear one.</li>
+                                                <li><strong>The Scale and Shift Parameters:</strong> To restore the model's capacity, we introduce two learnable parameters per channel/feature: a scale parameter \(\gamma\) (initialized to 1) and a shift parameter \(\beta\) (initialized to 0). The final normalized output is computed as:
                                                     <div style="text-align: center; margin: 8px 0;">
                                                         \( y = \gamma \hat{x} + \beta \)
                                                     </div>
                                                 </li>
+                                                <li><strong>Identity Mapping Recovery:</strong> During backpropagation, the optimizer can adjust \(\gamma\) and \(\beta\) to match the optimal activation range. If the optimal distribution for a layer is indeed the unnormalized distribution, the network can learn to set \(\gamma = \sqrt{\sigma^2 + \epsilon}\) and \(\beta = \mu\), completely undoing the normalization. This gives the network the flexibility to decide exactly how much normalization is beneficial.</li>
                                             </ul>
                                             <div dir="ltr" style="margin-top: 12px;">
                                                 <figure class="image" id="19a8a6d6-2b53-80c6-af03-f18f5b713fa6">
@@ -7113,8 +7116,49 @@ M834 80h400000v40h-400000z"></path>
                                 </div>
                             </div>
                         </details>
-                        
-<details id="encoder">
+                    </div>
+                    <div dir="auto"></div>
+                    <div dir="auto"></div>
+                    <div dir="auto"></div>
+                </article>
+            </section>
+            <section class="section" id="part-2">
+                <div class="section-header">
+                    <span class="eyebrow">Part 2 · Architecture</span>
+                    <h2>Encoder and Decoder Architecture Walkthrough</h2>
+                    <p>This part contains the architecture notes. It first describes the encoder, then moves into
+                        decoder training, masked self-attention, cross-attention, inference, softmax, and autoregressive
+                        generation.</p>
+                </div>
+                <article class="note-shell note-content">
+                    <div dir="auto">
+                        <ul class="bulleted-list">
+                            <li style="list-style-type:disc"><strong>Architecture map:</strong> the Transformer is built
+                                from two cooperating stacks: the <strong>encoder</strong>, which reads and
+                                contextualizes the source sequence, and the <strong>decoder</strong>, which generates
+                                the target sequence step by step.</li>
+                            <li style="list-style-type:disc"><strong>Encoder job:</strong> convert input tokens into
+                                contextual memory vectors that capture meaning, order, and relationships across the
+                                whole input sentence.</li>
+                            <li style="list-style-type:disc"><strong>Decoder job:</strong> use previously generated
+                                target tokens plus encoder memory to predict the next token.</li>
+                            <li style="list-style-type:disc"><strong>Key distinction:</strong> encoder self-attention
+                                can see the full input sequence, while decoder masked self-attention must hide future
+                                target tokens.</li>
+                            <li style="list-style-type:disc"><strong>Learning path:</strong> start with the encoder
+                                flow, then study decoder masking, then cross-attention, then training vs inference
+                                behavior.</li>
+                        </ul>
+                    </div>
+                    <div dir="auto">
+                        <h1 class="" id="19a8a6d6-2b53-80af-8c78-db390e8db2b3"><mark class="highlight-yellow">Transformer Architecture:</mark></h1>
+                    </div>
+                    <div dir="ltr">
+                        <figure class="image" id="19c8a6d6-2b53-8049-9c82-da3dc4be60c6"><a href="assets/images/part-2/01.png"><img src="assets/images/part-2/01.png"></a>
+                        </figure>
+                    </div>
+                    <div dir="auto">
+                        <details id="encoder">
                             <summary class="pro-heading style-h2">Encoder: Source-Side Understanding Stack</summary>
                             <div class="indented">
                                 <div dir="auto" style="margin-bottom: 24px;">
