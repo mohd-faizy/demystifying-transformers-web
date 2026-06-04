@@ -13346,10 +13346,15 @@ M834 80h400000v40h-400000z"></path>
 
                                 <h3 class="pro-heading style-h3 encoder-custom-h3 encoder-h3-1">1. Complete Transformer Architecture (Encoder &amp; Decoder Overview)</h3>
                                 <div dir="auto" style="margin-bottom: 16px;">
-                                    <ul class="bulleted-list">
+                                    <ul class="bulleted-list" style="line-height: 1.8;">
                                         <li><strong>Bidirectional Reading:</strong> The encoder (yellow block, left) reads the full input sequence at once, while the decoder (red block, right) generates the output step-by-step.</li>
                                         <li><strong>Cross-Attention Bridge:</strong> The output of the final encoder layer is sent to all decoder layers, allowing the decoder to reference any part of the input sentence.</li>
                                         <li><strong>Skip Connections:</strong> Every major sub-layer is wrapped in skip connections and Layer Normalization (Add &amp; Norm) to keep gradient flow stable during backpropagation.</li>
+                                        <li><strong>Shared Embedding Weights:</strong> In the original Transformer, the encoder's input embedding matrix, the decoder's input embedding matrix, and the decoder's final output projection layer all share the same weight matrix — cutting parameters by millions and improving generalization.</li>
+                                        <li><strong>Parameter Count (Base Model):</strong> Each encoder layer contains ~3.15M parameters (Self-Attention projections: 4 × 512 × 512 = ~1.05M; FFN: 2 × 512 × 2048 = ~2.1M). With 6 layers, the encoder stack totals ~18.9M trainable parameters.</li>
+                                        <li><strong>No Position-Dependent Weights:</strong> Unlike CNNs, the encoder has no spatially local filters. Self-attention treats every pair of positions identically (modulo positional encoding), making the architecture inherently position-agnostic until you inject order information.</li>
+                                        <li><strong>Encoder-Only vs. Encoder-Decoder:</strong> Models like BERT use only the encoder stack (no decoder) for classification and understanding tasks. Full encoder-decoder models (like the original Transformer, T5, BART) are used for sequence-to-sequence generation tasks like translation and summarization.</li>
+                                        <li><strong>Dropout Regularization:</strong> A dropout rate of <code>P_drop = 0.1</code> is applied at three key points: after the embedding + positional encoding sum, after the attention weights softmax, and after each sub-layer output before the residual addition.</li>
                                     </ul>
                                 </div>
                                 <div dir="ltr">
@@ -13382,10 +13387,16 @@ M834 80h400000v40h-400000z"></path>
 
                                 <h3 class="pro-heading style-h3 encoder-custom-h3 encoder-h3-2">2. Single Encoder Layer: Step-by-Step Tensor Data Flow</h3>
                                 <div dir="auto" style="margin-bottom: 16px;">
-                                    <ul class="bulleted-list">
+                                    <ul class="bulleted-list" style="line-height: 1.8;">
                                         <li><strong>Dimensional Match:</strong> The layer returns a tensor of the exact same shape (e.g., <code>[seq_len x 512]</code>) that it receives, allowing layers to be stacked easily.</li>
                                         <li><strong>Sublayer 1 (Self-Attention):</strong> Mixes context across positions. Every word checks all other words to refine its meaning.</li>
                                         <li><strong>Sublayer 2 (Feed-Forward):</strong> Refines the representation of each word independently using a position-wise multi-layer perceptron.</li>
+                                        <li><strong>Identity Initialization Intuition:</strong> Due to residual connections, a freshly initialized layer (with near-zero weights) approximately computes the identity function — it passes input through unchanged. Training gradually learns to add useful residual corrections on top.</li>
+                                        <li><strong>Sub-Layer Formula (Post-LN):</strong> Each sub-layer follows the formula: <code>Output = LayerNorm(x + SubLayer(x))</code>. The <code>SubLayer(x)</code> is either Multi-Head Self-Attention or the position-wise FFN.</li>
+                                        <li><strong>Self-Attention is a Weighted Average:</strong> The output for each token position is literally a weighted sum of all Value vectors in the sequence. The weights are dynamically computed via softmax over scaled dot-product scores — making the representation fully context-dependent.</li>
+                                        <li><strong>FFN is Token-Independent:</strong> The same FFN weights <code>W1, b1, W2, b2</code> are applied to every token position independently (no cross-token mixing). This is sometimes called a "1×1 convolution" over the sequence dimension.</li>
+                                        <li><strong>Layer-to-Layer Feature Hierarchy:</strong> Lower layers tend to capture surface-level patterns (POS tags, morphology), while upper layers encode abstract semantic features (coreference, entailment). This has been confirmed by probing experiments on BERT-style encoders.</li>
+                                        <li><strong>Gradient Highway:</strong> The residual path creates a direct shortcut from the output of any layer back to the input embedding. During backpropagation, gradients can flow through this highway unattenuated, enabling effective training of 6+ stacked layers.</li>
                                     </ul>
                                 </div>
                                 <div dir="ltr">
@@ -13809,6 +13820,12 @@ M834 80h400000v40h-400000z"></path>
                                     <ul class="bulleted-list" style="line-height: 1.8;">
                                         <li><strong>Causal Masking:</strong> The decoder prevents information leakage by adding a causal mask of <code>-∞</code> to logits of future tokens before Softmax. These positions resolve to 0 probability weight.</li>
                                         <li><strong>Parallel Training:</strong> During training, the mask allows the model to process all target positions in parallel without the risk of "cheating" by copying the correct target word.</li>
+                                        <li><strong>Mask Shape:</strong> The causal mask is a lower-triangular matrix of shape <code>[T × T]</code>. Position <code>(i, j)</code> is 0 if <code>j ≤ i</code> (allowed) and <code>-∞</code> if <code>j > i</code> (blocked). After softmax, blocked positions contribute exactly 0 weight.</li>
+                                        <li><strong>Mask is Static:</strong> Unlike padding masks that change per-batch, the causal mask is fixed and sequence-length-dependent. It can be pre-computed once and reused across all training examples of the same length.</li>
+                                        <li><strong>Difference from Encoder:</strong> The encoder uses unmasked (bidirectional) self-attention because the entire source is available. The decoder must be causal because at inference time, future tokens literally do not exist yet — masking during training simulates this constraint.</li>
+                                        <li><strong>Combined with Padding Mask:</strong> In practice, the causal mask is combined (element-wise addition) with a padding mask that also sets <code>&lt;PAD&gt;</code> token positions to <code>-∞</code>, ensuring both future leakage and padding tokens are jointly suppressed.</li>
+                                        <li><strong>Autoregressive Property:</strong> This masking enforces the autoregressive factorization: <code>P(y₁, y₂, ..., yₜ) = P(y₁) × P(y₂|y₁) × ... × P(yₜ|y₁,...,yₜ₋₁)</code>. Each token's prediction is conditioned only on previously generated tokens.</li>
+                                        <li><strong>GPT-Family Connection:</strong> Decoder-only models (GPT-2, GPT-3, GPT-4, LLaMA) use this exact same causal masking as their sole attention pattern — the entire model is a stack of masked self-attention + FFN layers without any encoder or cross-attention.</li>
                                     </ul>
                                 </div>
                                 <div dir="ltr">
@@ -13831,6 +13848,12 @@ M834 80h400000v40h-400000z"></path>
                                                 <li><strong>Keys (K) &amp; Values (V):</strong> Projected from the final encoder stack output.</li>
                                             </ul>
                                         </li>
+                                        <li><strong>Asymmetric Attention Matrix:</strong> Unlike self-attention which produces a square <code>[T_dec × T_dec]</code> matrix, cross-attention produces a rectangular <code>[T_dec × T_enc]</code> matrix — each decoder token attends to every encoder token, but not to other decoder tokens.</li>
+                                        <li><strong>Encoder K/V are Frozen per Step:</strong> The encoder runs once, and its Key and Value projections remain identical across all decoder layers and all autoregressive steps. Only the decoder's Query changes as new tokens are generated.</li>
+                                        <li><strong>No Masking Needed:</strong> Cross-attention does <em>not</em> use a causal mask because the entire source sentence is always available. The decoder is allowed to look at any source position at any generation step.</li>
+                                        <li><strong>Soft Alignment Mechanism:</strong> Cross-attention learns a soft, differentiable alignment between source and target words — replacing the hard alignment tables used in classical statistical machine translation (IBM Models 1-5).</li>
+                                        <li><strong>Present in Every Decoder Layer:</strong> Cross-attention appears in all 6 decoder layers, not just the last one. Each layer re-attends to the encoder memory, allowing lower decoder layers to focus on lexical matches while upper layers handle abstract semantic alignment.</li>
+                                        <li><strong>Removed in Decoder-Only Models:</strong> Architectures like GPT have no encoder and therefore no cross-attention. All source context must be packed into the input prompt and processed through masked self-attention alone.</li>
                                     </ul>
                                 </div>
                                 <div dir="ltr" style="display: grid; gap: 16px; margin: 20px 0;">
@@ -13908,6 +13931,9 @@ M834 80h400000v40h-400000z"></path>
                                         <li><strong>Causal Enforcer:</strong> The mask prevents position $i$ from looking at target answers in position $i+1$, preserving learning integrity.</li>
                                         <li><strong>Non-Autoregressive at Training:</strong> Thanks to the mask + teacher forcing, all target positions are computed in a single forward pass — no sequential loop is needed.</li>
                                         <li><strong>LSTM Comparison:</strong> Traditional LSTM encoder-decoder is autoregressive at both training and inference. The Transformer decoder is autoregressive only at inference time, making training significantly faster.</li>
+                                        <li><strong>Loss Computation:</strong> Cross-entropy loss is computed at every target position simultaneously: <code>Loss = -Σ log P(y_t | y_&lt;t, x)</code>. All T predictions contribute to a single backward pass, making GPU utilization highly efficient.</li>
+                                        <li><strong>Label Smoothing:</strong> The original Transformer applies label smoothing with <code>ε = 0.1</code> — instead of assigning probability 1.0 to the correct token, it assigns 0.9 to the correct token and distributes 0.1 uniformly across all other vocabulary tokens. This prevents overconfident predictions and improves BLEU scores.</li>
+                                        <li><strong>Exposure Bias Trade-off:</strong> Teacher forcing means the model never sees its own mistakes during training. At inference, if it generates a wrong token, all subsequent predictions may degrade because the model was never trained on erroneous prefixes. Techniques like scheduled sampling partially mitigate this gap.</li>
                                     </ul>
                                     <figure class="image" id="19e8a6d6-2b53-8063-9fb5-f02d7677bcf1">
                                         <a href="assets/images/part-2/14.png"><img src="assets/images/part-2/14.png"></a>
@@ -13922,6 +13948,10 @@ M834 80h400000v40h-400000z"></path>
                                         <li><strong>Recurrent Loop:</strong> The predicted token at time step $t$ is appended back into the input sequence to predict the token at step $t+1$.</li>
                                         <li><strong>Encoder Runs Once:</strong> The encoder processes the source sentence a single time. Its output (Keys and Values) is cached and reused at every decoder step.</li>
                                         <li><strong>Stopping Condition:</strong> Generation continues until the model emits a special <code>&lt;EOS&gt;</code> (end-of-sequence) token or hits a maximum length limit.</li>
+                                        <li><strong>KV Cache Optimization:</strong> At each autoregressive step, the Key and Value vectors from all previous decoder positions are cached in GPU memory. Only the new token's Q, K, V need to be computed, reducing redundant computation from <code>O(T²)</code> per step to <code>O(T)</code> per step.</li>
+                                        <li><strong>Greedy vs. Beam Search:</strong> Greedy decoding picks the single highest-probability token at each step. Beam search maintains the top-<code>B</code> candidate sequences (beams) and selects the overall highest-scoring complete sequence — typically improving translation quality by 1–2 BLEU points at the cost of <code>B×</code> computation.</li>
+                                        <li><strong>Temperature &amp; Sampling:</strong> Dividing logits by a temperature <code>τ</code> before softmax controls output diversity: <code>τ &lt; 1.0</code> sharpens the distribution (more deterministic), <code>τ &gt; 1.0</code> flattens it (more creative/random). Top-k and nucleus (top-p) sampling further truncate the tail for quality control.</li>
+                                        <li><strong>Inference Latency Bottleneck:</strong> Because each step depends on the previous token, decoder inference is inherently sequential and memory-bandwidth-bound. This is the primary reason LLM serving is expensive — techniques like speculative decoding, continuous batching, and model parallelism are used to mitigate this.</li>
                                     </ul>
                                     <div style="display: grid; gap: 16px;">
                                         <figure class="image" id="1a08a6d6-2b53-8020-9075-d593c1494639">
@@ -14154,12 +14184,54 @@ M834 80h400000v40h-400000z"></path>
 
                                     <!-- Q15 -->
                                     <details style="margin: 8px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);">
-                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q15: What is KV Caching and why is it crucial for fast inference?</summary>
+                                        <summary class="pro-heading style-h4" style="font-size: 1rem; font-weight: 700; color: var(--accent); cursor: pointer; padding: 12px 16px;">Q15: What is KV Caching Optimization and Why is it Important?</summary>
                                         <div class="indented" style="padding: 0 16px 16px;">
+                                            <h4 class="pro-heading style-h4" style="margin: 12px 0 8px 0; font-size: 0.95rem; color: var(--heading);">🔹 The Problem: Redundant Recomputation</h4>
                                             <ul class="bulleted-list" style="line-height: 1.8;">
-                                                <li><strong>Redundant Computation:</strong> At step $t$, the decoder recomputes Q, K, V for all previous positions even though they haven't changed. This wastes time.</li>
-                                                <li><strong>KV Cache:</strong> Store the Key and Value matrices from previous steps. At step $t+1$, only compute Q, K, V for the new token and append K, V to the cache. This reduces per-step cost from $O(t)$ to roughly $O(1)$.</li>
+                                                <li><strong>Autoregressive Bottleneck:</strong> During inference, the decoder generates tokens one at a time. At step $t$, a naive implementation recomputes the Key (K) and Value (V) projections for <em>all</em> previous positions $1, 2, \ldots, t-1$, even though those tokens and their K/V vectors have not changed.</li>
+                                                <li><strong>Wasted FLOPs:</strong> Without caching, generating a sequence of length $T$ requires $O(T^2)$ total attention computations because step 1 computes 1 K/V pair, step 2 computes 2, step 3 computes 3, and so on: $1 + 2 + 3 + \ldots + T = O(T^2 / 2)$.</li>
+                                                <li><strong>Latency Impact:</strong> For long sequences (e.g., $T = 4096$), this quadratic recomputation makes inference painfully slow and is the single biggest bottleneck in LLM serving.</li>
                                             </ul>
+
+                                            <h4 class="pro-heading style-h4" style="margin: 20px 0 8px 0; font-size: 0.95rem; color: var(--heading);">🔹 The Solution: KV Cache</h4>
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Core Idea:</strong> Store (cache) the Key and Value vectors from all previously generated tokens in GPU memory. At each new step $t+1$, only compute Q, K, V for the <em>single new token</em>, then append the new K and V to the existing cache.</li>
+                                                <li><strong>Attention Lookup:</strong> The new token's Query vector is multiplied against the <em>entire cached K matrix</em> (shape: <code>[t × d_k]</code>) to produce attention scores over all past positions. The weighted sum over cached V vectors produces the output — no recomputation of old K/V needed.</li>
+                                                <li><strong>Complexity Reduction:</strong> Per-step computation drops from $O(t \cdot d)$ (recomputing all K/V) to $O(d)$ for projection + $O(t \cdot d_k)$ for the attention dot-product. Over $T$ steps, total cost drops from $O(T^2 \cdot d)$ to $O(T \cdot d)$ for projections alone — a massive speedup.</li>
+                                                <li><strong>Step-by-Step Mechanics:</strong>
+                                                    <ul style="margin-top: 6px; padding-left: 20px;">
+                                                        <li><strong>Step 1:</strong> Compute Q₁, K₁, V₁ for <code>&lt;SOS&gt;</code>. Cache = {K₁, V₁}. Attend Q₁ → K₁. Output → predict "Hum".</li>
+                                                        <li><strong>Step 2:</strong> Compute Q₂, K₂, V₂ for "Hum". Append → Cache = {K₁ K₂, V₁ V₂}. Attend Q₂ → [K₁, K₂]. Output → predict "dost".</li>
+                                                        <li><strong>Step 3:</strong> Compute Q₃, K₃, V₃ for "dost". Append → Cache = {K₁ K₂ K₃, V₁ V₂ V₃}. Attend Q₃ → [K₁, K₂, K₃]. Output → predict "hai".</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+
+                                            <h4 class="pro-heading style-h4" style="margin: 20px 0 8px 0; font-size: 0.95rem; color: var(--heading);">🔹 Memory Cost &amp; Trade-offs</h4>
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Memory Formula:</strong> KV cache memory per layer = <code>2 × T × d_model × sizeof(dtype)</code>. For a 32-layer model with <code>d_model = 4096</code>, sequence length $T = 2048$, and FP16: <code>32 × 2 × 2048 × 4096 × 2 bytes ≈ 1 GB</code> per request.</li>
+                                                <li><strong>Scales with Batch Size:</strong> Each concurrent request needs its own KV cache. Serving 64 users simultaneously multiplies the cache memory by 64× — often exceeding the GPU's total VRAM.</li>
+                                                <li><strong>Speed vs. Memory Trade-off:</strong> KV caching trades memory (storing K/V tensors) for speed (skipping recomputation). This is almost always worthwhile because LLM inference is memory-bandwidth-bound, not compute-bound.</li>
+                                            </ul>
+
+                                            <h4 class="pro-heading style-h4" style="margin: 20px 0 8px 0; font-size: 0.95rem; color: var(--heading);">🔹 Advanced KV Cache Optimizations</h4>
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Multi-Query Attention (MQA):</strong> Instead of separate K and V heads for each attention head, all heads share a single K and a single V projection. This reduces KV cache size by $h\times$ (e.g., 8×) with minimal accuracy loss. Used in PaLM, Falcon.</li>
+                                                <li><strong>Grouped-Query Attention (GQA):</strong> A compromise — instead of 1 shared KV (MQA) or $h$ independent KV heads (MHA), use $g$ groups (e.g., $g = 4$ groups for $h = 32$ heads). Each group of query heads shares one KV head. Used in LLaMA 2, Mistral.</li>
+                                                <li><strong>PagedAttention (vLLM):</strong> Manages KV cache like an operating system's virtual memory — allocating cache in non-contiguous "pages" instead of one large contiguous block. This eliminates memory fragmentation and allows near-100% GPU memory utilization for serving.</li>
+                                                <li><strong>Quantized KV Cache:</strong> Store cached K/V vectors in INT8 or INT4 precision instead of FP16. Cuts memory usage by 2–4× with negligible quality degradation.</li>
+                                            </ul>
+
+                                            <h4 class="pro-heading style-h4" style="margin: 20px 0 8px 0; font-size: 0.95rem; color: var(--heading);">🔹 Encoder vs. Decoder Caching</h4>
+                                            <ul class="bulleted-list" style="line-height: 1.8;">
+                                                <li><strong>Encoder (Cross-Attention Cache):</strong> The encoder processes the source sentence once. Its output K/V projections for cross-attention are computed once and cached — reused identically by every decoder step and every decoder layer.</li>
+                                                <li><strong>Decoder (Self-Attention Cache):</strong> The decoder's self-attention KV cache grows by one token per step. This is the cache that dominates memory during long-form generation.</li>
+                                                <li><strong>Decoder-Only Models (GPT, LLaMA):</strong> Since there is no encoder, the <em>entire</em> input prompt is also processed through the decoder. The KV cache for the prompt tokens is computed during the "prefill" phase and cached for all subsequent generation steps.</li>
+                                            </ul>
+
+                                            <div style="margin: 16px 0 0 0; background: var(--soft); border-radius: 8px; border-left: 4px solid var(--accent); padding: 14px 18px;">
+                                                <strong>💡 Key Takeaway:</strong> KV caching is not an optional optimization — it is a <em>fundamental requirement</em> for practical LLM inference. Without it, generating a 1000-token response would be ~500× slower. Every modern inference framework (vLLM, TensorRT-LLM, TGI, Ollama) implements KV caching by default.
+                                            </div>
                                         </div>
                                     </details>
 
