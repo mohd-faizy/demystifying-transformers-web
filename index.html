@@ -13879,43 +13879,78 @@ M834 80h400000v40h-400000z"></path>
                                     <!-- Step 1: Side-by-side overview -->
                                     <figure class="image" style="margin: 16px 0;">
                                         <a href="assets/images/part-2/07.png"><img src="assets/images/part-2/07.png"></a>
-                                        <figcaption><strong>Self-Attention vs. Cross-Attention — High-Level Comparison:</strong> (Left) In self-attention all Q, K, V come from the same sentence. (Right) In cross-attention, Q comes from the decoder target (Hindi) while K and V come from the encoder source (English).</figcaption>
                                     </figure>
+                                    <ul class="bulleted-list" style="line-height: 1.8; margin-top: 4px;">
+                                        <li><strong>Self-Attention (Left Panel):</strong> All three projections — Query (Q), Key (K), and Value (V) — originate from the <em>same</em> input sentence. Every word attends to every other word within the same sequence.</li>
+                                        <li><strong>Cross-Attention (Right Panel):</strong> Q comes from the <em>decoder target</em> (Hindi), while K and V come from the <em>encoder source</em> (English). This bridges two separate sequences.</li>
+                                        <li><strong>Attention Matrix Shape:</strong> Self-attention produces a square <code>[T_src × T_src]</code> matrix; cross-attention produces a rectangular <code>[T_tgt × T_src]</code> matrix.</li>
+                                        <li><strong>Key Insight:</strong> The only structural difference between the two is <em>where</em> Q, K, V come from — the dot-product attention formula itself is identical in both cases.</li>
+                                    </ul>
 
                                     <!-- Step 2 & 3: Detailed mechanics -->
                                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 16px 0;">
                                         <figure class="image" style="margin: 0;">
                                             <a href="assets/images/part-2/08.png"><img src="assets/images/part-2/08.png"></a>
-                                            <figcaption><strong>Self-Attention Full Pipeline:</strong> Each source word ("We", "are", "friends") is projected into Q, K, V vectors. Dot-product scores are computed, softmaxed into weights, then used to create a weighted sum of V vectors. The resulting attention matrix (bottom) shows every word attending to every other word in the same sentence.</figcaption>
                                         </figure>
                                         <figure class="image" style="margin: 0;">
                                             <a href="assets/images/part-2/09.png"><img src="assets/images/part-2/09.png"></a>
-                                            <figcaption><strong>Cross-Attention Full Pipeline:</strong> Q vectors come from decoder tokens (हम, दोस्त, हैं) while K and V vectors come from encoder tokens (We, are, friends). Each Hindi word queries the English sequence, producing a cross-lingual attention matrix that maps target words to their most relevant source words.</figcaption>
                                         </figure>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 0 0 16px 0;">
+                                        <ul class="bulleted-list" style="line-height: 1.8; margin: 0;">
+                                            <li><strong>Self-Attention Pipeline (Left):</strong> Each source word ("We", "are", "friends") is projected into Q, K, V vectors using learned weight matrices.</li>
+                                            <li><strong>Score → Weight → Output:</strong> Dot-product scores <code>Q·Kᵀ</code> are computed, scaled by <code>1/√d_k</code>, passed through softmax to get probability weights, then used to create a weighted sum of V vectors.</li>
+                                            <li><strong>Square Attention Matrix:</strong> The resulting <code>[3×3]</code> matrix shows every word attending to every other word — including itself. The diagonal typically has high values (self-attention to own position).</li>
+                                        </ul>
+                                        <ul class="bulleted-list" style="line-height: 1.8; margin: 0;">
+                                            <li><strong>Cross-Attention Pipeline (Right):</strong> Q vectors come from decoder tokens (हम, दोस्त, हैं), while K and V vectors come from encoder tokens (We, are, friends).</li>
+                                            <li><strong>Cross-Lingual Alignment:</strong> Each Hindi query word searches the English key sequence, producing a <code>[3×3]</code> cross-lingual attention matrix that maps target words to their most relevant source words.</li>
+                                            <li><strong>No Self-Loop:</strong> Unlike self-attention, a target token cannot attend to other target tokens here — it only queries the source sequence.</li>
+                                        </ul>
                                     </div>
 
                                     <!-- Step 3: Simplified self-attention flow -->
                                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 16px 0;">
                                         <figure class="image" style="margin: 0;">
                                             <a href="assets/images/part-2/10.png"><img src="assets/images/part-2/10.png"></a>
-                                            <figcaption><strong>Simplified Self-Attention Flow:</strong> Input embeddings (blue) pass through the self-attention layer and produce context-enriched output embeddings (green). All inputs and outputs belong to the same language / sequence.</figcaption>
                                         </figure>
                                         <figure class="image" style="margin: 0;">
                                             <a href="assets/images/part-2/11.png"><img src="assets/images/part-2/11.png"></a>
-                                            <figcaption><strong>Self-Attention Weighted Sum Example:</strong> Numerical attention weights show how each output is a weighted combination of all input embeddings. For example, <code>ce_we = 0.8 × e_we + 0.1 × e_are + 0.1 × e_friends</code> — "We" mostly attends to itself.</figcaption>
                                         </figure>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 0 0 16px 0;">
+                                        <ul class="bulleted-list" style="line-height: 1.8; margin: 0;">
+                                            <li><strong>Input → Self-Attention → Output:</strong> Input embeddings (blue: <code>e_we</code>, <code>e_are</code>, <code>e_friends</code>) pass through the self-attention layer and produce context-enriched output embeddings (green).</li>
+                                            <li><strong>Same Sequence In/Out:</strong> Both the inputs and outputs belong to the <em>same</em> language and sequence — the self-attention layer only mixes information within this single sentence.</li>
+                                            <li><strong>Contextual Enrichment:</strong> Each output embedding now encodes not just the word's own meaning, but also the relationships and relevance of all other words in the sentence.</li>
+                                        </ul>
+                                        <ul class="bulleted-list" style="line-height: 1.8; margin: 0;">
+                                            <li><strong>Weighted Sum Formula:</strong> Each output is a weighted combination of all input embeddings. Example: <code>ce_we = 0.8 × e_we + 0.1 × e_are + 0.1 × e_friends</code>.</li>
+                                            <li><strong>High Self-Weight:</strong> "We" mostly attends to itself (weight 0.8), meaning the word retains most of its own identity while absorbing a small amount of context from neighboring words.</li>
+                                            <li><strong>Weights Sum to 1.0:</strong> Because attention weights pass through softmax, they always sum to exactly 1.0 per row — forming a proper probability distribution over all source tokens.</li>
+                                        </ul>
                                     </div>
 
                                     <!-- Step 4: Cross-attention flow -->
                                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 16px 0;">
                                         <figure class="image" style="margin: 0;">
                                             <a href="assets/images/part-2/12.png"><img src="assets/images/part-2/12.png"></a>
-                                            <figcaption><strong>Simplified Cross-Attention Flow:</strong> Source embeddings (blue, English) provide Keys and Values. Target embeddings (green, Hindi) provide Queries. The cross-attention layer produces fused output embeddings (pink) that combine both languages' information.</figcaption>
                                         </figure>
                                         <figure class="image" style="margin: 0;">
                                             <a href="assets/images/part-2/13.png"><img src="assets/images/part-2/13.png"></a>
-                                            <figcaption><strong>Cross-Attention Weighted Sum Example:</strong> Target word "दोस्त" (friends) strongly attends to "friends" with weight 0.6, while "हम" (we) focuses on "We" with weight 0.5. This alignment lets the decoder know which source word to translate at each step.</figcaption>
                                         </figure>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 0 0 16px 0;">
+                                        <ul class="bulleted-list" style="line-height: 1.8; margin: 0;">
+                                            <li><strong>Two-Sequence Input:</strong> Source embeddings (blue, English) provide Keys (K) and Values (V). Target embeddings (green, Hindi) provide Queries (Q).</li>
+                                            <li><strong>Fused Output:</strong> The cross-attention layer produces fused output embeddings (pink) that combine both languages' information — each output carries semantic content from the source weighted by relevance to the target.</li>
+                                            <li><strong>Decoder's Window into Source:</strong> This is how the decoder "reads" the source sentence. Without cross-attention, the decoder would have no access to the input and could only generate text based on previously generated tokens.</li>
+                                        </ul>
+                                        <ul class="bulleted-list" style="line-height: 1.8; margin: 0;">
+                                            <li><strong>Alignment via Weights:</strong> Target word "दोस्त" (friends) strongly attends to source word "friends" with weight 0.6, while "हम" (we) focuses on "We" with weight 0.5.</li>
+                                            <li><strong>Learned Translation Table:</strong> These attention weights act as a soft, differentiable word alignment — the model automatically learns which source word corresponds to which target word during training.</li>
+                                            <li><strong>Sparse in Practice:</strong> Although cross-attention computes scores over all source positions, the learned weights are typically concentrated on 1–2 source tokens per target token, resembling a sparse lookup rather than a uniform average.</li>
+                                        </ul>
                                     </div>
                                 </div>
                                 <div dir="auto">
