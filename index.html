@@ -13344,7 +13344,7 @@ M834 80h400000v40h-400000z"></path>
                                     <hr>
                                 </div>
 
-                                <h3 class="pro-heading style-h3">1. Complete Transformer Architecture (Encoder &amp; Decoder Overview)</h3>
+                                <h3 class="pro-heading style-h3 encoder-custom-h3 encoder-h3-1">1. Complete Transformer Architecture (Encoder &amp; Decoder Overview)</h3>
                                 <div dir="auto" style="margin-bottom: 16px;">
                                     <ul class="bulleted-list">
                                         <li><strong>Bidirectional Reading:</strong> The encoder (yellow block, left) reads the full input sequence at once, while the decoder (red block, right) generates the output step-by-step.</li>
@@ -13380,7 +13380,7 @@ M834 80h400000v40h-400000z"></path>
                                     <hr>
                                 </div>
 
-                                <h3 class="pro-heading style-h3">2. Single Encoder Layer: Step-by-Step Tensor Data Flow</h3>
+                                <h3 class="pro-heading style-h3 encoder-custom-h3 encoder-h3-2">2. Single Encoder Layer: Step-by-Step Tensor Data Flow</h3>
                                 <div dir="auto" style="margin-bottom: 16px;">
                                     <ul class="bulleted-list">
                                         <li><strong>Dimensional Match:</strong> The layer returns a tensor of the exact same shape (e.g., <code>[seq_len x 512]</code>) that it receives, allowing layers to be stacked easily.</li>
@@ -13432,7 +13432,7 @@ M834 80h400000v40h-400000z"></path>
                                     <hr>
                                 </div>
 
-                                <h3 class="pro-heading style-h3">3. Practice Questions &amp; Concept Intuitions</h3>
+                                <h3 class="pro-heading style-h3 encoder-custom-h3 encoder-h3-3">3. Practice Questions &amp; Concept Intuitions</h3>
                                 <div style="margin: 20px 0; display: flex; flex-direction: column; gap: 16px;">
                                     
                                     <!-- Q1 -->
@@ -13804,7 +13804,7 @@ M834 80h400000v40h-400000z"></path>
                                     <hr>
                                 </div>
 
-                                <h3 class="pro-heading style-h3">1. Masked Self-Attention: Preventing Future Token Leakage</h3>
+                                <h3 class="pro-heading style-h3 decoder-custom-h3 decoder-h3-1">1. Masked Self-Attention: Preventing Future Token Leakage</h3>
                                 <div dir="auto" style="margin-bottom: 16px;">
                                     <ul class="bulleted-list" style="line-height: 1.8;">
                                         <li><strong>Causal Masking:</strong> The decoder prevents information leakage by adding a causal mask of <code>-∞</code> to logits of future tokens before Softmax. These positions resolve to 0 probability weight.</li>
@@ -13821,7 +13821,7 @@ M834 80h400000v40h-400000z"></path>
                                     <hr>
                                 </div>
 
-                                <h3 class="pro-heading style-h3">2. Cross-Attention: Connecting Encoder and Decoder</h3>
+                                <h3 class="pro-heading style-h3 decoder-custom-h3 decoder-h3-2">2. Cross-Attention: Connecting Encoder and Decoder</h3>
                                 <div dir="auto" style="margin-bottom: 16px;">
                                     <ul class="bulleted-list" style="line-height: 1.8;">
                                         <li><strong>Information Bridge:</strong> Cross-attention aligns decoder representation targets with source contextual representations.</li>
@@ -13899,7 +13899,7 @@ M834 80h400000v40h-400000z"></path>
                                     <hr>
                                 </div>
 
-                                <h3 class="pro-heading style-h3">3. Decoder During Training vs. Inference</h3>
+                                <h3 class="pro-heading style-h3 decoder-custom-h3 decoder-h3-3">3. Decoder During Training vs. Inference</h3>
                                 <div style="margin: 24px 0;">
                                     <h4 class="pro-heading style-h4">Training Phase: Teacher Forcing &amp; Parallelism</h4>
                                     <ul class="bulleted-list" style="line-height: 1.8;">
@@ -13957,7 +13957,7 @@ M834 80h400000v40h-400000z"></path>
                                     <hr>
                                 </div>
 
-                                <h3 class="pro-heading style-h3">4. Decoder Final Takeaways</h3>
+                                <h3 class="pro-heading style-h3 decoder-custom-h3 decoder-h3-4">4. Decoder Final Takeaways</h3>
                                 <div style="overflow-x: auto; margin: 20px 0;">
                                     <table class="simple-table" style="width: 100%; border-collapse: collapse; line-height: 1.6;">
                                         <thead>
@@ -13994,7 +13994,7 @@ M834 80h400000v40h-400000z"></path>
                                     <hr>
                                 </div>
 
-                                <h3 class="pro-heading style-h3">5. Practice Questions &amp; Concept Intuitions</h3>
+                                <h3 class="pro-heading style-h3 decoder-custom-h3 decoder-h3-5">5. Practice Questions &amp; Concept Intuitions</h3>
                                 <div style="margin: 20px 0; display: flex; flex-direction: column; gap: 16px;">
 
                                     <!-- Q1 -->
