@@ -3,7 +3,8 @@
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Doto:ROND,wght@100,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <title>Transformer Architecture Notes</title>
     <meta content="Clean, systematic notes for learning Transformer architecture from components to encoder and decoder flow." name="description">
     <link href="assets/favicon.svg" rel="icon" type="image/svg+xml">
@@ -12,11 +13,84 @@
 
 <body>
     <script>
-        // Prevent Flash of Light Mode by checking theme immediately
-        if (localStorage.getItem('theme') === 'dark') {
+        // Default to Dark Mode unless light mode was specifically chosen
+        if (localStorage.getItem('theme') !== 'light') {
             document.body.classList.add('dark-mode');
         }
     </script>
+
+    <!-- Nothing OS Hardware Dot Matrix & Scanlines Overlays -->
+    <div class="matrix-dots-overlay"></div>
+    <div class="scanlines-overlay"></div>
+
+    <!-- Modern Floating Capsule Navigation Bar (Nothing OS Aesthetic) -->
+    <nav class="modern-nav fixed top-5 left-1/2 transform -translate-x-1/2 z-50 hidden md:block w-max" id="mainNav">
+        <div class="nav-container relative flex items-center gap-1.5 lg:gap-2 bg-[#0c0c0e]/90 backdrop-blur-2xl rounded-full px-5 py-2.5 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.75)] transition-all duration-300 hover:border-red-500/40" id="navContainer">
+            <!-- Integrated Scroll Progress Laser Bar -->
+            <div class="nav-scroll-progress-bar">
+                <div class="nav-scroll-progress-fill" id="navProgressFill"></div>
+            </div>
+
+            <!-- Logo with Favicon & Red Recording Dot -->
+            <a href="#overview" class="group flex items-center pr-3.5 border-r border-white/10 mr-1 gap-2.5 relative z-10">
+                <span class="font-mono text-sm lg:text-base font-bold text-white tracking-wider flex items-center gap-2">
+                    faizy<span class="text-zinc-400">.dev</span>
+                    <span class="rec-dot"></span>
+                </span>
+            </a>
+
+            <!-- Navigation Links -->
+            <a href="#overview" class="nav-link-awesome active" data-section="overview">
+                <i class="fas fa-layer-group link-icon"></i>
+                <span class="link-text">Sandbox</span>
+            </a>
+            <a href="#attention-paper" class="nav-link-awesome" data-section="attention-paper">
+                <i class="fas fa-file-alt link-icon"></i>
+                <span class="link-text">Paper</span>
+            </a>
+            <a href="#learning-path" class="nav-link-awesome" data-section="learning-path">
+                <i class="fas fa-map-signs link-icon"></i>
+                <span class="link-text">Curriculum</span>
+            </a>
+            <a href="#part-1" class="nav-link-awesome" data-section="part-1">
+                <i class="fas fa-cubes link-icon"></i>
+                <span class="link-text">Part 1</span>
+            </a>
+            <a href="#part-2" class="nav-link-awesome" data-section="part-2">
+                <i class="fas fa-network-wired link-icon"></i>
+                <span class="link-text">Part 2</span>
+            </a>
+
+            <!-- Global Accordion Toggle Pill -->
+            <button class="nav-action-pill font-mono text-xs font-bold px-3 py-1.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white transition-all duration-200 flex items-center gap-1.5 ml-1" id="global-accordion-toggle" title="Expand or Collapse All 10 Transformer Modules">
+                <i class="fas fa-expand-alt" id="global-accordion-icon"></i>
+                <span id="global-accordion-text">EXPAND ALL</span>
+            </button>
+
+            <!-- Theme Toggle in Floating Nav -->
+            <div class="pro-theme-wrapper nav-toggle-wrapper ml-1">
+                <input aria-label="Toggle dark mode" class="cyber-toggle-checkbox" id="theme-toggle-floating" type="checkbox">
+                <label class="pro-theme-toggle" for="theme-toggle-floating">
+                    <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <span class="toggle-thumb"></span>
+                </label>
+            </div>
+        </div>
+    </nav>
+
     <div class="pro-theme-wrapper desktop-toggle">
         <input aria-label="Toggle dark mode" class="cyber-toggle-checkbox" id="theme-toggle" type="checkbox">
         <label class="pro-theme-toggle" for="theme-toggle">
@@ -96,8 +170,8 @@
         <aside aria-label="Study navigation" class="sidebar">
             <div class="brand">
                 <div>
-                    <span class="brand-kicker">Transformer Notes</span>
-                    <h1 class="brand-title">Architecture Learning Path</h1>
+                    <span class="brand-kicker"><span class="rec-dot"></span> [ AI // ARCHITECTURE ]</span>
+                    <h1 class="brand-title">Transformer Notes</h1>
                 </div>
                 <button class="hamburger-menu" id="mobile-menu-btn" aria-label="Toggle navigation">
                     <span class="bar"></span>
@@ -132,8 +206,28 @@
         </aside>
         <main class="content">
             <section class="hero" id="overview">
+                <div class="hero-top-badges">
+                    <span class="bracket-index">[ <span class="highlight">00</span> <span class="accent-slash">//</span> ARCHITECTURAL MASTERY ]</span>
+                    <span class="hero-status-pill"><span class="rec-dot"></span> LIVE // 10 MODULES · 49 DIAGRAMS</span>
+                </div>
                 <span class="eyebrow">From components to full architecture</span>
-                <h1>Transformer Architecture Notes - By Mohd Faizy</h1>
+                <h1 class="hero-main-title">Transformer Architecture Notes - By Mohd Faizy</h1>
+                <p class="hero-lead-text">From fundamental self-attention projections to full encoder-decoder sequence pipelines. Systematic mathematical breakdowns, geometric intuition, visual diagrams, and interactive computational sandboxes.</p>
+                <div class="hero-cta-cluster">
+                    <a href="#interactive-pipeline-section" class="shiny-cta-pill">
+                        <div class="resume-laser-sheen"></div>
+                        <i class="fas fa-play-circle"></i>
+                        <span>Launch Interactive Pipeline</span>
+                    </a>
+                    <a href="#01-introduction-to-transformer" class="secondary-cta-pill">
+                        <i class="fas fa-book-open"></i>
+                        <span>Start Learning Path</span>
+                    </a>
+                    <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer" class="glass-cta-pill">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>Vaswani et al. (2017)</span>
+                    </a>
+                </div>
             </section>
             <section class="section" id="attention-paper">
                 <div class="section-header">
@@ -466,29 +560,39 @@
                 <!-- ═══════════════════════════════════════════
                          INTERACTIVE TRANSFORMER PIPELINE
                      ═══════════════════════════════════════════ -->
+                                <!-- ═══════════════════════════════════════════
+                         INTERACTIVE TRANSFORMER PIPELINE
+                     ═══════════════════════════════════════════ -->
                 <div class="reddit-block interactive-pipeline-block" id="interactive-pipeline-section">
                     <div class="reddit-line" style="background:var(--accent);"></div>
                     <div class="reddit-content">
                         <div class="pipeline-header">
+                            <div class="pipeline-header-badge-row">
+                                <span class="bracket-index">[ <span class="highlight">ARCH</span> <span class="accent-slash">//</span> LIVE COMPUTATION PIPELINE ]</span>
+                                <span id="pipeline-current-step-badge" class="pipeline-step-badge"><span class="rec-dot"></span> STEP 01 // INPUT SETUP</span>
+                            </div>
                             <h3>🔬 Interactive End-to-End Transformer Pipeline</h3>
-                            <p>Trace the flow of a sentence through every single layer of the Transformer. Click on steps or use the controls to animate the process.</p>
+                            <p>Trace the computational flow of a sentence through every single layer of the Transformer. Click on steps or use the controls to animate the process.</p>
+                            <div class="pipeline-global-progress-track">
+                                <div id="pipeline-global-progress-fill" class="pipeline-global-progress-fill" style="width: 11.1%;"></div>
+                            </div>
                         </div>
                         
                         <div class="pipeline-controls">
                             <div class="pipeline-input-group">
-                                <label for="pipeline-input">Input Sentence:</label>
+                                <label for="pipeline-input"><i class="fas fa-terminal" style="color:var(--accent); margin-right:4px;"></i> Input Sentence:</label>
                                 <input type="text" id="pipeline-input" class="pipeline-text-input" value="Attention is all you need" maxlength="50">
                             </div>
                             <div class="pipeline-presets">
-                                <button class="pipeline-preset-btn" data-text="Attention is all you need">Preset 1</button>
+                                <button class="pipeline-preset-btn active-preset" data-text="Attention is all you need">Preset 1</button>
                                 <button class="pipeline-preset-btn" data-text="Deep learning is magic">Preset 2</button>
                                 <button class="pipeline-preset-btn" data-text="Artificial intelligence is the future">Preset 3</button>
                             </div>
                             <div class="pipeline-playback-group">
-                                <button class="pipeline-btn" id="pipeline-prev-btn" title="Previous Step">⏮</button>
-                                <button class="pipeline-btn" id="pipeline-play-btn" title="Play / Pause">▶</button>
-                                <button class="pipeline-btn" id="pipeline-next-btn" title="Next Step">⏭</button>
-                                <button class="pipeline-btn" id="pipeline-reset-btn" title="Reset">↺</button>
+                                <button class="pipeline-btn" id="pipeline-prev-btn" title="Previous Step"><i class="fas fa-step-backward"></i></button>
+                                <button class="pipeline-btn" id="pipeline-play-btn" title="Play / Pause"><i class="fas fa-play" id="pipeline-play-icon"></i></button>
+                                <button class="pipeline-btn" id="pipeline-next-btn" title="Next Step"><i class="fas fa-step-forward"></i></button>
+                                <button class="pipeline-btn" id="pipeline-reset-btn" title="Reset"><i class="fas fa-undo"></i></button>
                                 <div class="pipeline-speed-wrap">
                                     <span>Speed:</span>
                                     <input type="range" id="pipeline-speed" class="pipeline-speed-slider" min="500" max="3000" step="250" value="1500">
@@ -503,63 +607,90 @@
                                 <div class="pipeline-step-item active" data-step="1">
                                     <div class="pipeline-step-icon">1</div>
                                     <div class="pipeline-step-info">
-                                        <span class="pipeline-step-title">Input Processing</span>
+                                        <div class="pipeline-step-title-row">
+                                            <span class="pipeline-step-title">Input Processing</span>
+                                            <span class="pipeline-step-pill">ACTIVE</span>
+                                        </div>
                                         <span class="pipeline-step-desc">Enter source &amp; target text</span>
                                     </div>
                                 </div>
                                 <div class="pipeline-step-item" data-step="2">
                                     <div class="pipeline-step-icon">2</div>
                                     <div class="pipeline-step-info">
-                                        <span class="pipeline-step-title">Tokenization (BPE)</span>
+                                        <div class="pipeline-step-title-row">
+                                            <span class="pipeline-step-title">Tokenization (BPE)</span>
+                                            <span class="pipeline-step-pill">ID MAP</span>
+                                        </div>
                                         <span class="pipeline-step-desc">Convert words to vocabulary IDs</span>
                                     </div>
                                 </div>
                                 <div class="pipeline-step-item" data-step="3">
                                     <div class="pipeline-step-icon">3</div>
                                     <div class="pipeline-step-info">
-                                        <span class="pipeline-step-title">Embedding Lookup</span>
+                                        <div class="pipeline-step-title-row">
+                                            <span class="pipeline-step-title">Embedding Lookup</span>
+                                            <span class="pipeline-step-pill">512-D</span>
+                                        </div>
                                         <span class="pipeline-step-desc">Lookup 512-dim vectors</span>
                                     </div>
                                 </div>
                                 <div class="pipeline-step-item" data-step="4">
                                     <div class="pipeline-step-icon">4</div>
                                     <div class="pipeline-step-info">
-                                        <span class="pipeline-step-title">Positional Encoding</span>
+                                        <div class="pipeline-step-title-row">
+                                            <span class="pipeline-step-title">Positional Encoding</span>
+                                            <span class="pipeline-step-pill">WAVES</span>
+                                        </div>
                                         <span class="pipeline-step-desc">Inject sequence order waves</span>
                                     </div>
                                 </div>
                                 <div class="pipeline-step-item" data-step="5">
                                     <div class="pipeline-step-icon">5</div>
                                     <div class="pipeline-step-info">
-                                        <span class="pipeline-step-title">Encoder Layers (x6)</span>
+                                        <div class="pipeline-step-title-row">
+                                            <span class="pipeline-step-title">Encoder Layers (x6)</span>
+                                            <span class="pipeline-step-pill">ATTN</span>
+                                        </div>
                                         <span class="pipeline-step-desc">Multi-Head Self-Attention + FFN</span>
                                     </div>
                                 </div>
                                 <div class="pipeline-step-item" data-step="6">
                                     <div class="pipeline-step-icon">6</div>
                                     <div class="pipeline-step-info">
-                                        <span class="pipeline-step-title">Decoder Layers (x6)</span>
+                                        <div class="pipeline-step-title-row">
+                                            <span class="pipeline-step-title">Decoder Layers (x6)</span>
+                                            <span class="pipeline-step-pill">MASKED</span>
+                                        </div>
                                         <span class="pipeline-step-desc">Masked Self-Attention + Cross-Attention</span>
                                     </div>
                                 </div>
                                 <div class="pipeline-step-item" data-step="7">
                                     <div class="pipeline-step-icon">7</div>
                                     <div class="pipeline-step-info">
-                                        <span class="pipeline-step-title">Linear Projection</span>
+                                        <div class="pipeline-step-title-row">
+                                            <span class="pipeline-step-title">Linear Projection</span>
+                                            <span class="pipeline-step-pill">37K</span>
+                                        </div>
                                         <span class="pipeline-step-desc">Project 512-dim to Vocab Size</span>
                                     </div>
                                 </div>
                                 <div class="pipeline-step-item" data-step="8">
                                     <div class="pipeline-step-icon">8</div>
                                     <div class="pipeline-step-info">
-                                        <span class="pipeline-step-title">Softmax Probabilities</span>
+                                        <div class="pipeline-step-title-row">
+                                            <span class="pipeline-step-title">Softmax Probabilities</span>
+                                            <span class="pipeline-step-pill">PROBS</span>
+                                        </div>
                                         <span class="pipeline-step-desc">Calculate vocabulary probability</span>
                                     </div>
                                 </div>
                                 <div class="pipeline-step-item" data-step="9">
                                     <div class="pipeline-step-icon">9</div>
                                     <div class="pipeline-step-info">
-                                        <span class="pipeline-step-title">Autoregressive Loop</span>
+                                        <div class="pipeline-step-title-row">
+                                            <span class="pipeline-step-title">Autoregressive Loop</span>
+                                            <span class="pipeline-step-pill">CYCLE</span>
+                                        </div>
                                         <span class="pipeline-step-desc">Select word and feed back</span>
                                     </div>
                                 </div>
@@ -570,43 +701,71 @@
                                 <!-- Step 1: Input -->
                                 <div class="sandbox-pane active" data-step="1">
                                     <div class="sandbox-pane-header">
+                                        <div class="pane-tag-row">
+                                            <span class="pane-tag">[ STAGE 01 / 09 ]</span>
+                                            <span class="pane-tag accent">SEQUENCE TRANSDUCTION</span>
+                                        </div>
                                         <h4 class="sandbox-pane-title">Step 1 — Input Sentence &amp; Seq2Seq Setup</h4>
-                                        <p class="sandbox-pane-desc">Transformers are encoder-decoder sequence transduction models. The Encoder takes a source sentence (English) and the Decoder generates a target sentence (Spanish) token-by-token.</p>
+                                        <p class="sandbox-pane-desc">Transformers are encoder-decoder sequence transduction models. The Encoder processes the full source sentence in parallel, while the Decoder autoregressively predicts the target sentence token-by-token.</p>
                                     </div>
                                     
                                     <div class="explainer-card">
                                         <div class="explainer-row">
                                             <span class="badge-tag badge-goal">Goal</span>
-                                            <span>Accept source input and prepare the sequence translation context.</span>
+                                            <span>Format English input tokens and Spanish target prefix into sequence vectors.</span>
                                         </div>
                                         <div class="explainer-row">
                                             <span class="badge-tag badge-analogy">Analogy</span>
-                                            <span>Like having a book in English on the left table, and a notebook on the right table where you will write the translation page-by-page.</span>
+                                            <span>Like placing the English novel open on your left desk, while writing the Spanish translation line-by-line into your notebook on the right.</span>
                                         </div>
                                     </div>
 
-                                    <div class="sentence-flow-card">
-                                        <div class="flow-label">Source Sequence (Encoder Input)</div>
-                                        <div class="flow-text" id="step1-source-text">Attention is all you need</div>
+                                    <!-- Interactive Seq2Seq Cards -->
+                                    <div class="seq-dual-container">
+                                        <div class="sentence-flow-card source-flow">
+                                            <div class="flow-header-row">
+                                                <div class="flow-label"><i class="fas fa-arrow-right" style="color:var(--nothing-red); margin-right:6px;"></i> Source Sequence (Encoder Input X)</div>
+                                                <span id="step1-src-count" class="seq-count-badge">T_enc = 5 tokens</span>
+                                            </div>
+                                            <div class="flow-text" id="step1-source-text">Attention is all you need</div>
+                                            <div class="seq-pills-row" id="step1-source-pills"></div>
+                                        </div>
+
+                                        <!-- Transduction Flow Graphic -->
+                                        <div class="transduction-bridge">
+                                            <div class="bridge-line">
+                                                <span class="bridge-particle p1"></span>
+                                                <span class="bridge-particle p2"></span>
+                                            </div>
+                                            <div class="bridge-label">ENCODER-DECODER TRANSDUCTION</div>
+                                        </div>
+
+                                        <div class="sentence-flow-card target-flow">
+                                            <div class="flow-header-row">
+                                                <div class="flow-label" style="color: var(--accent-2);"><i class="fas fa-keyboard" style="color:var(--accent-2); margin-right:6px;"></i> Target Prefix (Decoder Input Y)</div>
+                                                <span id="step1-trg-count" class="seq-count-badge accent-2">T_dec = 7 tokens</span>
+                                            </div>
+                                            <div class="flow-text" id="step1-target-text">&lt;bos&gt; La atención es todo lo que</div>
+                                            <div class="seq-pills-row" id="step1-target-pills"></div>
+                                        </div>
                                     </div>
-                                    
-                                    <div class="sentence-flow-card" style="border-left-color: var(--accent-2);">
-                                        <div class="flow-label" style="color: var(--accent-2);">Target Sequence Prefix (Decoder Input)</div>
-                                        <div class="flow-text" id="step1-target-text" style="color: var(--accent-3); font-weight: 555;">&lt;bos&gt; La atención es todo lo que</div>
-                                    </div>
-                                    
+
                                     <div class="concept-tooltip-box">
-                                        💡 <strong>Next Step target word:</strong> The model will predict the next word in the Spanish translation (which should be <strong>"necesitas"</strong>).
+                                        🎯 <strong>Next Target Word to Predict:</strong> The model will compute probabilities over the entire vocabulary to predict the next Spanish word: <strong id="step1-target-word-pill" class="predict-target-pill">"necesitas"</strong>.
                                     </div>
                                     
                                     <div class="step-math-box" id="step1-math-readout">
-                                        <!-- Dynamically written via JS with MathJax -->
+                                        <!-- Dynamically written via JS with safeTypeset -->
                                     </div>
                                 </div>
                                 
                                 <!-- Step 2: Tokenization -->
                                 <div class="sandbox-pane" data-step="2">
                                     <div class="sandbox-pane-header">
+                                        <div class="pane-tag-row">
+                                            <span class="pane-tag">[ STAGE 02 / 09 ]</span>
+                                            <span class="pane-tag accent">SUBWORD ENCODING</span>
+                                        </div>
                                         <h4 class="sandbox-pane-title">Step 2 — Byte-Pair Encoding (BPE) Tokenization</h4>
                                         <p class="sandbox-pane-desc">Computers cannot read text directly. A tokenizer splits text into sub-words (tokens) and converts them into indices from a pre-defined Vocabulary list (V = 37,000 words/symbols).</p>
                                     </div>
@@ -621,29 +780,51 @@
                                             <span>Like looking up words in a dictionary index to convert a sentence into a series of page numbers.</span>
                                         </div>
                                     </div>
-                                    
-                                    <div class="flow-label">Source Tokens &amp; Vocabulary IDs <span style="font-size:0.75rem; font-weight:normal; text-transform:none; color:var(--muted);">(Click any token to inspect details)</span></div>
-                                    <div class="flow-tokens-display" id="step2-tokens-display">
-                                        <!-- Dynamically generated chips -->
+
+                                    <div class="interactive-toolbar-row">
+                                        <div class="flow-label">Source Tokens &amp; Vocabulary IDs <span style="font-size:0.75rem; font-weight:normal; text-transform:none; color:var(--muted);">(Click any token to inspect details)</span></div>
+                                        <button id="step2-split-btn" class="interactive-tool-btn"><i class="fas fa-cut"></i> <span id="step2-split-label">Animate BPE Subwords</span></button>
                                     </div>
+                                    
+                                    <div class="flow-tokens-display" id="step2-tokens-display"></div>
 
                                     <div id="step2-token-detail" class="sentence-flow-card" style="margin-top: 12px; display: none;">
-                                        <div class="flow-label" style="color: var(--accent-2);">Token Inspector</div>
+                                        <div class="flow-label" style="color: var(--accent-2);"><i class="fas fa-search"></i> Token Inspector</div>
                                         <div class="flow-text" id="step2-token-detail-text" style="font-size:0.9rem;">Click a token above to inspect character indexes and statistics.</div>
+                                    </div>
+
+                                    <!-- Vocabulary Space Spectrum Bar -->
+                                    <div class="vocab-radar-card">
+                                        <div class="vocab-radar-header">
+                                            <span class="vocab-radar-title">Vocabulary Distribution (V = 37,000)</span>
+                                            <span id="step2-vocab-selected-id" class="vocab-radar-id">Select Token</span>
+                                        </div>
+                                        <div class="vocab-radar-bar">
+                                            <div id="step2-vocab-indicator" class="vocab-radar-indicator" style="left: 20%;"></div>
+                                        </div>
+                                        <div class="vocab-radar-labels">
+                                            <span>0 [Common]</span>
+                                            <span>9,250</span>
+                                            <span>18,500</span>
+                                            <span>27,750</span>
+                                            <span>37,000 [Rare/Subwords]</span>
+                                        </div>
                                     </div>
                                     
                                     <div class="concept-tooltip-box">
                                         ⚙️ <strong>BPE Algorithm:</strong> It iteratively merges the most frequent pairs of characters/bytes. This prevents "Out-of-Vocabulary" errors by breaking unknown words down into smaller subwords (like "transformer" → ["trans", "former"]).
                                     </div>
                                     
-                                    <div class="step-math-box" id="step2-math-readout">
-                                        <!-- Dynamically written via JS with MathJax -->
-                                    </div>
+                                    <div class="step-math-box" id="step2-math-readout"></div>
                                 </div>
                                 
                                 <!-- Step 3: Embeddings -->
                                 <div class="sandbox-pane" data-step="3">
                                     <div class="sandbox-pane-header">
+                                        <div class="pane-tag-row">
+                                            <span class="pane-tag">[ STAGE 03 / 09 ]</span>
+                                            <span class="pane-tag accent">VECTOR LOOKUP</span>
+                                        </div>
                                         <h4 class="sandbox-pane-title">Step 3 — Token Embedding Lookup (d_model = 512)</h4>
                                         <p class="sandbox-pane-desc">Each Token ID is used to lookup a 512-dimensional vector. These vectors represent the semantic meaning of the token in a continuous vector space where similar concepts cluster together.</p>
                                     </div>
@@ -660,26 +841,50 @@
                                     </div>
                                     
                                     <div class="flow-label">Embedding Matrix Grid <span style="font-size:0.75rem; font-weight:normal; text-transform:none; color:var(--muted);">(Hover cells to view specific dimensions)</span></div>
-                                    <div class="embedding-vis-container" id="step3-embeddings-container">
-                                        <!-- Dynamically generated rows -->
+                                    <div class="embedding-vis-container" id="step3-embeddings-container"></div>
+
+                                    <div id="step3-hover-detail" class="embedding-hover-card">
+                                        Hover over cells to see float values and dimension numbers.
                                     </div>
 
-                                    <div id="step3-hover-detail" style="font-size: 0.8rem; font-weight:700; color:var(--accent); min-height: 20px;">
-                                        Hover over cells to see float values and dimension numbers.
+                                    <!-- Interactive Cosine Similarity Calculator -->
+                                    <div class="interactive-subcard similarity-explorer-card">
+                                        <div class="similarity-header">
+                                            <span class="similarity-title"><i class="fas fa-compass" style="color:var(--nothing-red); margin-right:6px;"></i> Interactive Cosine Similarity Calculator</span>
+                                            <span class="similarity-formula">cos(θ) = (u · v) / (||u|| ||v||)</span>
+                                        </div>
+                                        <div class="similarity-controls">
+                                            <div class="sim-select-wrap">
+                                                <label>Token A:</label>
+                                                <select id="step3-token-a-select" class="pipeline-select"></select>
+                                            </div>
+                                            <span class="sim-vs-tag">VS</span>
+                                            <div class="sim-select-wrap">
+                                                <label>Token B:</label>
+                                                <select id="step3-token-b-select" class="pipeline-select"></select>
+                                            </div>
+                                            <div class="sim-result-pill">
+                                                <span class="sim-score-label">Similarity:</span>
+                                                <span id="step3-sim-score" class="sim-score-value">+0.842</span>
+                                                <span id="step3-sim-badge" class="sim-semantic-badge">Strong Affinity</span>
+                                            </div>
+                                        </div>
                                     </div>
                                     
                                     <div class="concept-tooltip-box">
-                                        📊 <strong>Shape:</strong> `[Sequence Length × 512]`. Each row is a 512-element vector containing floating-point numbers learned during training.
+                                        📊 <strong>Shape:</strong> <code>[Sequence Length × 512]</code>. Each row is a 512-element vector containing floating-point numbers learned during training.
                                     </div>
                                     
-                                    <div class="step-math-box" id="step3-math-readout">
-                                        <!-- Dynamically written via JS with MathJax -->
-                                    </div>
+                                    <div class="step-math-box" id="step3-math-readout"></div>
                                 </div>
                                 
                                 <!-- Step 4: Positional Encoding -->
                                 <div class="sandbox-pane" data-step="4">
                                     <div class="sandbox-pane-header">
+                                        <div class="pane-tag-row">
+                                            <span class="pane-tag">[ STAGE 04 / 09 ]</span>
+                                            <span class="pane-tag accent">ORDER INJECTION</span>
+                                        </div>
                                         <h4 class="sandbox-pane-title">Step 4 — Sinusoidal Positional Encoding Injection</h4>
                                         <p class="sandbox-pane-desc">Self-attention processes all words in parallel, losing order information. To fix this, fixed sine/cosine waves of different frequencies are added element-wise to the embeddings.</p>
                                     </div>
@@ -697,19 +902,21 @@
                                     
                                     <div class="wave-legend">
                                         <div class="legend-item">
-                                            <span class="legend-color" style="background:#0f766e;"></span>
-                                            <span>Sinwave (Even Dim)</span>
+                                            <span class="legend-color" style="background:#00f0ff;"></span>
+                                            <span>Sinwave (Even Dim 2i)</span>
                                         </div>
                                         <div class="legend-item">
-                                            <span class="legend-color" style="background:#b45309;"></span>
-                                            <span>Coswave (Odd Dim)</span>
+                                            <span class="legend-color" style="background:#d71920;"></span>
+                                            <span>Coswave (Odd Dim 2i+1)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <span class="legend-color" style="background:#eab308; border-radius:50%; width:8px; height:8px;"></span>
+                                            <span>Current Position Marker</span>
                                         </div>
                                     </div>
                                     
                                     <div class="svg-wave-container">
-                                        <svg id="step4-wave-svg" style="width:100%; height:100%;" viewBox="0 0 400 150">
-                                            <!-- Grid lines and wave paths will be rendered here -->
-                                        </svg>
+                                        <svg id="step4-wave-svg" style="width:100%; height:100%;" viewBox="0 0 400 150"></svg>
                                     </div>
 
                                     <div class="sandbox-slider-group">
@@ -725,18 +932,32 @@
                                         </div>
                                     </div>
 
-                                    <div class="step-math-box" id="pe-math-readout">
-                                        PE(pos=1, dim=0) = sin(...) = ...
+                                    <!-- Interactive Vector Fusion Button -->
+                                    <div class="interactive-action-row">
+                                        <button id="step4-fusion-btn" class="interactive-tool-btn"><i class="fas fa-layer-group"></i> <span id="step4-fusion-label">Animate Vector Addition (Embedding + PE = Final Z)</span></button>
                                     </div>
+                                    <div id="step4-fusion-vis" class="fusion-vis-container" style="display: none;">
+                                        <div class="fusion-step-box"><span class="fusion-title">E (Semantic Embedding)</span><div class="fusion-bar e-bar"></div></div>
+                                        <span class="fusion-op">+</span>
+                                        <div class="fusion-step-box"><span class="fusion-title">PE (Positional Wave)</span><div class="fusion-bar pe-bar"></div></div>
+                                        <span class="fusion-op">=</span>
+                                        <div class="fusion-step-box"><span class="fusion-title">Z (Position-Aware Input)</span><div class="fusion-bar z-bar"></div></div>
+                                    </div>
+
+                                    <div class="step-math-box" id="pe-math-readout"></div>
                                     
                                     <div class="concept-tooltip-box">
-                                        🧮 <strong>Formula:</strong> <code>PE(pos, 2i) = sin(pos/10000^(2i/d))</code> PE(pos, 2i+1) = cos(pos/10000^(2i/d)). This enables the model to extrapolate to longer sequences than seen during training.
+                                        🧮 <strong>Formula:</strong> <code>PE(pos, 2i) = sin(pos/10000^(2i/d))</code>, <code>PE(pos, 2i+1) = cos(pos/10000^(2i/d))</code>. This enables the model to extrapolate to longer sequences than seen during training.
                                     </div>
                                 </div>
                                 
                                 <!-- Step 5: Encoder Layers -->
                                 <div class="sandbox-pane" data-step="5">
                                     <div class="sandbox-pane-header">
+                                        <div class="pane-tag-row">
+                                            <span class="pane-tag">[ STAGE 05 / 09 ]</span>
+                                            <span class="pane-tag accent">SELF-ATTENTION GRAPH</span>
+                                        </div>
                                         <h4 class="sandbox-pane-title">Step 5 — Encoder Layer Stack &amp; Self-Attention Graph</h4>
                                         <p class="sandbox-pane-desc">The Encoder uses a stack of 6 identical layers. In each layer, tokens attend to each other via Self-Attention to gather contextual information, then pass through a Feed-Forward Network.</p>
                                     </div>
@@ -754,13 +975,16 @@
                                     
                                     <div class="stack-visualizer">
                                         <div class="stack-layer-box active-sub">
-                                            <span>Encoder Layer 1 (Active)</span>
-                                            <span class="stack-layer-badge">Interactive Node Graph</span>
+                                            <div class="layer-title-badge-wrap">
+                                                <span>Encoder Layer 1 (Active)</span>
+                                                <span class="stack-layer-badge">Interactive Node Graph</span>
+                                            </div>
+                                            <button id="step5-residual-btn" class="interactive-pill-btn"><i class="fas fa-share"></i> Residual Bypass: ON</button>
                                         </div>
                                         
                                         <div class="sublayer-details">
                                             <div class="head-switcher-wrap">
-                                                <span class="head-switcher-label">Attention Head:</span>
+                                                <span class="head-switcher-label"><i class="fas fa-brain" style="color:var(--accent); margin-right:4px;"></i> Attention Head:</span>
                                                 <div class="head-buttons" id="step5-head-buttons">
                                                     <button class="head-btn active" data-head="1">Head 1 (Syntactic)</button>
                                                     <button class="head-btn" data-head="2">Head 2 (Position)</button>
@@ -769,28 +993,22 @@
                                                 </div>
                                             </div>
 
-                                            <div class="flow-label">Self-Attention Link Network <span style="font-size:0.72rem; font-weight:normal; text-transform:none; color:var(--muted);">(Hover/Click nodes to check links)</span></div>
+                                            <div class="flow-label">Self-Attention Link Network <span style="font-size:0.72rem; font-weight:normal; text-transform:none; color:var(--muted);">(Hover any word to project attention laser arcs)</span></div>
                                             
-                                            <!-- SVG Graph visualizer -->
+                                            <!-- SVG Graph visualizer with Laser Arcs -->
                                             <div class="attention-graph-svg-container">
-                                                <svg id="step5-attention-graph" style="width:100%; height:100%;">
-                                                    <!-- Nodes and curves drawn dynamically -->
-                                                </svg>
+                                                <svg id="step5-attention-graph" style="width:100%; height:100%;"></svg>
                                             </div>
                                             
                                             <div class="attention-interactive-wrap">
-                                                <div class="attention-list" id="step5-attention-list">
-                                                    <!-- Words list -->
-                                                </div>
-                                                <div class="attention-matrix-grid" id="step5-matrix-grid">
-                                                    <!-- Dynamic visual grid -->
-                                                </div>
+                                                <div class="attention-list" id="step5-attention-list"></div>
+                                                <div class="attention-matrix-grid" id="step5-matrix-grid"></div>
                                             </div>
                                         </div>
                                         
                                         <div class="stack-layer-box">
                                             <span>Encoder Layers 2–6</span>
-                                            <span class="stack-layer-badge">Stacked</span>
+                                            <span class="stack-layer-badge">Stacked Identical</span>
                                         </div>
                                     </div>
 
@@ -839,10 +1057,7 @@
                                                 </div>
 
                                                 <div class="sandbox-workspace">
-                                                    <div class="sandbox-equation-display" id="sandbox-eq-display">
-                                                        <!-- Math equation displays here -->
-                                                    </div>
-
+                                                    <div class="sandbox-equation-display" id="sandbox-eq-display"></div>
                                                     <div class="sandbox-matrix-multiplier">
                                                         <!-- Matrix A -->
                                                         <div class="matrix-wrap">
@@ -878,14 +1093,16 @@
                                         </div>
                                     </div>
 
-                                    <div class="step-math-box" id="step5-math-readout">
-                                        <!-- Dynamically written via JS with MathJax -->
-                                    </div>
+                                    <div class="step-math-box" id="step5-math-readout"></div>
                                 </div>
                                 
                                 <!-- Step 6: Decoder Layers -->
                                 <div class="sandbox-pane" data-step="6">
                                     <div class="sandbox-pane-header">
+                                        <div class="pane-tag-row">
+                                            <span class="pane-tag">[ STAGE 06 / 09 ]</span>
+                                            <span class="pane-tag accent">CAUSAL MASK &amp; CROSS-ATTN</span>
+                                        </div>
                                         <h4 class="sandbox-pane-title">Step 6 — Decoder Layer Stack &amp; Attention Masking</h4>
                                         <p class="sandbox-pane-desc">The Decoder stacks 6 layers to generate target tokens. It first applies <strong>Masked Self-Attention</strong> (protecting future tokens), then performs <strong>Cross-Attention</strong> to read Encoder outputs.</p>
                                     </div>
@@ -903,24 +1120,20 @@
                                     
                                     <div class="stack-visualizer">
                                         <div class="stack-layer-box active-sub">
-                                            <span>Decoder Layer 1 (Active)</span>
-                                            <span class="stack-layer-badge">Interactive Masks</span>
+                                            <div class="layer-title-badge-wrap">
+                                                <span>Decoder Layer 1 (Active)</span>
+                                                <span class="stack-layer-badge">Interactive Masks</span>
+                                            </div>
+                                            <button id="step6-mask-toggle-btn" class="interactive-pill-btn"><i class="fas fa-lock"></i> Causal Mask: ACTIVE</button>
                                         </div>
                                         <div class="sublayer-details" style="gap: 8px;">
-                                            <div class="flow-label">Masked Attention matrix (🔒 Padlocks represent masked future tokens)</div>
-                                            
-                                            <div class="masked-padlock-overlay" id="step6-padlock-grid">
-                                                <!-- Dynamic padlock layout grid -->
-                                            </div>
+                                            <div class="flow-label">Masked Attention matrix (🔒 Padlocks represent masked future tokens set to -∞)</div>
+                                            <div class="masked-padlock-overlay" id="step6-padlock-grid"></div>
 
-                                            <div class="flow-label" style="margin-top: 10px;">Decoder Cross-Attention (Decoder → Encoder Context)</div>
+                                            <div class="flow-label" style="margin-top: 10px;">Decoder Cross-Attention (Decoder Query → Encoder Context Memory)</div>
                                             <div class="attention-interactive-wrap">
-                                                <div class="attention-list" id="step6-decoder-list">
-                                                    <!-- Decoder target tokens list -->
-                                                </div>
-                                                <div class="attention-list" id="step6-encoder-mem-list">
-                                                    <!-- Encoder memory weights -->
-                                                </div>
+                                                <div class="attention-list" id="step6-decoder-list"></div>
+                                                <div class="attention-list" id="step6-encoder-mem-list"></div>
                                             </div>
                                         </div>
                                         <div class="stack-layer-box">
@@ -929,14 +1142,16 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="step-math-box" id="step6-math-readout">
-                                        <!-- Dynamically written via JS with MathJax -->
-                                    </div>
+                                    <div class="step-math-box" id="step6-math-readout"></div>
                                 </div>
                                 
                                 <!-- Step 7: Linear -->
                                 <div class="sandbox-pane" data-step="7">
                                     <div class="sandbox-pane-header">
+                                        <div class="pane-tag-row">
+                                            <span class="pane-tag">[ STAGE 07 / 09 ]</span>
+                                            <span class="pane-tag accent">DIMENSIONAL EXPANSION</span>
+                                        </div>
                                         <h4 class="sandbox-pane-title">Step 7 — Linear Projection Layer</h4>
                                         <p class="sandbox-pane-desc">The output of the final Decoder layer is a 512-dim vector for the active position. The Linear layer projects this back to the size of our Vocabulary (37,000 logits).</p>
                                     </div>
@@ -952,41 +1167,41 @@
                                         </div>
                                     </div>
                                     
-                                    <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin: auto 0; padding: 20px 0;">
-                                        <div style="display: flex; flex-direction: column; align-items: center;">
-                                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--muted); margin-bottom: 4px;">Decoder Output</span>
-                                            <div style="background:var(--soft); border:1px solid var(--line); padding:10px; border-radius:6px; font-family:monospace; font-size:0.8rem;">
-                                                [1 × 512]
-                                            </div>
+                                    <div class="projection-graphic-box">
+                                        <div class="proj-tensor">
+                                            <span class="proj-tensor-label">Decoder Output</span>
+                                            <div class="proj-tensor-badge">[1 × 512]</div>
                                         </div>
-                                        <span style="font-size: 1.5rem; color: var(--muted); font-weight: 300;">×</span>
-                                        <div style="display: flex; flex-direction: column; align-items: center;">
-                                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--muted); margin-bottom: 4px;">Projection Matrix W</span>
-                                            <div style="background:var(--soft); border:1px solid var(--line); padding:10px; border-radius:6px; font-family:monospace; font-size:0.8rem; border-left: 3px solid var(--accent-2);">
-                                                [512 × 37,000]
-                                            </div>
+                                        <span class="proj-tensor-op">×</span>
+                                        <div class="proj-tensor">
+                                            <span class="proj-tensor-label">Projection Matrix W_U</span>
+                                            <div class="proj-tensor-badge accent-2">[512 × 37,000]</div>
                                         </div>
-                                        <span style="font-size: 1.5rem; color: var(--muted); font-weight: 300;">=</span>
-                                        <div style="display: flex; flex-direction: column; align-items: center;">
-                                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--accent); margin-bottom: 4px;">Output Logits</span>
-                                            <div style="background:rgba(15, 118, 110, 0.1); border:1px solid var(--accent); padding:10px; border-radius:6px; font-family:monospace; font-size:0.8rem; font-weight: 700; color: var(--accent);">
-                                                [1 × 37,000]
-                                            </div>
+                                        <span class="proj-tensor-op">=</span>
+                                        <div class="proj-tensor">
+                                            <span class="proj-tensor-label highlight">Output Logits Vector</span>
+                                            <div class="proj-tensor-badge highlight">[1 × 37,000]</div>
                                         </div>
                                     </div>
+
+                                    <!-- Candidate Logits Preview -->
+                                    <div class="flow-label">Top Raw Unnormalized Logits (Pre-Softmax)</div>
+                                    <div id="step7-logits-preview" class="logits-preview-container"></div>
                                     
                                     <div class="concept-tooltip-box">
                                         📝 <strong>Logits:</strong> These are raw, unnormalized scoring values. A higher score means the model thinks that vocabulary index is more likely to be the correct next word.
                                     </div>
                                     
-                                    <div class="step-math-box" id="step7-math-readout">
-                                        <!-- Dynamically written via JS with MathJax -->
-                                    </div>
+                                    <div class="step-math-box" id="step7-math-readout"></div>
                                 </div>
                                 
                                 <!-- Step 8: Softmax -->
                                 <div class="sandbox-pane" data-step="8">
                                     <div class="sandbox-pane-header">
+                                        <div class="pane-tag-row">
+                                            <span class="pane-tag">[ STAGE 08 / 09 ]</span>
+                                            <span class="pane-tag accent">PROBABILITY NORMALIZATION</span>
+                                        </div>
                                         <h4 class="sandbox-pane-title">Step 8 — Softmax Probabilities &amp; Temperature Control</h4>
                                         <p class="sandbox-pane-desc">The Softmax function normalizes raw logits into a probability distribution. The values sum to 1.0 (100%), with each representing the probability of that word being the next token.</p>
                                     </div>
@@ -1002,22 +1217,35 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="flow-label">Top Vocabulary Candidates (Softmax Probability)</div>
-                                    <div class="logits-chart-container" id="step8-logits-chart">
-                                        <!-- Dynamically generated bars -->
-                                    </div>
+                                    <div class="flow-label">Top Vocabulary Candidates (Softmax Probability Distribution)</div>
+                                    <div class="logits-chart-container" id="step8-logits-chart"></div>
 
                                     <div class="sandbox-slider-group">
                                         <div class="sandbox-slider-row">
-                                            <label for="softmax-temp-slider">Temperature (T):</label>
+                                            <label for="softmax-temp-slider"><i class="fas fa-thermometer-half" style="color:var(--accent); margin-right:4px;"></i> Temperature (T):</label>
                                             <input type="range" id="softmax-temp-slider" class="sandbox-slider" min="0.1" max="2.0" step="0.1" value="1.0">
                                             <span id="softmax-temp-val" class="sandbox-slider-value">1.0</span>
                                         </div>
                                     </div>
 
-                                    <div class="step-math-box" id="softmax-math-explanation">
-                                        Low Temp (T=0.1) = Highly Focused (Greedy) | High Temp (T=2.0) = Creative (Flat)
+                                    <div class="temperature-entropy-card">
+                                        <div class="entropy-status-row">
+                                            <span class="entropy-title">Distribution Certainty:</span>
+                                            <span id="step8-mode-badge" class="entropy-badge">Standard Sampling</span>
+                                        </div>
+                                        <div class="entropy-gauge-wrap">
+                                            <div class="entropy-gauge-track">
+                                                <div id="step8-entropy-fill" class="entropy-gauge-fill" style="width: 45%;"></div>
+                                            </div>
+                                            <div class="entropy-gauge-labels">
+                                                <span>Confident (Greedy)</span>
+                                                <span id="step8-entropy-num">Entropy: 0.85 bits</span>
+                                                <span>Diverse (High Temp)</span>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    <div class="step-math-box" id="softmax-math-explanation"></div>
                                     
                                     <div class="concept-tooltip-box">
                                         📈 <strong>Formula:</strong> <code>P(w_i) = exp(logit_i / T) / Σ_j exp(logit_j / T)</code>. Applying an exponent accentuates the highest scores, suppressing minor candidates to ensure a confident prediction.
@@ -1027,6 +1255,10 @@
                                 <!-- Step 9: Autoregressive Loop -->
                                 <div class="sandbox-pane" data-step="9">
                                     <div class="sandbox-pane-header">
+                                        <div class="pane-tag-row">
+                                            <span class="pane-tag">[ STAGE 09 / 09 ]</span>
+                                            <span class="pane-tag accent">CYCLE RECURRENCE</span>
+                                        </div>
                                         <h4 class="sandbox-pane-title">Step 9 — Output Token Generation &amp; Auto-Regressive Cycle</h4>
                                         <p class="sandbox-pane-desc">The token with the highest probability is selected (greedy decoding) and printed. To generate the next word, the selected token is appended to the target prefix, and the loop restarts.</p>
                                     </div>
@@ -1045,7 +1277,7 @@
                                     <div class="autoregressive-loop-box">
                                         <div class="loop-stage">
                                             <div class="loop-block highlight-accent" id="step9-selected-word">...</div>
-                                            <span style="font-weight: 800; color: var(--muted);">→</span>
+                                            <span style="font-weight: 800; color: var(--muted);">➔</span>
                                             <span style="font-size: 0.82rem; font-weight: 700; color: var(--muted);">Appended to Target Sequence</span>
                                         </div>
                                         
@@ -1053,8 +1285,34 @@
                                         
                                         <div class="loop-stage">
                                             <div class="loop-block highlight-accent-2" style="font-size: 0.8rem;">New Decoder Input</div>
-                                            <span style="font-weight: 800; color: var(--muted);">→</span>
+                                            <span style="font-weight: 800; color: var(--muted);">➔</span>
                                             <div class="loop-block" id="step9-new-input" style="font-size: 0.8rem; font-family: monospace;">&lt;bos&gt;...</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Interactive Autoregressive Controls -->
+                                    <div class="interactive-generation-bar">
+                                        <button id="step9-emit-btn" class="interactive-tool-btn action-primary"><i class="fas fa-play"></i> Emit Next Word &amp; Loop Back</button>
+                                        <button id="step9-reset-gen-btn" class="interactive-tool-btn"><i class="fas fa-undo"></i> Reset Generation</button>
+                                        <div class="strategy-selector-wrap">
+                                            <span>Strategy:</span>
+                                            <span class="strategy-pill active">Greedy (Argmax)</span>
+                                            <span class="strategy-pill">Top-K (k=3)</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Live Terminal Console -->
+                                    <div class="decoding-terminal-console" id="step9-terminal-console">
+                                        <div class="terminal-header">
+                                            <span class="terminal-dot red"></span>
+                                            <span class="terminal-dot yellow"></span>
+                                            <span class="terminal-dot green"></span>
+                                            <span class="terminal-title">AUTOREGRESSIVE DECODING LOG</span>
+                                        </div>
+                                        <div class="terminal-body" id="step9-terminal-log">
+                                            <div class="term-line info">[INIT] Decoder prefix loaded: &lt;bos&gt; La atención es todo lo que</div>
+                                            <div class="term-line success">[STEP 01] Argmax predicted token: "necesitas" (p=88.5%, ID=4821)</div>
+                                            <div class="term-line highlight">[UPDATE] New prefix: &lt;bos&gt; La atención es todo lo que necesitas</div>
                                         </div>
                                     </div>
                                     
@@ -1062,14 +1320,13 @@
                                         🔄 <strong>Auto-Regressive translation:</strong> The model generates translation tokens one-by-one. Generation stops when the model outputs the special end-of-sequence token <code>&lt;eos&gt;</code>.
                                     </div>
                                     
-                                    <div class="step-math-box" id="step9-math-readout">
-                                        <!-- Dynamically written via JS with MathJax -->
-                                    </div>
+                                    <div class="step-math-box" id="step9-math-readout"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-            </div></section>
+                </div>
+</section>
             <section class="section" id="learning-path">
                 <div class="section-header">
                     <span class="eyebrow">Recommended order</span>
@@ -8340,7 +8597,7 @@ M834 80h400000v40h-400000z"></path>
     <footer class="site-footer">
         <div class="footer-inner">
             <p class="footer-name">Mohd Faizy</p>
-            <p class="footer-tagline">Transformer Architecture Notes — Built with curiosity</p>
+            <p class="footer-tagline">Transformer Architecture Notes</p>
             <div class="footer-icons">
                 <a href="https://github.com/mohd-faizy" target="_blank" rel="noopener noreferrer" class="footer-icon github-icon" aria-label="GitHub">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -8387,7 +8644,8 @@ M834 80h400000v40h-400000z"></path>
     <script>
         MathJax = {
             tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
             },
             svg: {
                 fontCache: 'global'
@@ -8395,9 +8653,11 @@ M834 80h400000v40h-400000z"></path>
             startup: {
                 ready: () => {
                     MathJax.startup.defaultReady();
-                    if (window.triggerMathJax) {
-                        window.triggerMathJax();
-                    }
+                    MathJax.startup.promise.then(() => {
+                        if (window.onMathJaxReady) {
+                            window.onMathJaxReady();
+                        }
+                    }).catch(err => console.warn('MathJax startup error:', err));
                 }
             }
         };

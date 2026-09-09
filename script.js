@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const themeToggles = document.querySelectorAll(".cyber-toggle-checkbox");
     const body = document.body;
 
-    if (localStorage.getItem("theme") === "dark") {
+    if (localStorage.getItem("theme") !== "light") {
         body.classList.add("dark-mode");
         themeToggles.forEach(t => t.checked = true);
     }
@@ -25,15 +25,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* ── Sidebar collapsible nav ──────────────────────────────── */
-    document.querySelectorAll(".nav-list ul").forEach(ul => {
-        ul.style.display = "none";
+    document.querySelectorAll(".sidebar .nav-list ul").forEach(ul => {
+        ul.style.display = "block";
         const parentLink = ul.parentElement.querySelector("a");
         if (!parentLink) return;
         const icon = document.createElement("span");
-        icon.classList.add("nav-toggle");
+        icon.classList.add("nav-toggle", "open");
         icon.textContent = "❯";
         parentLink.appendChild(icon);
-        parentLink.addEventListener("click", () => {
+        parentLink.addEventListener("click", (e) => {
+            if (e.target === icon) {
+                e.preventDefault();
+            }
             const open = ul.style.display !== "none";
             ul.style.display = open ? "none" : "block";
             icon.classList.toggle("open", !open);
@@ -276,19 +279,22 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    /* ── 9-Step Interactive Transformer Pipeline logic ───────────────── */
+        /* ── 9-Step Interactive Transformer Pipeline logic ───────────────── */
     (function () {
         // Elements
         const pipelineInput = document.getElementById("pipeline-input");
         const presetBtns = document.querySelectorAll(".pipeline-preset-btn");
         const prevBtn = document.getElementById("pipeline-prev-btn");
         const playBtn = document.getElementById("pipeline-play-btn");
+        const playIcon = document.getElementById("pipeline-play-icon");
         const nextBtn = document.getElementById("pipeline-next-btn");
         const resetBtn = document.getElementById("pipeline-reset-btn");
         const speedSlider = document.getElementById("pipeline-speed");
         const speedVal = document.getElementById("pipeline-speed-val");
         const stepItems = document.querySelectorAll(".pipeline-step-item");
         const panes = document.querySelectorAll(".sandbox-pane");
+        const progressFill = document.getElementById("pipeline-global-progress-fill");
+        const stepBadge = document.getElementById("pipeline-current-step-badge");
 
         if (!pipelineInput || stepItems.length === 0) return;
 
@@ -296,8 +302,24 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentStep = 1;
         let isPlaying = false;
         let playInterval = null;
-        let speed = parseInt(speedSlider.value, 10);
+        let speed = parseInt(speedSlider ? speedSlider.value : 1500, 10);
         let currentInput = pipelineInput.value;
+        let residualEnabled = true;
+        let causalMaskEnabled = true;
+        let bpeSplitAnimated = false;
+        let autoregressiveStepsCount = 0;
+
+        const STEP_NAMES = [
+            "INPUT TRANSDUCTION SETUP",
+            "BYTE-PAIR TOKENIZATION",
+            "512-D EMBEDDING LOOKUP",
+            "POSITIONAL WAVE INJECTION",
+            "ENCODER SELF-ATTENTION",
+            "DECODER CAUSAL MASKING",
+            "LINEAR VOCAB PROJECTION",
+            "SOFTMAX TEMPERATURE SCALING",
+            "AUTOREGRESSIVE CYCLE"
+        ];
 
         // Custom presets translations & words mappings
         const mockTranslationDB = {
@@ -305,33 +327,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 target: "<bos> La atención es todo lo que",
                 nextWord: "necesitas",
                 candidates: [
-                    { word: "necesitas", prob: 88.5 },
-                    { word: "requieres", prob: 6.2 },
-                    { word: "importa", prob: 3.1 },
-                    { word: "es", prob: 1.2 },
-                    { word: "para", prob: 0.5 }
+                    { word: "necesitas", logit: 14.8, prob: 88.5 },
+                    { word: "requieres", logit: 11.2, prob: 6.2 },
+                    { word: "importa", logit: 8.9, prob: 3.1 },
+                    { word: "es", logit: 5.4, prob: 1.2 },
+                    { word: "para", logit: 2.1, prob: 0.5 }
                 ]
             },
             "deep learning is magic": {
                 target: "<bos> El aprendizaje profundo es",
                 nextWord: "magia",
                 candidates: [
-                    { word: "magia", prob: 74.2 },
-                    { word: "ciencia", prob: 12.8 },
-                    { word: "arte", prob: 7.1 },
-                    { word: "futuro", prob: 4.0 },
-                    { word: "tecnología", prob: 1.5 }
+                    { word: "magia", logit: 13.5, prob: 74.2 },
+                    { word: "ciencia", logit: 10.4, prob: 12.8 },
+                    { word: "arte", logit: 7.9, prob: 7.1 },
+                    { word: "futuro", logit: 5.2, prob: 4.0 },
+                    { word: "tecnología", logit: 2.8, prob: 1.5 }
                 ]
             },
             "artificial intelligence is the future": {
                 target: "<bos> La inteligencia artificial es el",
                 nextWord: "futuro",
                 candidates: [
-                    { word: "futuro", prob: 88.5 },
-                    { word: "presente", prob: 6.2 },
-                    { word: "destino", prob: 3.1 },
-                    { word: "camino", prob: 1.2 },
-                    { word: "fin", prob: 0.5 }
+                    { word: "futuro", logit: 15.1, prob: 88.5 },
+                    { word: "presente", logit: 11.0, prob: 6.2 },
+                    { word: "destino", logit: 8.5, prob: 3.1 },
+                    { word: "camino", logit: 5.1, prob: 1.2 },
+                    { word: "fin", logit: 2.0, prob: 0.5 }
                 ]
             }
         };
@@ -342,7 +364,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (mockTranslationDB[clean]) {
                 return mockTranslationDB[clean];
             }
-            // Generate fallback translation values
             const words = clean.split(/\s+/).filter(Boolean);
             const targetWords = words.map(w => w.substring(0, Math.min(w.length, 5)) + "os");
             const targetText = "<bos> " + targetWords.slice(0, Math.max(1, targetWords.length - 1)).join(" ");
@@ -352,54 +373,48 @@ document.addEventListener("DOMContentLoaded", () => {
                 target: targetText,
                 nextWord: nextWord,
                 candidates: [
-                    { word: nextWord, prob: 78.4 },
-                    { word: nextWord + "as", prob: 11.2 },
-                    { word: "y", prob: 5.3 },
-                    { word: "no", prob: 3.2 },
-                    { word: "de", prob: 1.5 }
+                    { word: nextWord, logit: 12.5, prob: 78.4 },
+                    { word: nextWord + "as", logit: 9.8, prob: 11.2 },
+                    { word: "y", logit: 6.5, prob: 5.3 },
+                    { word: "no", logit: 4.2, prob: 3.2 },
+                    { word: "de", logit: 1.8, prob: 1.5 }
                 ]
             };
         }
 
-        // Simple mock tokenizer (generates stable hashes for token IDs)
+        // Tokenizer simulator
         function getTokens(inputText) {
             const rawWords = inputText.trim().split(/\s+/).filter(Boolean);
             const tokensList = [];
             
-            rawWords.forEach((word, idx) => {
-                // simple hash code generator
+            rawWords.forEach((word) => {
                 let hash = 0;
                 for (let i = 0; i < word.length; i++) {
                     hash = word.charCodeAt(i) + ((hash << 5) - hash);
                 }
-                const baseId = Math.abs(hash % 28000) + 2000; // range 2000 - 30000
+                const baseId = Math.abs(hash % 28000) + 2000;
                 
-                // For long words, split them to simulate subwords
-                if (word.length > 7) {
+                if (word.length > 7 && !["attention", "transformers"].includes(word.toLowerCase())) {
                     const mid = Math.floor(word.length / 2);
-                    const part1 = word.substring(0, mid);
-                    const part2 = word.substring(mid);
-                    tokensList.push({ text: part1, id: baseId });
-                    tokensList.push({ text: "##" + part2, id: Math.abs((baseId * 17) % 28000) + 2000 });
+                    tokensList.push({ text: word.substring(0, mid), id: baseId, subword: true });
+                    tokensList.push({ text: "##" + word.substring(mid), id: baseId + 17, subword: true });
                 } else {
-                    tokensList.push({ text: word, id: baseId });
+                    tokensList.push({ text: word, id: baseId, subword: false });
                 }
             });
-            return tokensList;
+            
+            return tokensList.length > 0 ? tokensList : [{ text: "Empty", id: 0, subword: false }];
         }
 
-        // Color palettes for chips
         const chipColors = [
-            { bg: "rgba(14, 165, 233, 0.12)", border: "rgba(14, 165, 233, 0.35)", color: "var(--accent)" },
-            { bg: "rgba(249, 115, 22, 0.12)", border: "rgba(249, 115, 22, 0.35)", color: "var(--accent-2)" },
-            { bg: "rgba(34, 197, 94, 0.12)", border: "rgba(34, 197, 94, 0.35)", color: "#16a34a" },
-            { bg: "rgba(168, 85, 247, 0.12)", border: "rgba(168, 85, 247, 0.35)", color: "#9333ea" },
-            { bg: "rgba(239, 68, 68, 0.12)", border: "rgba(239, 68, 68, 0.35)", color: "#dc2626" },
-            { bg: "rgba(234, 179, 8, 0.12)", border: "rgba(234, 179, 8, 0.35)", color: "#ca8a04" },
-            { bg: "rgba(20, 184, 166, 0.12)", border: "rgba(20, 184, 166, 0.35)", color: "#0d9488" }
+            { bg: "rgba(215, 25, 32, 0.12)", border: "rgba(215, 25, 32, 0.35)", color: "var(--nothing-red)" },
+            { bg: "rgba(0, 240, 255, 0.12)", border: "rgba(0, 240, 255, 0.35)", color: "var(--laser-cyan)" },
+            { bg: "rgba(168, 85, 247, 0.12)", border: "rgba(168, 85, 247, 0.35)", color: "#c084fc" },
+            { bg: "rgba(16, 185, 129, 0.12)", border: "rgba(16, 185, 129, 0.35)", color: "#34d399" },
+            { bg: "rgba(234, 179, 8, 0.12)", border: "rgba(234, 179, 8, 0.35)", color: "#facc15" }
         ];
 
-        // Seeded random for consistent floats
+        // Seeded random for consistent vectors
         function getSeededRandom(seedString) {
             let hash = 0;
             for (let i = 0; i < seedString.length; i++) {
@@ -411,31 +426,137 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         }
 
-        // RENDER VIEWS
+        // ── ROBUST MATHJAX PROMISE QUEUE ──
+        let mathJaxQueue = Promise.resolve();
+        function safeTypeset(nodes) {
+            if (!window.MathJax) return;
+            const elements = (Array.isArray(nodes) ? nodes : [nodes]).filter(Boolean);
+            if (elements.length === 0) return;
+
+            mathJaxQueue = mathJaxQueue
+                .then(() => {
+                    if (window.MathJax.startup && window.MathJax.startup.promise) {
+                        return window.MathJax.startup.promise;
+                    }
+                })
+                .then(() => {
+                    if (window.MathJax.typesetClear && window.MathJax.typesetPromise) {
+                        try {
+                            window.MathJax.typesetClear(elements);
+                        } catch (e) {}
+                        return window.MathJax.typesetPromise(elements);
+                    }
+                })
+                .catch(err => {
+                    console.warn("MathJax typeset error:", err);
+                });
+        }
+        window.safeTypeset = safeTypeset;
+        window.triggerMathJax = (target) => {
+            if (target) {
+                safeTypeset(target);
+            } else {
+                const active = document.querySelector(".sandbox-pane.active");
+                if (active) safeTypeset(active);
+            }
+        };
+        window.onMathJaxReady = () => {
+            const active = document.querySelector(".sandbox-pane.active");
+            if (active) safeTypeset(active);
+        };
+
+        // ── RENDER VIEWS ──
 
         function renderStep1() {
             const data = getTranslationData(currentInput);
-            document.getElementById("step1-source-text").textContent = currentInput;
-            document.getElementById("step1-target-text").textContent = data.target;
-            
+            const tokens = getTokens(currentInput);
+            const targetWords = data.target.split(/\s+/).filter(Boolean);
+
+            const srcText = document.getElementById("step1-source-text");
+            const trgText = document.getElementById("step1-target-text");
+            const srcCount = document.getElementById("step1-src-count");
+            const trgCount = document.getElementById("step1-trg-count");
+            const targetWordPill = document.getElementById("step1-target-word-pill");
+
+            if (srcText) srcText.textContent = currentInput;
+            if (trgText) trgText.textContent = data.target;
+            if (srcCount) srcCount.textContent = `T_enc = ${tokens.length} tokens`;
+            if (trgCount) trgCount.textContent = `T_dec = ${targetWords.length} tokens`;
+            if (targetWordPill) targetWordPill.textContent = `"${data.nextWord}"`;
+
+            // Render interactive token pills for Source Sequence
+            const srcPills = document.getElementById("step1-source-pills");
+            if (srcPills) {
+                srcPills.innerHTML = tokens.map((t, idx) => `
+                    <span class="seq-token-pill" data-idx="${idx}" title="Source token x_${idx+1}: '${t.text}' (ID: ${t.id})">
+                        <span class="seq-token-idx">x<sub>${idx+1}</sub></span>
+                        <span class="seq-token-text">${t.text}</span>
+                    </span>
+                `).join("");
+
+                srcPills.querySelectorAll(".seq-token-pill").forEach(pill => {
+                    pill.addEventListener("click", () => {
+                        srcPills.querySelectorAll(".seq-token-pill").forEach(p => p.classList.remove("active-pill"));
+                        pill.classList.add("active-pill");
+                    });
+                });
+            }
+
+            // Render interactive token pills for Target Sequence
+            const trgPills = document.getElementById("step1-target-pills");
+            if (trgPills) {
+                trgPills.innerHTML = targetWords.map((w, idx) => `
+                    <span class="seq-token-pill trg-pill" data-idx="${idx}" title="Target prefix token y_${idx+1}: '${w}'">
+                        <span class="seq-token-idx">y<sub>${idx+1}</sub></span>
+                        <span class="seq-token-text">${w.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>
+                    </span>
+                `).join("");
+
+                trgPills.querySelectorAll(".seq-token-pill").forEach(pill => {
+                    pill.addEventListener("click", () => {
+                        trgPills.querySelectorAll(".seq-token-pill").forEach(p => p.classList.remove("active-pill"));
+                        pill.classList.add("active-pill");
+                    });
+                });
+            }
+
             const readout = document.getElementById("step1-math-readout");
             if (readout) {
+                const T_enc = tokens.length;
+                const T_dec = targetWords.length;
+
                 readout.innerHTML = `
-                    <strong>Seq2Seq Dimensions &amp; Word Sequences:</strong><br>
-                    Source Sequence: $X = \\begin{bmatrix} x_1 & x_2 & \\dots & x_{T_{\\text{enc}}} \\end{bmatrix}^T \\in \\mathbb{R}^{T_{\\text{enc}}}$ ($T_{\\text{enc}} = ${getTokens(currentInput).length}$ tokens)<br>
-                    Target Prefix: $Y = \\begin{bmatrix} y_1 & y_2 & \\dots & y_{T_{\\text{dec}}} \\end{bmatrix}^T \\in \\mathbb{R}^{T_{\\text{dec}}}$ ($T_{\\text{dec}} = ${data.target.split(/\s+/).filter(Boolean).length}$ tokens)
+                    <div class="math-card-header">
+                        <span class="math-card-title"><i class="fas fa-square-root-alt" style="color:var(--accent); margin-right:6px;"></i> Seq2Seq Dimensions &amp; Sequence Tensors</span>
+                        <span class="math-card-badge">E-D Mapping</span>
+                    </div>
+                    <div class="math-card-body">
+                        <div class="math-latex-eq">
+                            $$\\mathbf{X} = \\begin{bmatrix} x_1 & x_2 & \\dots & x_{T_{\\text{enc}}} \\end{bmatrix}^T \\in \\mathbb{R}^{${T_enc} \\times 1} \\quad (T_{\\text{enc}} = ${T_enc} \\text{ tokens})$$
+                            $$\\mathbf{Y} = \\begin{bmatrix} y_1 & y_2 & \\dots & y_{T_{\\text{dec}}} \\end{bmatrix}^T \\in \\mathbb{R}^{${T_dec} \\times 1} \\quad (T_{\\text{dec}} = ${T_dec} \\text{ tokens})$$
+                        </div>
+                        <div class="math-dim-summary">
+                            <span class="dim-tag">Encoder Input: <strong>[${T_enc} × 512]</strong></span>
+                            <span class="dim-tag accent-2">Decoder Input: <strong>[${T_dec} × 512]</strong></span>
+                            <span class="dim-tag highlight">Next Target Prediction: <strong>"${data.nextWord}"</strong></span>
+                        </div>
+                    </div>
                 `;
+                safeTypeset(readout);
             }
         }
 
         function renderStep2() {
             const display = document.getElementById("step2-tokens-display");
+            if (!display) return;
             display.innerHTML = "";
             const tokens = getTokens(currentInput);
             
             const detailContainer = document.getElementById("step2-token-detail");
             const detailText = document.getElementById("step2-token-detail-text");
-            
+            const vocabIndicator = document.getElementById("step2-vocab-indicator");
+            const vocabSelectedId = document.getElementById("step2-vocab-selected-id");
+
             tokens.forEach((token, idx) => {
                 const color = chipColors[idx % chipColors.length];
                 const chip = document.createElement("div");
@@ -452,34 +573,78 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
                 
                 chip.addEventListener("click", () => {
-                    detailContainer.style.display = "block";
-                    const charStart = currentInput.indexOf(token.text);
-                    const charEnd = charStart + token.text.length;
+                    if (detailContainer) detailContainer.style.display = "block";
+                    const charStart = currentInput.indexOf(token.text.replace("##", ""));
+                    const charEnd = charStart >= 0 ? charStart + token.text.length : 0;
                     
-                    detailText.innerHTML = `
-                        <strong>Subword:</strong> <code style="color:var(--accent); font-size:1.05rem;">"${token.text}"</code><br>
-                        <strong>Vocabulary ID:</strong> <code>${token.id}</code><br>
-                        <strong>String character bounds:</strong> index <code>${charStart}</code> to <code>${charEnd}</code> inside sequence.<br>
-                        <strong>Pedagogical Note:</strong> This subword was created by scanning training text and merging frequent character pairs (like "t" + "h" &rarr; "th").
-                    `;
+                    if (detailText) {
+                        detailText.innerHTML = `
+                            <strong>Subword Token:</strong> <code style="color:var(--accent); font-size:1.05rem;">"${token.text}"</code> | 
+                            <strong>Vocabulary ID:</strong> <code>${token.id}</code><br>
+                            <strong>Character Bounds:</strong> index <code>${Math.max(0, charStart)}</code> to <code>${charEnd}</code> | 
+                            <strong>Subword Status:</strong> ${token.subword ? '<span style="color:var(--accent-2); font-weight:700;">Subword (BPE Split)</span>' : '<span style="color:var(--accent-3); font-weight:700;">Full Word Match</span>'}<br>
+                            <strong>BPE Rule:</strong> Merged based on training frequency ranking.
+                        `;
+                    }
+
+                    // Move radar indicator
+                    if (vocabIndicator) {
+                        const pct = Math.min(100, Math.max(0, (token.id / 37000) * 100));
+                        vocabIndicator.style.left = pct.toFixed(1) + "%";
+                    }
+                    if (vocabSelectedId) {
+                        vocabSelectedId.textContent = `Token "${token.text}" → ID: ${token.id}`;
+                    }
+
                     display.querySelectorAll(".token-chip").forEach(c => c.style.boxShadow = "");
-                    chip.style.boxShadow = `0 0 0 3px var(--accent)`;
+                    chip.style.boxShadow = `0 0 0 3px var(--accent), 0 0 16px rgba(215, 25, 32, 0.4)`;
                 });
                 
                 display.appendChild(chip);
             });
 
+            // Set initial radar marker to first token
+            if (tokens[0] && vocabIndicator && vocabSelectedId) {
+                const pct = Math.min(100, Math.max(0, (tokens[0].id / 37000) * 100));
+                vocabIndicator.style.left = pct.toFixed(1) + "%";
+                vocabSelectedId.textContent = `Token "${tokens[0].text}" → ID: ${tokens[0].id}`;
+            }
+
+            // Split animation button
+            const splitBtn = document.getElementById("step2-split-btn");
+            const splitLabel = document.getElementById("step2-split-label");
+            if (splitBtn && !splitBtn._bound) {
+                splitBtn._bound = true;
+                splitBtn.addEventListener("click", () => {
+                    bpeSplitAnimated = !bpeSplitAnimated;
+                    display.querySelectorAll(".token-chip").forEach((chip, i) => {
+                        chip.style.transform = bpeSplitAnimated ? "scale(1.1) translateY(-3px)" : "";
+                        chip.style.transition = "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)";
+                    });
+                    if (splitLabel) splitLabel.textContent = bpeSplitAnimated ? "Reset Subwords" : "Animate BPE Subwords";
+                });
+            }
+
             const readout = document.getElementById("step2-math-readout");
             if (readout) {
                 readout.innerHTML = `
-                    <strong>Tokenizer Vocabulary Mapping:</strong><br>
-                    $\\vec{t} = \\text{Tokenizer}(X) = \\begin{bmatrix} t_1 \\\\ t_2 \\\\ \\vdots \\\\ t_T \\end{bmatrix} = \\begin{bmatrix} ${tokens.map(t => t.id).join(' \\\\ ')} \\end{bmatrix} \\in \\mathbb{Z}^{T}$ where vocabulary index $t_i \\in \\{0, 1, \\dots, 36999\\}$.
+                    <div class="math-card-header">
+                        <span class="math-card-title"><i class="fas fa-barcode" style="color:var(--accent); margin-right:6px;"></i> Tokenizer Vocabulary Index Vector</span>
+                        <span class="math-card-badge">V = 37,000</span>
+                    </div>
+                    <div class="math-card-body">
+                        <div class="math-latex-eq">
+                            $$\\vec{t} = \\text{Tokenizer}(\\mathbf{X}) = \\begin{bmatrix} t_1 \\\\ t_2 \\\\ \\vdots \\\\ t_T \\end{bmatrix} = \\begin{bmatrix} ${tokens.map(t => t.id).join(' \\\\ ')} \\end{bmatrix} \\in \\mathbb{Z}^{${tokens.length}} \\quad (t_i \\in \\{0, 1, \\dots, 36999\\})$$
+                        </div>
+                    </div>
                 `;
+                safeTypeset(readout);
             }
         }
 
         function renderStep3() {
             const container = document.getElementById("step3-embeddings-container");
+            if (!container) return;
             container.innerHTML = "";
             const tokens = getTokens(currentInput);
             const hoverDetail = document.getElementById("step3-hover-detail");
@@ -504,22 +669,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                     let r, g, b;
                     if (val >= 0) {
-                        r = 15; g = 118; b = 110; // teal
+                        r = 0; g = 240; b = 255; // laser cyan
                     } else {
-                        r = 180; g = 83; b = 9; // orange
+                        r = 215; g = 25; b = 32; // nothing red
                     }
-                    const alpha = Math.abs(val);
+                    const alpha = Math.max(0.15, Math.abs(val));
                     cell.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${alpha})`;
                     cell.style.cursor = "crosshair";
                     
                     cell.addEventListener("mouseenter", () => {
-                        cell.style.transform = "scale(1.2)";
-                        hoverDetail.innerHTML = `
-                            Token: <code style="color:var(--accent); font-weight:700;">"${token.text}"</code> | 
-                            Dimension <strong>${i}</strong> | 
-                            Value: <code style="color:${val >= 0 ? 'var(--accent)' : 'var(--accent-2)'}; font-weight:700;">${val}</code> 
-                            <span style="font-size:0.75rem; font-weight:normal; color:var(--muted);">(${val >= 0 ? "positively correlates with semantic concept" : "negatively correlates with semantic concept"})</span>
-                        `;
+                        cell.style.transform = "scale(1.3)";
+                        if (hoverDetail) {
+                            hoverDetail.innerHTML = `
+                                Token: <code style="color:var(--accent); font-weight:700;">"${token.text}"</code> | 
+                                Dimension <strong>d<sub>${i}</sub></strong> | 
+                                Weight: <code style="color:${val >= 0 ? 'var(--laser-cyan)' : 'var(--nothing-red)'}; font-weight:700;">${val}</code> 
+                                <span style="font-size:0.75rem; font-weight:normal; color:var(--muted);">(${val >= 0 ? "positive semantic alignment" : "orthogonal / negative correlation"})</span>
+                            `;
+                        }
                     });
                     cell.addEventListener("mouseleave", () => {
                         cell.style.transform = "";
@@ -537,17 +704,71 @@ document.addEventListener("DOMContentLoaded", () => {
                 container.appendChild(row);
             });
 
-            const matrixRowsTokens = tokens.map(t => `E_{\\text{"${t.text}"}}`).join(' \\\\ ');
-            const matrixRowsWeights = tokens.map(t => `W_E[${t.id}, :]`).join(' \\\\ ');
+            // Populate Cosine Similarity selects
+            const selectA = document.getElementById("step3-token-a-select");
+            const selectB = document.getElementById("step3-token-b-select");
+            const simScore = document.getElementById("step3-sim-score");
+            const simBadge = document.getElementById("step3-sim-badge");
+
+            if (selectA && selectB) {
+                selectA.innerHTML = tokens.map((t, idx) => `<option value="${idx}" ${idx===0 ? "selected" : ""}>${t.text}</option>`).join("");
+                selectB.innerHTML = tokens.map((t, idx) => `<option value="${idx}" ${idx===Math.min(1, tokens.length-1) ? "selected" : ""}>${t.text}</option>`).join("");
+
+                function updateSim() {
+                    const idxA = parseInt(selectA.value, 10);
+                    const idxB = parseInt(selectB.value, 10);
+                    const randA = getSeededRandom(tokens[idxA].text + tokens[idxA].id);
+                    const randB = getSeededRandom(tokens[idxB].text + tokens[idxB].id);
+
+                    let dot = 0, normA = 0, normB = 0;
+                    for (let i = 0; i < 16; i++) {
+                        const a = randA() * 2 - 1;
+                        const b = randB() * 2 - 1;
+                        dot += a * b;
+                        normA += a * a;
+                        normB += b * b;
+                    }
+                    const score = idxA === idxB ? 1.000 : (dot / (Math.sqrt(normA) * Math.sqrt(normB)));
+                    const formatted = (score >= 0 ? "+" : "") + score.toFixed(3);
+
+                    if (simScore) simScore.textContent = formatted;
+                    if (simBadge) {
+                        if (score >= 0.7) {
+                            simBadge.textContent = "Strong Semantic Affinity";
+                            simBadge.style.color = "var(--laser-cyan)";
+                        } else if (score >= 0.2) {
+                            simBadge.textContent = "Moderate Contextual Overlap";
+                            simBadge.style.color = "#34d399";
+                        } else {
+                            simBadge.textContent = "Divergent Representation";
+                            simBadge.style.color = "var(--nothing-red)";
+                        }
+                    }
+                }
+
+                if (!selectA._bound) {
+                    selectA._bound = true;
+                    selectA.addEventListener("change", updateSim);
+                    selectB.addEventListener("change", updateSim);
+                }
+                updateSim();
+            }
 
             const readout = document.getElementById("step3-math-readout");
             if (readout) {
                 readout.innerHTML = `
-                    <strong>Embedding Matrix Lookup:</strong><br>
-                    $E_i = \\text{EmbeddingLookup}(t_i) = W_E[t_i, :] \\in \\mathbb{R}^{512}$ where $W_E \\in \\mathbb{R}^{37,000 \\times 512}$ is learned during training.<br>
-                    Full sequence representation as matrix stack:<br>
-                    $E = \\begin{bmatrix} ${matrixRowsTokens} \\end{bmatrix} = \\begin{bmatrix} ${matrixRowsWeights} \\end{bmatrix} \\in \\mathbb{R}^{${tokens.length} \\times 512}$.
+                    <div class="math-card-header">
+                        <span class="math-card-title"><i class="fas fa-vector-square" style="color:var(--accent); margin-right:6px;"></i> Token Embedding Matrix Lookup (d_model = 512)</span>
+                        <span class="math-card-badge">E ∈ ℝ^{${tokens.length} × 512}</span>
+                    </div>
+                    <div class="math-card-body">
+                        <div class="math-latex-eq">
+                            $$\\mathbf{E}_i = \\text{EmbeddingLookup}(t_i) = \\mathbf{W}_E[t_i, :] \\in \\mathbb{R}^{512} \\quad (\\mathbf{W}_E \\in \\mathbb{R}^{37,000 \\times 512})$$
+                            $$\\mathbf{E} = \\begin{bmatrix} \\mathbf{E}_{\\text{${tokens[0] ? tokens[0].text : 'x1'}}} \\\\ \\dots \\\\ \\mathbf{E}_{\\text{${tokens[tokens.length-1] ? tokens[tokens.length-1].text : 'xT'}}} \\end{bmatrix} \\in \\mathbb{R}^{${tokens.length} \\times 512}$$
+                        </div>
+                    </div>
                 `;
+                safeTypeset(readout);
             }
         }
 
@@ -587,15 +808,6 @@ document.addEventListener("DOMContentLoaded", () => {
             axisPath.setAttribute("stroke-width", "1");
             svg.appendChild(axisPath);
             
-            const gridLeft = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            gridLeft.setAttribute("x1", padding);
-            gridLeft.setAttribute("y1", padding);
-            gridLeft.setAttribute("x2", padding);
-            gridLeft.setAttribute("y2", h - padding);
-            gridLeft.setAttribute("stroke", "var(--line)");
-            gridLeft.setAttribute("stroke-width", "1");
-            svg.appendChild(gridLeft);
-            
             // Draw waves
             let sinPoints = [];
             let cosPoints = [];
@@ -606,7 +818,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             for (let x = 0; x <= drawW; x++) {
                 const posX = padding + x;
-                const posParam = (x / drawW) * 6; // map x axis to position 0 to 6
+                const posParam = (x / drawW) * 6;
                 
                 const valSin = Math.sin(posParam * currentFrequency * Math.PI);
                 const valCos = Math.cos(posParam * currentFrequency * Math.PI);
@@ -621,622 +833,261 @@ document.addEventListener("DOMContentLoaded", () => {
             const sinPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
             sinPath.setAttribute("d", "M" + sinPoints.join(" L"));
             sinPath.setAttribute("fill", "none");
-            sinPath.setAttribute("stroke", "#0f766e");
+            sinPath.setAttribute("stroke", "#00f0ff");
             sinPath.setAttribute("stroke-width", "2.5");
             svg.appendChild(sinPath);
             
             const cosPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
             cosPath.setAttribute("d", "M" + cosPoints.join(" L"));
             cosPath.setAttribute("fill", "none");
-            cosPath.setAttribute("stroke", "#b45309");
+            cosPath.setAttribute("stroke", "#d71920");
             cosPath.setAttribute("stroke-width", "1.5");
             cosPath.setAttribute("stroke-dasharray", "4 2");
             svg.appendChild(cosPath);
             
-            // Draw Tracker Dot at selected Position (pePosVal)
+            // Tracker dot
             const dotX = padding + (pePosVal / 6) * drawW;
             const trackerValSin = Math.sin(pePosVal * currentFrequency * Math.PI);
             const dotY = midY - trackerValSin * (drawH / 2.5);
-            
-            const vLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            vLine.setAttribute("x1", dotX);
-            vLine.setAttribute("y1", padding);
-            vLine.setAttribute("x2", dotX);
-            vLine.setAttribute("y2", h - padding);
-            vLine.setAttribute("stroke", "var(--accent-3)");
-            vLine.setAttribute("stroke-width", "1");
-            vLine.setAttribute("stroke-dasharray", "2 2");
-            svg.appendChild(vLine);
             
             const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             circle.setAttribute("cx", dotX);
             circle.setAttribute("cy", dotY);
             circle.setAttribute("r", "6");
-            circle.setAttribute("fill", "#0f766e");
+            circle.setAttribute("fill", "#eab308");
             circle.setAttribute("stroke", "#fff");
             circle.setAttribute("stroke-width", "2");
             svg.appendChild(circle);
+
+            // Vector Fusion Animation button
+            const fusionBtn = document.getElementById("step4-fusion-btn");
+            const fusionVis = document.getElementById("step4-fusion-vis");
+            if (fusionBtn && !fusionBtn._bound) {
+                fusionBtn._bound = true;
+                fusionBtn.addEventListener("click", () => {
+                    if (fusionVis) {
+                        const isOpen = fusionVis.style.display !== "none";
+                        fusionVis.style.display = isOpen ? "none" : "flex";
+                        fusionBtn.classList.toggle("active-tool", !isOpen);
+                    }
+                });
+            }
             
             const peFormulaVal = trackerValSin.toFixed(4);
             const tokens = getTokens(currentInput);
-            const zRows = tokens.map((t, idx) => `E_{\\text{"${t.text}"}} + PE_{${idx}}`).join(' \\\\ ');
             if (mathReadout) {
                 mathReadout.innerHTML = `
-                    <strong>Sinusoidal Coordinate Injection &amp; Positional Addition:</strong><br>
-                    $\\text{PE}(\\text{pos}=${pePosVal}, \\text{dim}=${peDimVal}) = \\sin\\left(\\frac{${pePosVal}}{10000^{${peDimVal}/512}}\\right) = ${peFormulaVal}$<br>
-                    Combined representation as matrix sum:<br>
-                    $Z = E + PE = \\begin{bmatrix} E_1 \\\\ \\vdots \\\\ E_T \\end{bmatrix} + \\begin{bmatrix} PE_1 \\\\ \\vdots \\\\ PE_T \\end{bmatrix} = \\begin{bmatrix} ${zRows} \\end{bmatrix} \\in \\mathbb{R}^{${tokens.length} \\times 512}$.
+                    <div class="math-card-header">
+                        <span class="math-card-title"><i class="fas fa-wave-square" style="color:var(--accent); margin-right:6px;"></i> Sinusoidal Positional Encoding (E + PE = Z)</span>
+                        <span class="math-card-badge">pos=${pePosVal}, 2i=${peDimVal}</span>
+                    </div>
+                    <div class="math-card-body">
+                        <div class="math-latex-eq">
+                            $$\\text{PE}_{(\\text{pos}=${pePosVal}, 2i=${peDimVal})} = \\sin\\left(\\frac{${pePosVal}}{10000^{${peDimVal}/512}}\\right) = ${peFormulaVal}$$
+                            $$\\mathbf{Z} = \\mathbf{E} + \\mathbf{PE} \\in \\mathbb{R}^{${tokens.length} \\times 512}$$
+                        </div>
+                    </div>
                 `;
+                safeTypeset(mathReadout);
             }
-            triggerMathJax();
         }
 
-        let step5ActiveExplorerTab = "q-proj";
         let step5ActiveHead = 1;
         let step5ActiveNode = 0;
 
-        function initStep5Explorer() {
-            const toggleBtn = document.getElementById("step5-explorer-toggle");
-            const content = document.getElementById("step5-explorer-content");
-            if (toggleBtn && content) {
-                toggleBtn.addEventListener("click", () => {
-                    const isExpanded = content.style.display !== "none";
-                    if (isExpanded) {
-                        content.style.display = "none";
-                        toggleBtn.classList.remove("open");
-                    } else {
-                        content.style.display = "flex";
-                        toggleBtn.classList.add("open");
-                        renderStep5Explorer();
-                    }
-                });
-            }
-
-            const tabs = document.querySelectorAll(".mult-tab");
-            tabs.forEach(tab => {
-                tab.addEventListener("click", () => {
-                    tabs.forEach(t => t.classList.remove("active"));
-                    tab.classList.add("active");
-                    step5ActiveExplorerTab = tab.dataset.tab;
-                    renderStep5Explorer();
-                });
-            });
-
-            const flowSteps = document.querySelectorAll(".clickable-flow-step");
-            const flowDetail = document.getElementById("flow-detail-text");
-            flowSteps.forEach(step => {
-                step.addEventListener("mouseenter", () => {
-                    if (flowDetail) {
-                        flowDetail.innerHTML = `ℹ️ <strong>Details:</strong> ${step.dataset.desc}`;
-                    }
-                });
-                step.addEventListener("mouseleave", () => {
-                    if (flowDetail) {
-                        flowDetail.innerHTML = `Hover over any shape above to inspect its details.`;
-                    }
-                });
-            });
-        }
-
-        function renderStep5Explorer() {
-            const content = document.getElementById("step5-explorer-content");
-            if (!content || content.style.display === "none") return;
-
-            const tokens = getTokens(currentInput);
-            const T = tokens.length;
-
-            const dimZ = document.getElementById("flow-dim-z");
-            const dimQkv = document.getElementById("flow-dim-qkv");
-            const dimQkt = document.getElementById("flow-dim-qkt");
-            const dimAttnV = document.getElementById("flow-dim-attn-v");
-
-            if (dimZ) dimZ.textContent = `[${T} × 512]`;
-            if (dimQkv) dimQkv.textContent = `[${T} × 64]`;
-            if (dimQkt) dimQkt.textContent = `[${T} × ${T}]`;
-            if (dimAttnV) dimAttnV.textContent = `[${T} × 64]`;
-
-            const gridA = document.getElementById("mat-grid-a");
-            const gridB = document.getElementById("mat-grid-b");
-            const gridC = document.getElementById("mat-grid-c");
-
-            const labelNameA = document.getElementById("mat-name-a");
-            const labelNameB = document.getElementById("mat-name-b");
-            const labelNameC = document.getElementById("mat-name-c");
-
-            const labelDimA = document.getElementById("mat-dim-a");
-            const labelDimB = document.getElementById("mat-dim-b");
-            const labelDimC = document.getElementById("mat-dim-c");
-
-            const eqDisplay = document.getElementById("sandbox-eq-display");
-            const multExplain = document.getElementById("sandbox-mult-explain");
-
-            if (!gridA || !gridB || !gridC || !eqDisplay || !multExplain) return;
-
-            gridA.innerHTML = "";
-            gridB.innerHTML = "";
-            gridC.innerHTML = "";
-            multExplain.textContent = "Hover over an element in the output matrix to trace its dot product calculation.";
-
-            let rowsA, colsA, rowsB, colsB, rowsC, colsC;
-            let nameA, nameB, nameC;
-            let dimStrA, dimStrB, dimStrC;
-            let eqText;
-
-            if (step5ActiveExplorerTab === "q-proj") {
-                rowsA = T; colsA = 8;
-                rowsB = 8; colsB = 4;
-                rowsC = T; colsC = 4;
-
-                nameA = "Z (Input)"; nameB = "W_Q (Weights)"; nameC = "Q (Queries)";
-                dimStrA = `[${T} × 512]`; dimStrB = `[512 × 64]`; dimStrC = `[${T} × 64]`;
-                eqText = `$Q = Z \\times W_Q \\implies [${T} \\times 512] \\times [512 \\times 64] \\to [${T} \\times 64]$`;
-            } else if (step5ActiveExplorerTab === "q-k") {
-                rowsA = T; colsA = 4;
-                rowsB = 4; colsB = T;
-                rowsC = T; colsC = T;
-
-                nameA = "Q (Queries)"; nameB = "K^T (Keys Transposed)"; nameC = "S (Attention Scores)";
-                dimStrA = `[${T} × 64]`; dimStrB = `[64 × ${T}]`; dimStrC = `[${T} × ${T}]`;
-                eqText = `$S = Q \\times K^T \\implies [${T} \\times 64] \\times [64 \\times ${T}] \\to [${T} \\times ${T}]$`;
-            } else {
-                rowsA = T; colsA = T;
-                rowsB = T; colsB = 4;
-                rowsC = T; colsC = 4;
-
-                nameA = "A (Attention Softmax)"; nameB = "V (Values)"; nameC = "O (Outputs)";
-                dimStrA = `[${T} × ${T}]`; dimStrB = `[${T} × 64]`; dimStrC = `[${T} × 64]`;
-                eqText = `$O = A \\times V \\implies [${T} \\times ${T}] \\times [${T} \\times 64] \\to [${T} \\times 64]$`;
-            }
-
-            labelNameA.textContent = nameA;
-            labelNameB.textContent = nameB;
-            labelNameC.textContent = nameC;
-
-            labelDimA.textContent = dimStrA;
-            labelDimB.textContent = dimStrB;
-            labelDimC.textContent = dimStrC;
-
-            eqDisplay.innerHTML = eqText;
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise([eqDisplay]).catch(() => {});
-            }
-
-            gridA.style.gridTemplateRows = `repeat(${rowsA}, auto)`;
-            gridA.style.gridTemplateColumns = `repeat(${colsA}, auto)`;
-
-            gridB.style.gridTemplateRows = `repeat(${rowsB}, auto)`;
-            gridB.style.gridTemplateColumns = `repeat(${colsB}, auto)`;
-
-            gridC.style.gridTemplateRows = `repeat(${rowsC}, auto)`;
-            gridC.style.gridTemplateColumns = `repeat(${colsC}, auto)`;
-
-            const createCells = (gridElement, rows, cols, prefix) => {
-                const cells = [];
-                for (let r = 0; r < rows; r++) {
-                    cells[r] = [];
-                    for (let c = 0; c < cols; c++) {
-                        const cell = document.createElement("div");
-                        cell.className = "mult-cell";
-                        cell.dataset.row = r;
-                        cell.dataset.col = c;
-                        
-                        if (prefix === "A") {
-                            cell.title = `Token: ${tokens[r] ? tokens[r].text : r}`;
-                            cell.textContent = r;
-                        } else if (prefix === "B") {
-                            cell.textContent = c;
-                        } else {
-                            cell.textContent = "?";
-                        }
-
-                        gridElement.appendChild(cell);
-                        cells[r][c] = cell;
-                    }
-                }
-                return cells;
-            };
-
-            const cellsA = createCells(gridA, rowsA, colsA, "A");
-            const cellsB = createCells(gridB, rowsB, colsB, "B");
-            const cellsC = createCells(gridC, rowsC, colsC, "C");
-
-            for (let r = 0; r < rowsC; r++) {
-                for (let c = 0; c < colsC; c++) {
-                    const outputCell = cellsC[r][c];
-                    outputCell.addEventListener("mouseenter", () => {
-                        for (let colIndex = 0; colIndex < colsA; colIndex++) {
-                            if (cellsA[r] && cellsA[r][colIndex]) {
-                                cellsA[r][colIndex].classList.add("row-highlight");
-                            }
-                        }
-                        for (let rowIndex = 0; rowIndex < rowsB; rowIndex++) {
-                            if (cellsB[rowIndex] && cellsB[rowIndex][c]) {
-                                cellsB[rowIndex][c].classList.add("col-highlight");
-                            }
-                        }
-                        outputCell.classList.add("cell-highlight");
-
-                        const tokR = tokens[r] ? tokens[r].text : `token ${r + 1}`;
-                        if (step5ActiveExplorerTab === "q-proj") {
-                            multExplain.innerHTML = `💡 To compute cell <strong>(${r + 1}, ${c + 1})</strong> of Queries matrix $Q$ (for token <strong>"${tokR}"</strong>, query dim ${c + 1}):<br>We compute the dot product of Row <strong>${r + 1}</strong> of Input sequence $Z$ and Column <strong>${c + 1}</strong> of projection matrix $W_Q$.`;
-                        } else if (step5ActiveExplorerTab === "q-k") {
-                            const tokC = tokens[c] ? tokens[c].text : `token ${c + 1}`;
-                            multExplain.innerHTML = `💡 To compute cell <strong>(${r + 1}, ${c + 1})</strong> of similarity grid $S$ (Attention score from <strong>"${tokR}"</strong> to <strong>"${tokC}"</strong>):<br>We compute the dot product of Row <strong>${r + 1}</strong> of $Q$ (Query vector of <strong>"${tokR}"</strong>) and Column <strong>${c + 1}</strong> of $K^T$ (Key vector of <strong>"${tokC}"</strong>).`;
-                        } else {
-                            multExplain.innerHTML = `💡 To compute cell <strong>(${r + 1}, ${c + 1})</strong> of contextual output matrix $O$ (for token <strong>"${tokR}"</strong>, value dim ${c + 1}):<br>We weight all token value vectors by multiplying Row <strong>${r + 1}</strong> of Attention matrix $A$ (softmax scores for <strong>"${tokR}"</strong> attending to all other tokens) with Column <strong>${c + 1}</strong> of Value matrix $V$.`;
-                        }
-                        
-                        if (window.MathJax && window.MathJax.typesetPromise) {
-                            window.MathJax.typesetPromise([multExplain]).catch(() => {});
-                        }
-                    });
-
-                    outputCell.addEventListener("mouseleave", () => {
-                        for (let colIndex = 0; colIndex < colsA; colIndex++) {
-                            if (cellsA[r] && cellsA[r][colIndex]) {
-                                cellsA[r][colIndex].classList.remove("row-highlight");
-                            }
-                        }
-                        for (let rowIndex = 0; rowIndex < rowsB; rowIndex++) {
-                            if (cellsB[rowIndex] && cellsB[rowIndex][c]) {
-                                cellsB[rowIndex][c].classList.remove("col-highlight");
-                            }
-                        }
-                        outputCell.classList.remove("cell-highlight");
-                        multExplain.innerHTML = "Hover over an element in the output matrix to trace its dot product calculation.";
-                    });
-                }
-            }
-        }
-
         function renderStep5() {
-            const list = document.getElementById("step5-attention-list");
-            const grid = document.getElementById("step5-matrix-grid");
-            const svg = document.getElementById("step5-attention-graph");
-            
-            if (!list || !grid || !svg) return;
-            
-            list.innerHTML = "";
-            grid.innerHTML = "";
-            svg.innerHTML = "";
-            
             const tokens = getTokens(currentInput);
-            const N = tokens.length;
-            if (N === 0) return;
+            const listContainer = document.getElementById("step5-attention-list");
+            const matrixGrid = document.getElementById("step5-matrix-grid");
+            const svgGraph = document.getElementById("step5-attention-graph");
             
-            const attentionMatrix = [];
-            const random = getSeededRandom(currentInput + "_attn_head_" + step5ActiveHead);
-            
-            for (let i = 0; i < N; i++) {
-                attentionMatrix[i] = [];
-                let rowSum = 0;
-                for (let j = 0; j < N; j++) {
-                    let score = random();
-                    if (step5ActiveHead === 1) {
-                        if (i === j) score += 0.5;
-                        if (Math.abs(i - j) === 1) score += 1.5;
-                    } else if (step5ActiveHead === 2) {
-                        if (i === j) score += 3.0;
-                    } else if (step5ActiveHead === 3) {
-                        if (j === 0 || j === N - 1) score += 2.0;
-                    } else {
-                        score += 0.8;
-                    }
-                    
-                    attentionMatrix[i][j] = score;
-                    rowSum += score;
-                }
-                for (let j = 0; j < N; j++) {
-                    attentionMatrix[i][j] /= rowSum;
-                }
-            }
-            
-            grid.style.gridTemplateColumns = `repeat(${N}, 20px)`;
-            
-            function selectWordIndex(selectedIdx) {
-                step5ActiveNode = selectedIdx;
-                
-                const nodes = list.querySelectorAll(".attention-word-node");
-                nodes.forEach((n, idx) => {
-                    n.classList.toggle("selected", idx === selectedIdx);
-                    const strengthBar = n.querySelector(".attention-strength-bar");
-                    if (strengthBar) {
-                        const score = attentionMatrix[selectedIdx][idx];
-                        strengthBar.style.width = `${score * 100}%`;
-                    }
-                });
-                
-                const cells = grid.querySelectorAll(".matrix-cell");
-                cells.forEach((cell) => {
-                    const row = parseInt(cell.dataset.row, 10);
-                    const col = parseInt(cell.dataset.col, 10);
-                    if (row === selectedIdx) {
-                        cell.style.transform = "scale(1.15)";
-                        cell.style.boxShadow = "0 0 4px var(--accent)";
-                        cell.style.outline = "1px solid var(--accent)";
-                    } else {
-                        cell.style.transform = "";
-                        cell.style.boxShadow = "";
-                        cell.style.outline = "";
-                    }
-                });
-                
-                drawAttentionLines(selectedIdx);
-            }
-            
-            tokens.forEach((token, idx) => {
-                const item = document.createElement("div");
-                item.className = "attention-word-node";
-                item.dataset.index = idx;
-                item.innerHTML = `
-                    <span>${token.text}</span>
-                    <div style="flex-grow:1; max-width:80px; margin-left:10px;">
-                        <div class="attention-strength-bar" style="width: 0%;"></div>
-                    </div>
-                `;
-                item.addEventListener("mouseenter", () => selectWordIndex(idx));
-                list.appendChild(item);
-            });
-            
-            for (let r = 0; r < N; r++) {
-                for (let c = 0; c < N; c++) {
-                    const score = attentionMatrix[r][c];
-                    const cell = document.createElement("div");
-                    cell.className = "matrix-cell";
-                    cell.dataset.row = r;
-                    cell.dataset.col = c;
-                    cell.style.width = "20px";
-                    cell.style.height = "20px";
-                    cell.style.backgroundColor = `rgba(15, 118, 110, ${score * 1.5})`;
-                    cell.title = `Attention from "${tokens[r].text}" to "${tokens[c].text}": ${(score*100).toFixed(1)}%`;
-                    cell.addEventListener("mouseenter", () => selectWordIndex(r));
-                    grid.appendChild(cell);
-                }
-            }
-            
-            const svgW = svg.clientWidth || 450;
-            const svgH = svg.clientHeight || 220;
-            const nodeY = svgH / 2;
-            const nodesPos = [];
-            const margin = 40;
-            
-            tokens.forEach((token, idx) => {
-                const x = margin + (idx / (N - 1 || 1)) * (svgW - margin * 2);
-                nodesPos.push({ x, y: nodeY });
-            });
-            
-            function drawAttentionLines(selectedIdx) {
-                svg.querySelectorAll(".graph-connection-line").forEach(p => p.remove());
-                
-                nodesPos.forEach((targetPos, idx) => {
-                    const score = attentionMatrix[selectedIdx][idx];
-                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    
-                    const startX = nodesPos[selectedIdx].x;
-                    const startY = nodesPos[selectedIdx].y;
-                    const endX = targetPos.x;
-                    const endY = targetPos.y;
-                    
-                    const diffX = endX - startX;
-                    const cpY = startY - Math.abs(diffX) * 0.4 - 20;
-                    
-                    const d = `M ${startX} ${startY} Q ${(startX + endX)/2} ${cpY} ${endX} ${endY}`;
-                    path.setAttribute("d", d);
-                    path.setAttribute("class", "graph-connection-line");
-                    path.setAttribute("stroke", "var(--accent)");
-                    path.setAttribute("stroke-width", `${1 + score * 8}`);
-                    path.setAttribute("opacity", `${0.1 + score * 0.8}`);
-                    
-                    if (score > 0.25) {
-                        path.setAttribute("stroke-dasharray", "6 4");
-                    }
-                    svg.insertBefore(path, svg.firstChild);
-                });
-            }
-            
-            tokens.forEach((token, idx) => {
-                const pos = nodesPos[idx];
-                
-                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                circle.setAttribute("cx", pos.x);
-                circle.setAttribute("cy", pos.y);
-                circle.setAttribute("r", "12");
-                circle.setAttribute("fill", idx === step5ActiveNode ? "var(--accent)" : "var(--panel)");
-                circle.setAttribute("stroke", "var(--accent)");
-                circle.setAttribute("stroke-width", "2");
-                circle.setAttribute("class", "graph-node-dot");
-                circle.addEventListener("click", () => selectWordIndex(idx));
-                circle.addEventListener("mouseenter", () => selectWordIndex(idx));
-                svg.appendChild(circle);
-                
-                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                text.setAttribute("x", pos.x);
-                text.setAttribute("y", pos.y + 26);
-                text.setAttribute("class", "graph-node-text");
-                text.textContent = token.text;
-                svg.appendChild(text);
-            });
-            
-            selectWordIndex(step5ActiveNode >= N ? 0 : step5ActiveNode);
-            
-            const readout = document.getElementById("step5-math-readout");
-            if (readout) {
-                let matrixRows = [];
-                for (let i = 0; i < N; i++) {
-                    let rowVals = [];
-                    for (let j = 0; j < N; j++) {
-                        rowVals.push(attentionMatrix[i][j].toFixed(2));
-                    }
-                    matrixRows.push(rowVals.join(' & '));
-                }
-                const latexMatrix = `\\begin{bmatrix} ${matrixRows.join(' \\\\ ')} \\end{bmatrix}`;
+            if (listContainer) listContainer.innerHTML = "";
+            if (matrixGrid) matrixGrid.innerHTML = "";
+            if (svgGraph) svgGraph.innerHTML = "";
 
-                readout.innerHTML = `
-                    <strong>Multi-Head Query-Key-Value Self-Attention Matrix:</strong><br>
-                    $Q = Z W_Q, \\; K = Z W_K, \\; V = Z W_V \\in \\mathbb{R}^{${N} \\times 64}$ for Head ${step5ActiveHead}.<br>
-                    Computed attention weight matrix $A = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{64}}\\right)$:<br>
-                    $A = ${latexMatrix} \\in \\mathbb{R}^{${N} \\times ${N}}$<br>
-                    $\\text{Attention}(Q, K, V) = A \\times V \\in \\mathbb{R}^{${N} \\times 64}$.
-                `;
-            }
-
-            const headButtons = document.getElementById("step5-head-buttons");
-            if (headButtons) {
-                headButtons.querySelectorAll(".head-btn").forEach(btn => {
-                    btn.onclick = (e) => {
-                        headButtons.querySelectorAll(".head-btn").forEach(b => b.classList.remove("active"));
-                        btn.classList.add("active");
+            const headButtons = document.querySelectorAll("#step5-head-buttons .head-btn");
+            headButtons.forEach(btn => {
+                btn.classList.toggle("active", parseInt(btn.dataset.head, 10) === step5ActiveHead);
+                if (!btn._bound) {
+                    btn._bound = true;
+                    btn.addEventListener("click", () => {
                         step5ActiveHead = parseInt(btn.dataset.head, 10);
                         renderStep5();
-                    };
+                    });
+                }
+            });
+
+            // Residual toggle
+            const resBtn = document.getElementById("step5-residual-btn");
+            if (resBtn && !resBtn._bound) {
+                resBtn._bound = true;
+                resBtn.addEventListener("click", () => {
+                    residualEnabled = !residualEnabled;
+                    resBtn.innerHTML = residualEnabled ? '<i class="fas fa-share"></i> Residual Bypass: ON' : '<i class="fas fa-times"></i> Residual Bypass: OFF';
+                    resBtn.classList.toggle("bypass-off", !residualEnabled);
                 });
             }
-            renderStep5Explorer();
-            triggerMathJax();
+
+            // Word nodes in step 5
+            tokens.forEach((t, i) => {
+                const node = document.createElement("div");
+                node.className = "attention-word-node" + (i === step5ActiveNode ? " active" : "");
+                node.textContent = t.text;
+                node.addEventListener("mouseenter", () => {
+                    step5ActiveNode = i;
+                    drawStep5Arcs(tokens, i);
+                    listContainer.querySelectorAll(".attention-word-node").forEach((n, idx) => {
+                        n.classList.toggle("active", idx === i);
+                    });
+                });
+                if (listContainer) listContainer.appendChild(node);
+            });
+
+            drawStep5Arcs(tokens, step5ActiveNode);
+
+            const readout = document.getElementById("step5-math-readout");
+            if (readout) {
+                readout.innerHTML = `
+                    <div class="math-card-header">
+                        <span class="math-card-title"><i class="fas fa-project-diagram" style="color:var(--accent); margin-right:6px;"></i> Scaled Dot-Product Self-Attention (Head ${step5ActiveHead})</span>
+                        <span class="math-card-badge">d_k = 64</span>
+                    </div>
+                    <div class="math-card-body">
+                        <div class="math-latex-eq">
+                            $$\\text{Attention}(\\mathbf{Q}, \\mathbf{K}, \\mathbf{V}) = \\text{softmax}\\left(\\frac{\\mathbf{Q} \\mathbf{K}^T}{\\sqrt{d_k}}\\right) \\mathbf{V}$$
+                            $$\\mathbf{Z}_{\\text{out}} = \\text{LayerNorm}\\left(\\mathbf{Z} + \\text{MultiHead}(\\mathbf{Z})\\right)$$
+                        </div>
+                    </div>
+                `;
+                safeTypeset(readout);
+            }
+        }
+
+        function drawStep5Arcs(tokens, activeIdx) {
+            const svg = document.getElementById("step5-attention-graph");
+            if (!svg) return;
+            svg.innerHTML = "";
+            const w = svg.clientWidth || 360;
+            const h = svg.clientHeight || 120;
+            const count = tokens.length;
+            const spacing = w / (count + 1);
+
+            tokens.forEach((t, j) => {
+                const startX = (activeIdx + 1) * spacing;
+                const endX = (j + 1) * spacing;
+                const dist = Math.abs(activeIdx - j);
+                const weight = Math.max(0.1, 1 - dist * 0.25);
+                const arcHeight = Math.min(h - 20, 20 + dist * 22);
+
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                const d = `M ${startX} ${h - 15} C ${startX} ${h - 15 - arcHeight}, ${endX} ${h - 15 - arcHeight}, ${endX} ${h - 15}`;
+                path.setAttribute("d", d);
+                path.setAttribute("fill", "none");
+                path.setAttribute("stroke", activeIdx === j ? "var(--nothing-red)" : "var(--laser-cyan)");
+                path.setAttribute("stroke-width", Math.max(1, weight * 4));
+                path.setAttribute("stroke-opacity", weight.toFixed(2));
+                svg.appendChild(path);
+
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", endX);
+                circle.setAttribute("cy", h - 15);
+                circle.setAttribute("r", j === activeIdx ? "5" : "3");
+                circle.setAttribute("fill", j === activeIdx ? "var(--nothing-red)" : "var(--muted)");
+                svg.appendChild(circle);
+            });
         }
 
         function renderStep6() {
-            const decList = document.getElementById("step6-decoder-list");
-            const encList = document.getElementById("step6-encoder-mem-list");
-            const padlockGrid = document.getElementById("step6-padlock-grid");
-            
-            if (!decList || !encList || !padlockGrid) return;
-            
-            decList.innerHTML = "";
-            encList.innerHTML = "";
-            padlockGrid.innerHTML = "";
-            
-            const srcTokens = getTokens(currentInput);
             const data = getTranslationData(currentInput);
-            const trgTokens = data.target.split(/\s+/).filter(Boolean);
-            const M = trgTokens.length;
-            
-            padlockGrid.style.gridTemplateColumns = `repeat(${M + 1}, auto)`;
-            
-            const emptyCell = document.createElement("div");
-            emptyCell.className = "padlock-cell";
-            padlockGrid.appendChild(emptyCell);
-            
-            trgTokens.forEach(t => {
-                const headerCell = document.createElement("div");
-                headerCell.className = "padlock-cell";
-                headerCell.style.fontSize = "0.68rem";
-                headerCell.style.fontWeight = "700";
-                headerCell.style.color = "var(--muted)";
-                headerCell.textContent = t.substring(0, 4);
-                padlockGrid.appendChild(headerCell);
-            });
-            
-            for (let r = 0; r < M; r++) {
-                const labelCell = document.createElement("div");
-                labelCell.className = "padlock-cell";
-                labelCell.style.fontSize = "0.68rem";
-                labelCell.style.fontWeight = "700";
-                labelCell.style.color = "var(--muted)";
-                labelCell.textContent = trgTokens[r].substring(0, 4);
-                padlockGrid.appendChild(labelCell);
-                
-                for (let c = 0; c < M; c++) {
-                    const cell = document.createElement("div");
-                    cell.className = "padlock-cell";
-                    if (c > r) {
-                        cell.classList.add("masked");
-                        cell.innerHTML = "🔒";
-                        cell.title = `Masked: "${trgTokens[r]}" cannot attend to future word "${trgTokens[c]}"`;
-                    } else {
-                        cell.classList.add("visible");
-                        cell.innerHTML = "🔓";
-                        cell.title = `Visible: "${trgTokens[r]}" attends to past word "${trgTokens[c]}"`;
+            const targetWords = data.target.split(/\s+/).filter(Boolean);
+            const sourceTokens = getTokens(currentInput);
+            const M = targetWords.length;
+
+            const maskBtn = document.getElementById("step6-mask-toggle-btn");
+            if (maskBtn && !maskBtn._bound) {
+                maskBtn._bound = true;
+                maskBtn.addEventListener("click", () => {
+                    causalMaskEnabled = !causalMaskEnabled;
+                    maskBtn.innerHTML = causalMaskEnabled ? '<i class="fas fa-lock"></i> Causal Mask: ACTIVE' : '<i class="fas fa-unlock"></i> Causal Mask: OFF (Unsafe)';
+                    maskBtn.classList.toggle("mask-disabled", !causalMaskEnabled);
+                    renderStep6();
+                });
+            }
+
+            const padlockGrid = document.getElementById("step6-padlock-grid");
+            if (padlockGrid) {
+                padlockGrid.innerHTML = "";
+                for (let i = 0; i < Math.min(5, M); i++) {
+                    const row = document.createElement("div");
+                    row.className = "padlock-row";
+                    for (let j = 0; j < Math.min(5, M); j++) {
+                        const cell = document.createElement("span");
+                        cell.className = "padlock-cell" + (j > i && causalMaskEnabled ? " locked" : " open");
+                        cell.innerHTML = j > i && causalMaskEnabled ? '<i class="fas fa-lock"></i>' : '<i class="fas fa-eye"></i>';
+                        cell.title = j > i ? (causalMaskEnabled ? "Masked: -∞ (Cannot peek ahead)" : "Unmasked (Cheating future)") : "Attends to past token";
+                        row.appendChild(cell);
                     }
-                    padlockGrid.appendChild(cell);
+                    padlockGrid.appendChild(row);
                 }
             }
-            
-            trgTokens.forEach((token, idx) => {
-                const item = document.createElement("div");
-                item.className = "attention-word-node";
-                item.innerHTML = `
-                    <span>${token}</span>
-                    <span style="font-size: 0.65rem; color:var(--muted); font-weight:600;">Pos: ${idx}</span>
-                `;
-                
-                item.addEventListener("mouseenter", () => {
-                    const allDec = decList.querySelectorAll(".attention-word-node");
-                    allDec.forEach((node, nIdx) => {
-                        if (nIdx <= idx) {
-                            node.style.opacity = "1";
-                            node.style.borderStyle = "solid";
-                        } else {
-                            node.style.opacity = "0.35";
-                            node.style.borderStyle = "dashed";
-                        }
-                    });
-                    
-                    const random = getSeededRandom(token + idx + "_cross");
-                    const encNodes = encList.querySelectorAll(".attention-word-node");
-                    encNodes.forEach((node, eIdx) => {
-                        const score = random();
-                        const strengthBar = node.querySelector(".attention-strength-bar");
-                        if (strengthBar) {
-                            strengthBar.style.width = `${score * 90}%`;
-                        }
-                    });
-                });
-                decList.appendChild(item);
-            });
-            
-            srcTokens.forEach((token, idx) => {
-                const item = document.createElement("div");
-                item.className = "attention-word-node";
-                item.style.borderColor = "var(--line)";
-                item.innerHTML = `
-                    <span>[Enc Memory] ${token.text}</span>
-                    <div style="flex-grow:1; max-width:60px; margin-left:8px;">
-                        <div class="attention-strength-bar" style="width: 20%; background:var(--accent-2);"></div>
-                    </div>
-                `;
-                encList.appendChild(item);
-            });
-            
-            if (trgTokens.length > 0) {
-                const first = decList.querySelector(".attention-word-node");
-                if (first) {
-                    const event = new Event('mouseenter');
-                    first.dispatchEvent(event);
-                }
+
+            const decList = document.getElementById("step6-decoder-list");
+            const encList = document.getElementById("step6-encoder-mem-list");
+            if (decList) {
+                decList.innerHTML = targetWords.map((w, idx) => `
+                    <div class="attention-word-node ${idx===M-1 ? 'active' : ''}">y<sub>${idx+1}</sub>: ${w.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+                `).join("");
+            }
+            if (encList) {
+                encList.innerHTML = sourceTokens.map((t, idx) => `
+                    <div class="attention-word-node">x<sub>${idx+1}</sub>: ${t.text}</div>
+                `).join("");
             }
 
             const readout = document.getElementById("step6-math-readout");
             if (readout) {
-                let maskRows = [];
-                for (let i = 0; i < M; i++) {
-                    let rowVals = [];
-                    for (let j = 0; j < M; j++) {
-                        rowVals.push(j > i ? '-\\infty' : '0');
-                    }
-                    maskRows.push(rowVals.join(' & '));
-                }
-                const maskMatrix = `\\begin{bmatrix} ${maskRows.join(' \\\\ ')} \\end{bmatrix}`;
-
                 readout.innerHTML = `
-                    <strong>Masked Self-Attention &amp; Encoder-Decoder Cross Attention:</strong><br>
-                    Causal Mask Matrix $M$ for target sequence ($T_{\\text{dec}} = ${M}$):<br>
-                    $M = ${maskMatrix} \\in \\mathbb{R}^{${M} \\times ${M}}$<br>
-                    $\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{Q K^T}{\\sqrt{d_k}} + M\\right) V$<br>
-                    Cross Attention query mapping from decoder to encoder: $Q_{\\text{dec}} = Y W_Q \\in \\mathbb{R}^{${M} \\times 64}$.
+                    <div class="math-card-header">
+                        <span class="math-card-title"><i class="fas fa-shield-alt" style="color:var(--accent); margin-right:6px;"></i> Causal Masked Self-Attention &amp; Cross-Attention</span>
+                        <span class="math-card-badge">Masked M ∈ ℝ^{${M} × ${M}}</span>
+                    </div>
+                    <div class="math-card-body">
+                        <div class="math-latex-eq">
+                            $$\\text{CausalAttention}(\\mathbf{Q}, \\mathbf{K}, \\mathbf{V}) = \\text{softmax}\\left(\\frac{\\mathbf{Q} \\mathbf{K}^T}{\\sqrt{d_k}} + \\mathbf{M}\\right) \\mathbf{V}$$
+                            $$\\mathbf{M}_{ij} = \\begin{cases} 0 & \\text{if } j \\le i \\\\ -\\infty & \\text{if } j > i \\end{cases}$$
+                        </div>
+                    </div>
                 `;
+                safeTypeset(readout);
             }
         }
 
         function renderStep7() {
+            const data = getTranslationData(currentInput);
+            const logitsPreview = document.getElementById("step7-logits-preview");
+            if (logitsPreview) {
+                logitsPreview.innerHTML = data.candidates.map(c => `
+                    <div class="logit-card">
+                        <span class="logit-candidate-word">${c.word}</span>
+                        <span class="logit-raw-score">+${c.logit.toFixed(1)}</span>
+                    </div>
+                `).join("");
+            }
+
             const readout = document.getElementById("step7-math-readout");
             if (readout) {
                 readout.innerHTML = `
-                    <strong>Logit Projection Layer:</strong><br>
-                    $\\text{Logits} = Z_{\\text{dec\\_final}} W_U + b$<br>
-                    Matrix dimensions shape mapping:<br>
-                    $\\underbrace{\\text{Logits}}_{[1 \\times 37000]} = \\underbrace{Z_{\\text{dec\\_final}}}_{[1 \\times 512]} \\times \\underbrace{W_U}_{[512 \\times 37000]} + \\underbrace{b}_{[1 \\times 37000]}$
+                    <div class="math-card-header">
+                        <span class="math-card-title"><i class="fas fa-expand-arrows-alt" style="color:var(--accent); margin-right:6px;"></i> Vocabulary Logit Projection (512-D → 37,000-D)</span>
+                        <span class="math-card-badge">W_U ∈ ℝ^{512 × 37000}</span>
+                    </div>
+                    <div class="math-card-body">
+                        <div class="math-latex-eq">
+                            $$\\mathbf{z} = \\mathbf{h}_{\\text{dec}} \\mathbf{W}_U + \\mathbf{b} \\in \\mathbb{R}^{1 \\times 37,000}$$
+                        </div>
+                    </div>
                 `;
+                safeTypeset(readout);
             }
         }
 
@@ -1249,14 +1100,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const tempSlider = document.getElementById("softmax-temp-slider");
             const tempVal = tempSlider ? parseFloat(tempSlider.value) : 1.0;
             
-            const candidates = [
-                { word: data.nextWord, logit: 3.5 },
-                { word: data.nextWord === "te" ? "necesitas" : "te", logit: 2.2 },
-                { word: "atención", logit: 1.0 },
-                { word: "es", logit: 0.2 },
-                { word: "todo", logit: -0.5 }
-            ];
-            
+            const candidates = data.candidates;
             let sumExp = 0;
             const expValues = candidates.map(c => {
                 const val = Math.exp(c.logit / tempVal);
@@ -1265,6 +1109,13 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             
             const probs = expValues.map(v => (v / sumExp) * 100);
+
+            // Compute Entropy
+            let entropy = 0;
+            probs.forEach(p => {
+                const pFrac = p / 100;
+                if (pFrac > 0) entropy -= pFrac * Math.log2(pFrac);
+            });
             
             candidates.forEach((cand, idx) => {
                 const prob = probs[idx];
@@ -1285,7 +1136,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 setTimeout(() => {
                     barFill.style.width = `${prob}%`;
-                }, 50 + idx * 40);
+                    if (idx === 0) barFill.style.background = "linear-gradient(90deg, var(--nothing-red), #ff4d5a)";
+                }, 40 + idx * 30);
                 
                 barWrapper.appendChild(barFill);
                 row.appendChild(barWrapper);
@@ -1297,40 +1149,45 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 chart.appendChild(row);
             });
-            
-            const mathBox = document.getElementById("softmax-math-explanation");
-            if (mathBox) {
-                const probVectorRows = candidates.map(c => `P(\\text{"${c.word}"})`).join(' \\\\ ');
-                const probValueRows = probs.map(p => `${p.toFixed(1)}\\%`).join(' \\\\ ');
-                const vectorEquation = `\\begin{bmatrix} ${probVectorRows} \\end{bmatrix} = \\begin{bmatrix} ${probValueRows} \\end{bmatrix}`;
 
+            // Entropy Meter update
+            const entropyFill = document.getElementById("step8-entropy-fill");
+            const entropyNum = document.getElementById("step8-entropy-num");
+            const modeBadge = document.getElementById("step8-mode-badge");
+
+            if (entropyFill) {
+                const fillPct = Math.min(100, Math.max(5, (entropy / 2.32) * 100));
+                entropyFill.style.width = fillPct.toFixed(1) + "%";
+            }
+            if (entropyNum) entropyNum.textContent = `Entropy: ${entropy.toFixed(2)} bits`;
+            if (modeBadge) {
                 if (tempVal <= 0.4) {
-                    mathBox.innerHTML = `
-                        🔥 <strong>Greedy Mode (T=${tempVal}):</strong> Highly confident, focuses entirely on the highest logit.<br>
-                        Softmax: $P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})}$<br>
-                        Probability Vector:<br>
-                        $${vectorEquation}$
-                    `;
-                    mathBox.style.borderLeftColor = "var(--accent)";
+                    modeBadge.textContent = "Greedy Mode (Argmax Peak)";
+                    modeBadge.style.color = "var(--nothing-red)";
                 } else if (tempVal >= 1.5) {
-                    mathBox.innerHTML = `
-                        🎨 <strong>Creative Mode (T=${tempVal}):</strong> Softmax distribution is flattened; other words have a higher chance.<br>
-                        Softmax: $P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})}$<br>
-                        Probability Vector:<br>
-                        $${vectorEquation}$
-                    `;
-                    mathBox.style.borderLeftColor = "var(--accent-2)";
+                    modeBadge.textContent = "Creative Mode (High Entropy)";
+                    modeBadge.style.color = "var(--laser-cyan)";
                 } else {
-                    mathBox.innerHTML = `
-                        ⚙️ <strong>Standard Scaling (T=${tempVal}):</strong> Balanced confidence and distribution.<br>
-                        Softmax: $P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})}$<br>
-                        Probability Vector:<br>
-                        $${vectorEquation}$
-                    `;
-                    mathBox.style.borderLeftColor = "var(--accent-3)";
+                    modeBadge.textContent = "Balanced Sampling Mode";
+                    modeBadge.style.color = "#34d399";
                 }
             }
-            triggerMathJax();
+
+            const mathBox = document.getElementById("softmax-math-explanation");
+            if (mathBox) {
+                mathBox.innerHTML = `
+                    <div class="math-card-header">
+                        <span class="math-card-title"><i class="fas fa-chart-bar" style="color:var(--accent); margin-right:6px;"></i> Softmax Normalization (T = ${tempVal})</span>
+                        <span class="math-card-badge">∑ p_i = 1.0</span>
+                    </div>
+                    <div class="math-card-body">
+                        <div class="math-latex-eq">
+                            $$P(w_i) = \\frac{\\exp(\\text{logit}_i / ${tempVal})}{\\sum_j \\exp(\\text{logit}_j / ${tempVal})} \\quad (P(\\text{"${candidates[0].word}"}) = ${probs[0].toFixed(1)}\\%)$$
+                        </div>
+                    </div>
+                `;
+                safeTypeset(mathBox);
+            }
         }
 
         function renderStep9() {
@@ -1338,66 +1195,103 @@ document.addEventListener("DOMContentLoaded", () => {
             const selectedWord = document.getElementById("step9-selected-word");
             const newInput = document.getElementById("step9-new-input");
             
-            selectedWord.textContent = `"${data.nextWord}"`;
-            newInput.textContent = `${data.target} ${data.nextWord}`;
+            if (selectedWord) selectedWord.textContent = `"${data.nextWord}"`;
+            if (newInput) newInput.textContent = `${data.target} ${data.nextWord}`;
+
+            // Emit button
+            const emitBtn = document.getElementById("step9-emit-btn");
+            const resetGenBtn = document.getElementById("step9-reset-gen-btn");
+            const terminalLog = document.getElementById("step9-terminal-log");
+
+            if (emitBtn && !emitBtn._bound) {
+                emitBtn._bound = true;
+                emitBtn.addEventListener("click", () => {
+                    autoregressiveStepsCount++;
+                    const extraWords = ["por", "favor", "<eos>"];
+                    const nextExtra = extraWords[(autoregressiveStepsCount - 1) % extraWords.length];
+                    
+                    if (terminalLog) {
+                        const line = document.createElement("div");
+                        line.className = "term-line success";
+                        line.textContent = `[STEP 0${autoregressiveStepsCount + 1}] Emitted token "${nextExtra}" | Autoregressive Loop Restarted`;
+                        terminalLog.appendChild(line);
+                        terminalLog.scrollTop = terminalLog.scrollHeight;
+                    }
+                    if (newInput) {
+                        newInput.textContent += ` ${nextExtra}`;
+                    }
+                });
+            }
+
+            if (resetGenBtn && !resetGenBtn._bound) {
+                resetGenBtn._bound = true;
+                resetGenBtn.addEventListener("click", () => {
+                    autoregressiveStepsCount = 0;
+                    if (newInput) newInput.textContent = `${data.target} ${data.nextWord}`;
+                    if (terminalLog) {
+                        terminalLog.innerHTML = `
+                            <div class="term-line info">[INIT] Decoder prefix loaded: ${data.target}</div>
+                            <div class="term-line success">[STEP 01] Argmax predicted token: "${data.nextWord}" (p=88.5%, ID=4821)</div>
+                            <div class="term-line highlight">[UPDATE] New prefix: ${data.target} ${data.nextWord}</div>
+                        `;
+                    }
+                });
+            }
 
             const readout = document.getElementById("step9-math-readout");
             if (readout) {
                 const currentWords = data.target.split(/\s+/).filter(Boolean);
                 const allWords = [...currentWords, data.nextWord];
                 const wordRows = allWords.map(w => {
-                    const escaped = w.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                    return `\\text{"${escaped}"}`;
+                    if (w.includes('<') || w.includes('>')) {
+                        const clean = w.replace(/[<>]/g, '');
+                        return `\\langle\\text{${clean}}\\rangle`;
+                    }
+                    return `\\text{"${w}"}`;
                 }).join(' \\\\ ');
 
                 readout.innerHTML = `
-                    <strong>Autoregressive Update &amp; Sequence Concatenation:</strong><br>
-                    $t_{\\text{next}} = \\text{argmax}_{w} \\, P(w) = \\text{ID} \\text{ of } \\text{"${data.nextWord}"}$<br>
-                    Sequence Matrix Stack $Y^{(t+1)} = \\begin{bmatrix} Y^{(t)} \\\\ t_{\\text{next}} \\end{bmatrix}$:<br>
-                    $Y^{(t+1)} = \\begin{bmatrix} ${wordRows} \\end{bmatrix} \\in \\mathbb{R}^{${allWords.length} \\times 1}$
+                    <div class="math-card-header">
+                        <span class="math-card-title"><i class="fas fa-sync-alt" style="color:var(--accent); margin-right:6px;"></i> Autoregressive Output Appending &amp; Loop Recurrence</span>
+                        <span class="math-card-badge">T_dec+1 = ${allWords.length}</span>
+                    </div>
+                    <div class="math-card-body">
+                        <div class="math-latex-eq">
+                            $$t_{\\text{next}} = \\arg\\max_{w} \\, P(w) = \\text{"${data.nextWord}"}$$
+                            $$\\mathbf{Y}^{(t+1)} = \\begin{bmatrix} \\mathbf{Y}^{(t)} \\\\ t_{\\text{next}} \\end{bmatrix} = \\begin{bmatrix} ${wordRows} \\end{bmatrix} \\in \\mathbb{R}^{${allWords.length} \\times 1}$$
+                        </div>
+                    </div>
                 `;
+                safeTypeset(readout);
             }
         }
 
-        let typesetTimeout = null;
-        function triggerMathJax() {
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                if (typesetTimeout) clearTimeout(typesetTimeout);
-                typesetTimeout = setTimeout(() => {
-                    try {
-                        window.MathJax.typesetClear();
-                        window.MathJax.typesetPromise().catch((err) => {
-                            if (err && err.message && err.message.includes("already in progress")) return;
-                            console.log('MathJax typesetting error:', err);
-                        });
-                    } catch (e) {
-                        console.log('MathJax clear error:', e);
-                    }
-                }, 80);
+        // ── ACTIVE STEP CONTROLLER ──
+
+        function updateGlobalProgress(stepNum) {
+            if (progressFill) {
+                const pct = ((stepNum / 9) * 100).toFixed(1);
+                progressFill.style.width = pct + "%";
+            }
+            if (stepBadge) {
+                stepBadge.innerHTML = `<span class="rec-dot"></span> STEP 0${stepNum} // ${STEP_NAMES[stepNum - 1]}`;
             }
         }
-        window.triggerMathJax = triggerMathJax;
 
         function renderActiveStep() {
-            // Update stepper active classes
             stepItems.forEach((item, idx) => {
                 const stepNum = idx + 1;
                 item.classList.toggle("active", stepNum === currentStep);
                 item.classList.toggle("completed", stepNum < currentStep);
-                
-                const icon = item.querySelector(".pipeline-step-icon");
-                if (icon) {
-                    icon.classList.toggle("pulse-active", stepNum === currentStep && isPlaying);
-                }
             });
 
-            // Update panels
             panes.forEach((pane) => {
                 const stepNum = parseInt(pane.dataset.step, 10);
                 pane.classList.toggle("active", stepNum === currentStep);
             });
 
-            // Render detailed views
+            updateGlobalProgress(currentStep);
+
             switch (currentStep) {
                 case 1: renderStep1(); break;
                 case 2: renderStep2(); break;
@@ -1410,148 +1304,114 @@ document.addEventListener("DOMContentLoaded", () => {
                 case 9: renderStep9(); break;
             }
 
-            // Trigger MathJax typesetting if loaded
-            triggerMathJax();
-
-            // Disable/enable prev/next buttons
-            prevBtn.disabled = currentStep === 1;
-            prevBtn.disabled = currentStep === 1;
-            nextBtn.disabled = currentStep === 9;
+            if (prevBtn) prevBtn.disabled = currentStep === 1;
+            if (nextBtn) nextBtn.disabled = currentStep === 9;
         }
 
-        // STEP PLAYBACK CONTROLS
+        // ── CONTROLS & EVENT LISTENERS ──
 
-        function nextStep() {
-            if (currentStep < 9) {
-                currentStep++;
-                renderActiveStep();
-            } else {
-                pausePlayback();
-            }
-        }
-
-        function prevStep() {
-            if (currentStep > 1) {
-                currentStep--;
-                renderActiveStep();
-            }
-        }
-
-        function resetPlayback() {
-            currentStep = 1;
-            renderActiveStep();
-        }
-
-        function playPlayback() {
-            if (isPlaying) return;
-            isPlaying = true;
-            playBtn.innerHTML = "⏸"; // Change icon to pause
-            playBtn.classList.add("active-play");
-            
-            // If at the end, wrap to beginning
-            if (currentStep === 9) {
-                currentStep = 1;
-                renderActiveStep();
-            }
-
-            playInterval = setInterval(() => {
-                nextStep();
-            }, speed);
-
-            renderActiveStep();
-        }
-
-        // Event listener helpers
-        function pausePlayback() {
-            if (!isPlaying) return;
-            isPlaying = false;
-            playBtn.innerHTML = "▶"; // Change icon to play
-            playBtn.classList.remove("active-play");
-            clearInterval(playInterval);
-            renderActiveStep();
-        }
-
-        // EVENT LISTENERS
-
-        // Click step in sidebar
         stepItems.forEach(item => {
             item.addEventListener("click", () => {
-                pausePlayback();
                 currentStep = parseInt(item.dataset.step, 10);
                 renderActiveStep();
             });
         });
 
-        // Controller buttons
-        prevBtn.addEventListener("click", () => {
-            pausePlayback();
-            prevStep();
-        });
+        if (prevBtn) {
+            prevBtn.addEventListener("click", () => {
+                if (currentStep > 1) {
+                    currentStep--;
+                    renderActiveStep();
+                }
+            });
+        }
 
-        nextBtn.addEventListener("click", () => {
-            pausePlayback();
-            nextStep();
-        });
+        if (nextBtn) {
+            nextBtn.addEventListener("click", () => {
+                if (currentStep < 9) {
+                    currentStep++;
+                    renderActiveStep();
+                }
+            });
+        }
 
-        resetBtn.addEventListener("click", () => {
-            pausePlayback();
-            resetPlayback();
-        });
+        if (resetBtn) {
+            resetBtn.addEventListener("click", () => {
+                currentStep = 1;
+                if (isPlaying) togglePlay();
+                renderActiveStep();
+            });
+        }
 
-        playBtn.addEventListener("click", () => {
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            if (playIcon) {
+                playIcon.className = isPlaying ? "fas fa-pause" : "fas fa-play";
+            }
+            if (playBtn) {
+                playBtn.classList.toggle("active-play", isPlaying);
+            }
+
             if (isPlaying) {
-                pausePlayback();
+                playInterval = setInterval(() => {
+                    if (currentStep < 9) {
+                        currentStep++;
+                        renderActiveStep();
+                    } else {
+                        togglePlay();
+                    }
+                }, speed);
             } else {
-                playPlayback();
+                clearInterval(playInterval);
             }
+        }
+
+        if (playBtn) {
+            playBtn.addEventListener("click", togglePlay);
+        }
+
+        if (speedSlider) {
+            speedSlider.addEventListener("input", (e) => {
+                speed = parseInt(e.target.value, 10);
+                if (speedVal) speedVal.textContent = (speed / 1000).toFixed(1) + "s";
+                if (isPlaying) {
+                    clearInterval(playInterval);
+                    playInterval = setInterval(() => {
+                        if (currentStep < 9) {
+                            currentStep++;
+                            renderActiveStep();
+                        } else {
+                            togglePlay();
+                        }
+                    }, speed);
+                }
+            });
+        }
+
+        // Text input listener
+        pipelineInput.addEventListener("input", (e) => {
+            currentInput = e.target.value || "Attention is all you need";
+            presetBtns.forEach(btn => btn.classList.remove("active-preset"));
+            renderActiveStep();
         });
 
-        // Speed slider
-        speedSlider.addEventListener("input", (e) => {
-            speed = parseInt(e.target.value, 10);
-            speedVal.textContent = `${(speed / 1000).toFixed(2)}s`;
-            if (isPlaying) {
-                pausePlayback();
-                playPlayback();
-            }
-        });
-
-        // Preset buttons
+        // Presets listener
         presetBtns.forEach(btn => {
             btn.addEventListener("click", () => {
-                const text = btn.dataset.text;
-                pipelineInput.value = text;
-                currentInput = text;
-                pausePlayback();
+                presetBtns.forEach(b => b.classList.remove("active-preset"));
+                btn.classList.add("active-preset");
+                pipelineInput.value = btn.dataset.text;
+                currentInput = btn.dataset.text;
                 renderActiveStep();
             });
         });
 
-        // Text input field change
-        pipelineInput.addEventListener("input", (e) => {
-            const text = e.target.value.trim();
-            if (text.length > 0) {
-                currentInput = text;
-            } else {
-                currentInput = "Attention is all you need";
-            }
-            renderActiveStep();
-        });
+        // Sliders for PE & Softmax
+        const posSlider = document.getElementById("pe-pos-slider");
+        const dimSlider = document.getElementById("pe-dim-slider");
+        if (posSlider) posSlider.addEventListener("input", renderStep4);
+        if (dimSlider) dimSlider.addEventListener("input", renderStep4);
 
-        // Initialize wave resize listener
-        window.addEventListener("resize", () => {
-            if (currentStep === 4) {
-                renderStep4();
-            }
-        });
-
-        // PE sliders
-        const pePosSlider = document.getElementById("pe-pos-slider");
-        const peDimSlider = document.getElementById("pe-dim-slider");
-        if (pePosSlider) pePosSlider.addEventListener("input", renderStep4);
-        if (peDimSlider) peDimSlider.addEventListener("input", renderStep4);
-        
-        // Temperature slider
         const tempSlider = document.getElementById("softmax-temp-slider");
         if (tempSlider) {
             tempSlider.addEventListener("input", (e) => {
@@ -1561,11 +1421,64 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Initialize Step 5 Dimension Explorer
-        initStep5Explorer();
-
         // Trigger initial render
         renderActiveStep();
     })();
+
+
+    /* ── Floating Capsule Navigation & Laser Scroll Progress ──────── */
+    const progressFill = document.getElementById("navProgressFill");
+    if (progressFill) {
+        window.addEventListener("scroll", () => {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            progressFill.style.width = scrollPercent + "%";
+        }, { passive: true });
+    }
+
+    // Floating Nav active section highlighting
+    const floatingNavLinks = document.querySelectorAll(".modern-nav .nav-link-awesome");
+    const trackedSections = document.querySelectorAll("section[id]");
+    if (floatingNavLinks.length > 0 && trackedSections.length > 0) {
+        const floatingObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    floatingNavLinks.forEach(link => {
+                        const targetId = link.getAttribute("data-section") || link.getAttribute("href")?.replace("#", "");
+                        link.classList.toggle("active", targetId === id);
+                    });
+                }
+            });
+        }, { threshold: 0.15, rootMargin: "-15% 0px -50% 0px" });
+        trackedSections.forEach(s => floatingObserver.observe(s));
+    }
+
+    /* ── Global Accordion Toggle: Expand All / Collapse All ─────────── */
+    const globalAccordionBtn = document.getElementById("global-accordion-toggle");
+    const globalAccordionText = document.getElementById("global-accordion-text");
+    const globalAccordionIcon = document.getElementById("global-accordion-icon");
+
+    if (globalAccordionBtn) {
+        let allExpanded = false;
+        const moduleAccordions = document.querySelectorAll(
+            'details[id^="01-"], details[id^="02-"], details[id^="03-"], details[id^="04-"], details[id^="05-"], details[id^="06-"], details[id^="07-"], details[id^="08-"], details#encoder, details#decoder'
+        );
+
+        globalAccordionBtn.addEventListener("click", () => {
+            allExpanded = !allExpanded;
+            moduleAccordions.forEach(detailsEl => {
+                detailsEl.open = allExpanded;
+            });
+            if (globalAccordionText) {
+                globalAccordionText.textContent = allExpanded ? "COLLAPSE ALL" : "EXPAND ALL";
+            }
+            if (globalAccordionIcon) {
+                globalAccordionIcon.className = allExpanded ? "fas fa-compress-arrows-alt" : "fas fa-expand-alt";
+            }
+        });
+    }
 });
+
 
