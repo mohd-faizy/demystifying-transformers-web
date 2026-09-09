@@ -844,6 +844,7 @@ body:not(.dark-mode) .hero-main-title, body:not(.dark-mode) .hero h1 {
   margin-bottom: 36px;
 }
 
+.resource-card,
 .resource-card.paper-card {
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -857,13 +858,20 @@ body:not(.dark-mode) .hero-main-title, body:not(.dark-mode) .hero h1 {
   box-shadow: var(--shadow);
   position: relative;
   overflow: hidden;
+  text-decoration: none;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.resource-card:hover,
 .resource-card.paper-card:hover {
   border-color: rgba(215, 25, 32, 0.55);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(215, 25, 32, 0.2);
   transform: translateY(-3px);
+}
+
+.resource-card.blog-card:hover {
+  border-color: rgba(0, 240, 255, 0.6);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 240, 255, 0.2);
 }
 
 .resource-icon-wrapper {
@@ -879,6 +887,13 @@ body:not(.dark-mode) .hero-main-title, body:not(.dark-mode) .hero h1 {
   flex-shrink: 0;
 }
 
+.resource-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
 .resource-svg-icon {
   width: 26px;
   height: 26px;
@@ -891,6 +906,20 @@ body:not(.dark-mode) .hero-main-title, body:not(.dark-mode) .hero h1 {
 }
 
 .resource-tag.tag-paper {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--laser-cyan);
+  background: var(--laser-cyan-subtle);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  width: max-content;
+}
+
+.resource-tag.tag-blog {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 700;
@@ -939,10 +968,278 @@ body:not(.dark-mode) .resource-title {
   white-space: nowrap;
 }
 
+.resource-card:hover .resource-action,
 .resource-card.paper-card:hover .resource-action {
   background: var(--nothing-red);
   border-color: rgba(255, 255, 255, 0.2);
   box-shadow: 0 0 16px var(--nothing-red-glow);
+}
+
+.resource-card.blog-card:hover .resource-action {
+  background: #0284c7;
+  border-color: rgba(0, 240, 255, 0.4);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+}
+
+body:not(.dark-mode) .resource-action {
+  color: #18181b;
+  background: rgba(0, 0, 0, 0.05);
+  border-color: #cbd5e1;
+}
+
+body:not(.dark-mode) .resource-card:hover .resource-action {
+  color: #ffffff;
+  background: var(--nothing-red);
+}
+
+body:not(.dark-mode) .resource-card.blog-card:hover .resource-action {
+  color: #ffffff;
+  background: #0284c7;
+}
+
+/* Guard against unbounded arrow/bookmark icon expansion */
+.arrow-icon {
+  width: 18px !important;
+  height: 18px !important;
+  max-width: 18px !important;
+  max-height: 18px !important;
+  display: inline-block !important;
+}
+
+.bookmark {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  text-decoration: none;
+  background: var(--ai-surface);
+  transition: all 0.25s ease;
+}
+
+.bookmark:hover {
+  border-color: rgba(0, 240, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.bookmark-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+@media (max-width: 640px) {
+  .resource-card {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 18px 20px !important;
+  }
+}
+
+/* ── Authentic Monokai Theme for Code Blocks ────────────────────────── */
+.monokai-code-wrapper {
+  background: #272822 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-lg);
+  margin: 22px 0;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+}
+
+.monokai-code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: #1e1f1c;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.monokai-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.monokai-window-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.monokai-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.monokai-dot.dot-red { background: #ff5f56; }
+.monokai-dot.dot-yellow { background: #ffbd2e; }
+.monokai-dot.dot-green { background: #27c93f; }
+
+.monokai-filename {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #a6e22e;
+  letter-spacing: 0.02em;
+}
+
+.monokai-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.monokai-lang-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #66d9ef;
+  background: rgba(102, 217, 239, 0.12);
+  border: 1px solid rgba(102, 217, 239, 0.28);
+  border-radius: var(--radius-sm);
+  padding: 3px 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.monokai-copy-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-sm);
+  color: #f8f8f2;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.monokai-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+
+.monokai-copy-btn.copied {
+  background: rgba(166, 226, 46, 0.2);
+  border-color: #a6e22e;
+  color: #a6e22e;
+}
+
+pre.monokai-pre,
+pre[class*="language-"].monokai-pre {
+  margin: 0 !important;
+  padding: 22px 24px !important;
+  background: #272822 !important;
+  color: #f8f8f2 !important;
+  overflow-x: auto !important;
+  border-radius: 0 !important;
+  border: none !important;
+  tab-size: 4 !important;
+  -moz-tab-size: 4 !important;
+}
+
+pre.monokai-pre code,
+pre.monokai-pre code[class*="language-"] {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: #f8f8f2 !important;
+  font-family: 'JetBrains Mono', 'Space Mono', Consolas, Monaco, monospace !important;
+  font-size: 0.88rem !important;
+  line-height: 1.65 !important;
+  white-space: pre !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  display: block !important;
+  box-shadow: none !important;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Monokai light mode immunity: Never allow light background in Monokai blocks */
+body:not(.dark-mode) .monokai-code-wrapper {
+  background: #272822 !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+body:not(.dark-mode) pre.monokai-pre,
+body:not(.dark-mode) pre.monokai-pre code,
+body:not(.dark-mode) pre.monokai-pre code[class*="language-"] {
+  background: transparent !important;
+  border: none !important;
+  color: #f8f8f2 !important;
+}
+
+body:not(.dark-mode) pre.monokai-pre {
+  background: #272822 !important;
+}
+
+/* Monokai Token Syntax Highlight High-Contrast Colors */
+.monokai-pre .token.comment,
+.monokai-pre .token.prolog,
+.monokai-pre .token.doctype,
+.monokai-pre .token.cdata {
+  color: #75715e !important;
+  font-style: italic;
+}
+
+.monokai-pre .token.punctuation {
+  color: #f8f8f2 !important;
+}
+
+.monokai-pre .token.property,
+.monokai-pre .token.tag,
+.monokai-pre .token.constant,
+.monokai-pre .token.symbol,
+.monokai-pre .token.deleted {
+  color: #f92672 !important;
+}
+
+.monokai-pre .token.boolean,
+.monokai-pre .token.number {
+  color: #ae81ff !important;
+}
+
+.monokai-pre .token.selector,
+.monokai-pre .token.attr-name,
+.monokai-pre .token.string,
+.monokai-pre .token.char,
+.monokai-pre .token.builtin,
+.monokai-pre .token.inserted {
+  color: #a6e22e !important;
+}
+
+.monokai-pre .token.operator,
+.monokai-pre .token.entity,
+.monokai-pre .token.url,
+.monokai-pre .language-css .token.string,
+.monokai-pre .style .token.string,
+.monokai-pre .token.variable {
+  color: #f8f8f2 !important;
+}
+
+.monokai-pre .token.atrule,
+.monokai-pre .token.attr-value,
+.monokai-pre .token.function,
+.monokai-pre .token.class-name {
+  color: #e6db74 !important;
+}
+
+.monokai-pre .token.keyword {
+  color: #66d9ef !important;
+}
+
+.monokai-pre .token.regex,
+.monokai-pre .token.important {
+  color: #fd971f !important;
 }
 
 /* Paper Summary Grid & Modern Reddit Blocks */

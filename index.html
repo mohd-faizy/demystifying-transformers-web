@@ -4961,6 +4961,7 @@ M834 80h400000v40h-400000z"></path>
                                         </table>
                                     </div>
                                 </div>
+
                                 <div dir="auto">
                                     <hr>
                                 </div>
@@ -4974,11 +4975,32 @@ M834 80h400000v40h-400000z"></path>
                                     </ul>
                                 </div>
 
-                                <script crossorigin="anonymous" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-                                <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" referrerpolicy="no-referrer" rel="stylesheet">
-                                <script crossorigin="anonymous" integrity="sha512-m3JYEI6gx5fh9jF10FjGoMzVKcV2N6nchcDcqPCdI1L3R2WQV7br2XVNR8iTLb2daOMRl3zldbcfT40xU2ntVw==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
-                                
-                                <pre class="code code-wrap" id="1958a6d6-2b53-80db-aa35-d74c2864b9a6"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import torch
+                                <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" referrerpolicy="no-referrer" rel="stylesheet">
+                                <script crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+                                <script crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+                                <div class="monokai-code-wrapper" id="1958a6d6-2b53-80db-aa35-d74c2864b9a6">
+                                    <div class="monokai-code-header">
+                                        <div class="monokai-header-left">
+                                            <div class="monokai-window-dots">
+                                                <span class="monokai-dot dot-red"></span>
+                                                <span class="monokai-dot dot-yellow"></span>
+                                                <span class="monokai-dot dot-green"></span>
+                                            </div>
+                                            <span class="monokai-filename">positional_encoding.py</span>
+                                        </div>
+                                        <div class="monokai-header-right">
+                                            <span class="monokai-lang-badge">Python · PyTorch</span>
+                                            <button type="button" class="monokai-copy-btn" title="Copy code snippet">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                                </svg>
+                                                <span>Copy</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <pre class="monokai-pre language-python"><code class="language-python">import torch
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -5125,29 +5147,21 @@ seq_len = 10, 50, 100, 500    # Number of tokens (positions)</code></pre>
                                         <li><strong>Extrapolative Advantage:</strong> The relative offset pattern is sequence-length independent, allowing the self-attention mechanism to generalize over different sequence lengths.</li>
                                     </ul>
                                 </div>
-                                <div dir="ltr" style="margin: 20px 0;">
-                                    <figure id="1968a6d6-2b53-8079-b800-fa0bc4fadefd" style="margin: 0;">
-                                        <a class="bookmark source" href="https://blog.timodenk.com/linear-relationships-in-the-transformers-positional-encoding/" target="_blank" rel="noopener noreferrer">
-                                            <div class="bookmark-info">
-                                                <div class="bookmark-header">
-                                                    <div class="bookmark-icon-wrapper">
-                                                        <img class="bookmark-icon" src="https://blog.timodenk.com/favicon.ico" alt="" onerror="this.style.display='none';">
-                                                    </div>
-                                                    <span class="bookmark-domain">blog.timodenk.com</span>
-                                                </div>
-                                                <div class="bookmark-text">
-                                                    <div class="bookmark-title">Linear Relationships in the Transformer’s Positional Encoding</div>
-                                                    <div class="bookmark-description">In this post, the author proves the linear relationship between relative positions in the Transformer’s positional encoding.</div>
-                                                </div>
-                                            </div>
-                                            <div class="bookmark-action" aria-hidden="true">
-                                                <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                                    <polyline points="12 5 19 12 12 19"></polyline>
-                                                </svg>
-                                            </div>
-                                        </a>
-                                    </figure>
+                                <div class="resource-card-container" style="margin: 28px 0 24px 0;">
+                                    <a class="resource-card blog-card" href="https://blog.timodenk.com/linear-relationships-in-the-transformers-positional-encoding/" target="_blank" rel="noopener noreferrer">
+                                        <div class="resource-icon-wrapper">
+                                            <img alt="Timo Denk's Blog" class="resource-icon" src="https://blog.timodenk.com/favicon.ico" onerror="this.onerror=null; this.parentElement.innerHTML='<svg class=\'resource-svg-icon\' fill=\'none\' stroke=\'%2300f0ff\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' viewBox=\'0 0 24 24\'><path d=\'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\'></path><path d=\'M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\'></path></svg>';">
+                                        </div>
+                                        <div class="resource-details">
+                                            <span class="resource-tag tag-blog">Mathematical Proof · Timo Denk's Blog</span>
+                                            <h4 class="resource-title">Linear Relationships in the Transformer’s Positional Encoding</h4>
+                                            <p class="resource-desc">In this post, the author rigorously proves how sinusoidal positional encodings enable self-attention to capture relative token distances through linear transformations.</p>
+                                        </div>
+                                        <div class="resource-action">
+                                            <span>Read on Blog</span>
+                                            <span class="arrow">➔</span>
+                                        </div>
+                                    </a>
                                 </div>
                                 <div dir="auto">
                                     <hr>

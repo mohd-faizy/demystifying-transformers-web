@@ -1479,6 +1479,26 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // Monokai Code Snippet Copy Handler
+    document.addEventListener("click", (e) => {
+        const copyBtn = e.target.closest(".monokai-copy-btn");
+        if (!copyBtn) return;
+        const wrapper = copyBtn.closest(".monokai-code-wrapper");
+        const codeEl = wrapper ? wrapper.querySelector("code") : null;
+        if (codeEl) {
+            const textToCopy = codeEl.innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalHtml = copyBtn.innerHTML;
+                copyBtn.classList.add("copied");
+                copyBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!`;
+                setTimeout(() => {
+                    copyBtn.classList.remove("copied");
+                    copyBtn.innerHTML = originalHtml;
+                }, 2000);
+            }).catch(() => {});
+        }
+    });
 });
 
 
